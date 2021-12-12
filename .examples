@@ -1,0 +1,232 @@
+#Inserido em um novo grupo
+%{
+  "message" => %{
+    "chat" => %{
+      "id" => -1001294571722,
+      "title" => "bot Test",
+      "type" => "supergroup"
+    },
+    "date" => 1639249357,
+    "from" => %{
+      "first_name" => "alisson🍍",
+      "id" => 600614550,
+      "is_bot" => false,
+      "language_code" => "en",
+      "username" => "AlissonMachad0"
+    },
+    "message_id" => 145,
+    "new_chat_member" => %{
+      "first_name" => "Jurema bot",
+      "id" => 712946629,
+      "is_bot" => true,
+      "username" => "cudohenrybot"
+    },
+    "new_chat_members" => [
+      %{
+        "first_name" => "Jurema bot",
+        "id" => 712946629,
+        "is_bot" => true,
+        "username" => "cudohenrybot"
+      }
+    ],
+    "new_chat_participant" => %{
+      "first_name" => "Jurema bot",
+      "id" => 712946629,
+      "is_bot" => true,
+      "username" => "cudohenrybot"
+    }
+  },
+  "update_id" => 291601380
+}
+
+# chamado de comando 
+%{
+    "message" => %{
+      "chat" => %{
+        "id" => -1001294571722,
+        "title" => "bot Test",
+        "type" => "supergroup"
+      },
+      "date" => 1639249455,
+      "entities" => [%{"length" => 3, "offset" => 0, "type" => "bot_command"}],
+      "from" => %{
+        "first_name" => "alisson🍍",
+        "id" => 600614550,
+        "is_bot" => false,
+        "language_code" => "en",
+        "username" => "AlissonMachad0"
+      },
+      "message_id" => 146,
+      "text" => "/lt"
+    },
+    "update_id" => 291601381
+  }
+
+  novo membro adicionado
+  %{
+    "message" => %{
+      "chat" => %{
+        "id" => -1001294571722,
+        "title" => "bot Test",
+        "type" => "supergroup"
+      },
+      "date" => 1639250126,
+      "from" => %{
+        "first_name" => "alis🔜👀🍍",
+        "id" => 600614550,
+        "is_bot" => false,
+        "language_code" => "en",
+        "username" => "AlissonMachad0"
+      },
+      "message_id" => 148,
+      "new_chat_member" => %{
+        "first_name" => "emerson",
+        "id" => 205685170,
+        "is_bot" => false,
+        "username" => "cajunosuco"
+      },
+      "new_chat_members" => [
+        %{
+          "first_name" => "emerson",
+          "id" => 205685170,
+          "is_bot" => false,
+          "username" => "cajunosuco"
+        }
+      ],
+      "new_chat_participant" => %{
+        "first_name" => "emerson",
+        "id" => 205685170,
+        "is_bot" => false,
+        "username" => "cajunosuco"
+      }
+    },
+    "update_id" => 291601382
+  }
+
+  #um gif enviado pelo usuario no privado
+
+    %{
+        "message" => %{
+          "animation" => %{
+            "duration" => 4,
+            "file_id" => "CgACAgEAAxkBAAMuYbT5gw6MrPPvkVhLHKaMQXLluPYAAqsCAAIL46hEhrVsxnBDNCkjBA",
+            "file_name" => "VID_20211117_133048.mp4",
+            "file_size" => 55863,
+            "file_unique_id" => "AgADqwIAAgvjqEQ",
+            "height" => 112,
+            "mime_type" => "video/mp4",
+            "thumb" => %{
+              "file_id" => "AAMCAQADGQEAAy5htPmDDoys8--RWEscpoxBcuW49gACqwIAAgvjqESGtWzGcEM0KQEAB20AAyME",
+              "file_size" => 3525,
+              "file_unique_id" => "AQADqwIAAgvjqERy",
+              "height" => 112,
+              "width" => 112
+            },
+            "width" => 112
+          },
+          "chat" => %{
+            "first_name" => "alis🔜👀🍍",
+            "id" => 600614550,
+            "type" => "private",
+            "username" => "AlissonMachad0"
+          },
+          "date" => 1639250307,
+          "document" => %{
+            "file_id" => "CgACAgEAAxkBAAMuYbT5gw6MrPPvkVhLHKaMQXLluPYAAqsCAAIL46hEhrVsxnBDNCkjBA",
+            "file_name" => "VID_20211117_133048.mp4",
+            "file_size" => 55863,
+            "file_unique_id" => "AgADqwIAAgvjqEQ",
+            "mime_type" => "video/mp4",
+            "thumb" => %{
+              "file_id" => "AAMCAQADGQEAAy5htPmDDoys8--RWEscpoxBcuW49gACqwIAAgvjqESGtWzGcEM0KQEAB20AAyME",
+              "file_size" => 3525,
+              "file_unique_id" => "AQADqwIAAgvjqERy",
+              "height" => 112,
+              "width" => 112
+            }
+          },
+          "from" => %{
+            "first_name" => "alis🔜👀🍍",
+            "id" => 600614550,
+            "is_bot" => false,
+            "language_code" => "en",
+            "username" => "AlissonMachad0"
+          },
+          "message_id" => 46
+        },
+        "update_id" => 291601383
+      }
+
+      #Usuario removido do grupo
+
+%{
+    "message" => %{
+      "chat" => %{
+        "id" => -1001294571722,
+        "title" => "bot Test",
+        "type" => "supergroup"
+      },
+      "date" => 1639250636,
+      "from" => %{
+        "first_name" => "alis🔜👀🍍",
+        "id" => 600614550,
+        "is_bot" => false,
+        "language_code" => "en",
+        "username" => "AlissonMachad0"
+      },
+      "left_chat_member" => %{
+        "first_name" => "emerson",
+        "id" => 205685170,
+        "is_bot" => false,
+        "username" => "cajunosuco"
+      },
+      "left_chat_participant" => %{
+        "first_name" => "emerson",
+        "id" => 205685170,
+        "is_bot" => false,
+        "username" => "cajunosuco"
+      },
+      "message_id" => 163
+    },
+    "update_id" => 291601386
+  }
+
+  #entrou pelo link
+  %{
+    "message" => %{
+      "chat" => %{
+        "id" => -1001294571722,
+        "title" => "bot Test",
+        "type" => "supergroup"
+      },
+      "date" => 1639250874,
+      "from" => %{
+        "first_name" => "emerson",
+        "id" => 205685170,
+        "is_bot" => false,
+        "username" => "cajunosuco"
+      },
+      "message_id" => 170,
+      "new_chat_member" => %{
+        "first_name" => "emerson",
+        "id" => 205685170,
+        "is_bot" => false,
+        "username" => "cajunosuco"
+      },
+      "new_chat_members" => [
+        %{
+          "first_name" => "emerson",
+          "id" => 205685170,
+          "is_bot" => false,
+          "username" => "cajunosuco"
+        }
+      ],
+      "new_chat_participant" => %{
+        "first_name" => "emerson",
+        "id" => 205685170,
+        "is_bot" => false,
+        "username" => "cajunosuco"
+      }
+    },
+    "update_id" => 291601389
+  }
