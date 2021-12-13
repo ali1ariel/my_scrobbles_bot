@@ -41,6 +41,7 @@ defmodule MyScrobblesBot.Telegram.Message do
     |> Changeset.cast(params, [:text, :message_id, :chat_id, :chat_type])
     |> Changeset.validate_required([:text, :message_id])
     |> put_chat_id()
+    |> put_chat_type()
     |> Changeset.cast_embed(:from, with: &from_changeset/2)
     |> Changeset.cast_embed(:reply_to_message, with: &reply_to_message_changeset/2)
   end
@@ -50,16 +51,37 @@ defmodule MyScrobblesBot.Telegram.Message do
     |> Changeset.cast(params, [:text, :message_id, :chat_id, :chat_type, :chat_first_name])
     |> Changeset.validate_required([:text, :message_id])
     |> put_chat_id()
+    |> put_chat_type()
     |> Changeset.cast_embed(:from, with: &from_changeset/2)
   end
 
-  defp from_changeset(schema, params), do: Changeset.cast(schema, params, [:first_name, :language_code, :telegram_id, :username])
+  defp from_changeset(schema, params) do
+    schema
+    |> Changeset.cast(params, [:first_name, :language_code, :telegram_id, :username])
+    |> put_telegram_id()
+  end
 
   defp put_chat_id(%Ecto.Changeset{params: params} = changeset) do
     Ecto.Changeset.put_change(
       changeset,
       :chat_id,
       Changeset.get_change(changeset, :chat_id, params["chat"]["id"])
+    )
+  end
+
+  defp put_chat_type(%Ecto.Changeset{params: params} = changeset) do
+    Ecto.Changeset.put_change(
+      changeset,
+      :chat_type,
+      Changeset.get_change(changeset, :chat_type, params["chat"]["type"])
+    )
+  end
+
+  defp put_telegram_id(%Ecto.Changeset{params: params} = changeset) do
+    Ecto.Changeset.put_change(
+      changeset,
+      :telegram_id,
+      Changeset.get_change(changeset, :telegram_id, params["id"])
     )
   end
 end
