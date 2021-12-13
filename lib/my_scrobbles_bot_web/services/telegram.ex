@@ -1,4 +1,4 @@
-defmodule MyScrobblesBot.Telegram.Client do
+defmodule MyScrobblesBotWeb.Services.Telegram do
   @moduledoc """
   Client for the telegram API
   """
@@ -18,6 +18,10 @@ defmodule MyScrobblesBot.Telegram.Client do
   Calls the sendMessage method in the telegram api
   """
   def send_message(params) do
+    build_and_send(&post/2, "/sendMessage", ClientInputs.SendMessage, params)
+  end
+
+  def send_photo(params) do
     build_and_send(&post/2, "/sendMessage", ClientInputs.SendMessage, params)
   end
 

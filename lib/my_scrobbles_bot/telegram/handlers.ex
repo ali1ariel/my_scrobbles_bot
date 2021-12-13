@@ -6,7 +6,7 @@ defmodule MyScrobblesBot.Telegram.Handlers do
   """
 
   alias MyScrobblesBot.Telegram.Message
-  alias MyScrobblesBot.Telegram.Handlers.{DefaultHandler, HelpHandler}
+  alias MyScrobblesBot.Telegram.Handlers.{DefaultHandler, HelpHandler, CommandHandler}
 
   @callback handle(Message.t()) :: {:ok, term()} | {:error, term()}
 
@@ -14,5 +14,6 @@ defmodule MyScrobblesBot.Telegram.Handlers do
   Matches a message with its handler module
   """
   def get_handler(%Message{text: "/help" <> ""}), do: {:ok, HelpHandler}
+  def get_handler(%Message{text: "/" <> command}), do: {:ok, CommandHandler}
   def get_handler(_), do: {:ok, DefaultHandler}
 end

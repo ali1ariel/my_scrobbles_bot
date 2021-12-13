@@ -23,7 +23,6 @@ defmodule MyScrobblesBot.Telegram do
   Processes a message with its handler
   """
   def process_message(%Message{} = m) do
-    IO.puts " here guys"
     with {:ok, handler} <- MyScrobblesBot.Telegram.Handlers.get_handler(m) do
       Logger.info("Processing message #{inspect(m.message_id)} with handler #{inspect(handler)}")
       handler.handle(m)
