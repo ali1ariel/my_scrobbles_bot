@@ -2,23 +2,21 @@ defmodule MyScrobblesBot.LastFm.Artist do
 
 
   alias MyScrobblesBot.LastFm
-  alias MyScrobblesBotWeb.Services.Telegram
 
 
-  def artist(update) do
-    %{last_fm_username: username} = MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(update.message.from.id)
+  def artist(message) do
+    %{last_fm_username: username} = MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(message.from.id)
     {:ok, track} = LastFm.get_recent_track(%{username: username})
     {:ok, attrs} = LastFm.get_artist(track)
 
     query =
       Map.merge(track, attrs)
-      |> Map.merge(%{with_photo?: false, user: update.message.from.first_name})
+      |> Map.merge(%{with_photo?: false, user: message.from.first_name})
 
     msg = LastFm.get_now_artist(query)
-    {:ok, _} =Telegram.send_message(%{text: msg, parse_mode: :markdown})
-  end
+%{text: msg, parse_mode: "markdown", chat_id: message.chat_id}  end
 
-  def yourartist(update) do
+  def yourartist(message) do
     %{
       message:
       %{
@@ -35,7 +33,7 @@ defmodule MyScrobblesBot.LastFm.Artist do
             }
         }
       }
-    } = update
+    } = message
     %{last_fm_username: username} = MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(user_id)
 
     %{last_fm_username: friend_username} = MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(friend_user_id)
@@ -48,11 +46,10 @@ defmodule MyScrobblesBot.LastFm.Artist do
       |> Map.merge(%{with_photo?: true, user: user_first_name, friend: friend_first_name})
 
     msg = LastFm.get_your_artist(query)
-    {:ok, _} =Telegram.send_message(%{text: msg, parse_mode: :markdown})
-  end
+%{text: msg, parse_mode: "markdown", chat_id: message.chat_id}  end
 
 
-  def myartist(update) do
+  def myartist(message) do
     %{
       message:
       %{
@@ -69,7 +66,7 @@ defmodule MyScrobblesBot.LastFm.Artist do
             }
         }
       }
-    } = update
+    } = message
     %{last_fm_username: username} = MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(user_id)
 
     %{last_fm_username: friend_username} = MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(friend_user_id)
@@ -82,6 +79,5 @@ defmodule MyScrobblesBot.LastFm.Artist do
       |> Map.merge(%{with_photo?: true, user: user_first_name, friend: friend_first_name})
 
     msg = LastFm.get_my_artist(query)
-    {:ok, _} =Telegram.send_message(%{text: msg, parse_mode: :markdown})
-  end
+%{text: msg, parse_mode: "markdown", chat_id: message.chat_id}  end
 end

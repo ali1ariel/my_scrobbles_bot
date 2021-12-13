@@ -5,24 +5,21 @@ defmodule MyScrobblesBot.LastFm.User do
   alias MyScrobblesBotWeb.Services.Telegram
 
 
-  def myuser(update) do
-    %{last_fm_username: username} = MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(update.message.from.id)
+  def myuser(message) do
+    %{last_fm_username: username} = MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(message.from.id)
     msg = LastFm.get_user(%{username: username})
-    {:ok, _} =Telegram.send_message(%{text: msg, parse_mode: :markdown})
-  end
+%{text: msg, parse_mode: "markdown", chat_id: message.chat_id}  end
 
 
-  def youruser(update) do
-    %{last_fm_username: username} = MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(update.message.reply_to_message.from.id)
+  def youruser(message) do
+    %{last_fm_username: username} = MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(message.reply_to_message.from.id)
     msg = LastFm.get_user(%{username: username})
-    {:ok, _} =Telegram.send_message(%{text: msg, parse_mode: :markdown})
-  end
+%{text: msg, parse_mode: "markdown", chat_id: message.chat_id}  end
 
-  def register(update) do
+  def register(message) do
     ## CREATE OR UPDATE
-    %{last_fm_username: username} = MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(update.message.reply_to_message.from.id)
+    %{last_fm_username: username} = MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(message.reply_to_message.from.id)
     msg = LastFm.get_user(%{username: username})
-    {:ok, _} =Telegram.send_message(%{text: msg, parse_mode: :markdown})
-  end
+%{text: msg, parse_mode: "markdown", chat_id: message.chat_id}  end
 
 end

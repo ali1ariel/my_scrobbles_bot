@@ -7,53 +7,56 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
   alias MyScrobblesBotWeb.Services.Telegram
   @behaviour MyScrobblesBot.Telegram.Handlers
 
-  def handle(%Message{chat_id: c_id, message_id: m_id} = message) do
+  def handle(%Message{} = message) do
     match_command(message)
-    %{
-      chat_id: c_id,
-      reply_to_message_id: m_id,
-      text: "this is *just* a _sample_ message",
-      parse_mode: "markdown"
-
-    }
     |> Telegram.send_message()
+    # %{
+    #   chat_id: c_id,
+    #   reply_to_message_id: m_id,
+    #   text: "this is *just* a _sample_ message",
+    #   parse_mode: "markdown"
+
+    # }
   end
 
-  def match_command(%Message{text: "/" <> command} = _message) do
+  def match_command(%Message{text: "/" <> command} = message) do
     command = String.downcase(command)
     case command do
-      x when x in ["lt", "listen", "mysong", "ms"] ->
-        IO.inspect(x)
-      x when x in ["wyl", "ys", "yoursong"] ->
-        IO.inspect(x)
-      x when x in ["ltmarked", "ltm", "mysongmarked", "msm"] ->
-        IO.inspect(x)
-      x when x in ["textlisten", "tlisten", "txtl", "mysongtext", "mst"] ->
-        IO.inspect(x)
-      x when x in ["ltphoto", "ltp", "mysongphoto", "msp"] ->
-        IO.inspect(x)
-      x when x in ["andyou", "mymusic", "mm"] ->
-        IO.inspect(x)
-      x when x in ["andme", "yourmusic", "ym"] ->
-        IO.inspect(x)
+      x when x in ["lt", "listen", "mymusic", "mm"] ->
+        MyScrobblesBot.LastFm.Track.mymusic(message)
+      x when x in ["wyl", "ym", "yourmusic"] ->
+        MyScrobblesBot.LastFm.Track.yourmusic(message)
+      x when x in ["ltmarked", "ltm", "mymusicmarked", "msm"] ->
+        MyScrobblesBot.LastFm.Track.mymusicmarked(message)
+      x when x in ["textlisten", "tlisten", "txtl", "mymusictext", "mst"] ->
+        MyScrobblesBot.LastFm.Track.mymusictext(message)
+      x when x in ["ltphoto", "ltp", "mymusicphoto", "msp"] ->
+        MyScrobblesBot.LastFm.Track.mymusicphoto(message)
+      x when x in ["andyou", "mytrack", "mt"] ->
+        MyScrobblesBot.LastFm.Track.mytrack(message)
+      x when x in ["andme", "yourtrack", "yt"] ->
+        MyScrobblesBot.LastFm.Track.yourtrack(message)
       x when x in ["artist"] ->
-        IO.inspect(x)
+        MyScrobblesBot.LastFm.Artist.artist(message)
       x when x in ["yourartist", "yar"] ->
-        IO.inspect(x)
+        MyScrobblesBot.LastFm.Artist.yourartist(message)
       x when x in ["myartist", "mar"] ->
-        IO.inspect(x)
+        MyScrobblesBot.LastFm.Artist.myartist(message)
       x when x in ["album"] ->
-        IO.inspect(x)
+        MyScrobblesBot.LastFm.Album.album(message)
       x when x in ["youralbum", "yal"] ->
-        IO.inspect(x)
+        MyScrobblesBot.LastFm.Album.youralbum(message)
       x when x in ["myalbum", "mal"] ->
-        IO.inspect(x)
+        MyScrobblesBot.LastFm.Album.myalbum(message)
       x when x in ["youruser", "yu"] ->
-        IO.inspect(x)
+        MyScrobblesBot.LastFm.User.youruser(message)
       x when x in ["myuser", "mu"] ->
-        IO.inspect(x)
+        MyScrobblesBot.LastFm.User.myuser(message)
       x when x in ["register"] ->
-        IO.inspect(x)
+        MyScrobblesBot.LastFm.User.register(message)
+      "register " <> username ->
+        # MyScrobblesBot.Accounts.create_user(%{last_fm_username: username, telegram_id: })
+        IO.inspect username
     end
   end
 
