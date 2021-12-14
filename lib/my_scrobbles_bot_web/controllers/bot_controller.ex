@@ -4,7 +4,8 @@ defmodule MyScrobblesBotWeb.BotController do
   require Logger
   alias MyScrobblesBot.Telegram
 
-  def receive(conn, %{"message" => message} = _params) do
+
+  def receive(conn, %{"message" => %{"text" => "/" <> _} = message} = _params) do
     with {:ok, message} <- Telegram.build_message(message),
          :ok <- Telegram.enqueue_processing!(message) do
       Logger.info("Message enqueued for later processing")
@@ -18,5 +19,8 @@ defmodule MyScrobblesBotWeb.BotController do
         send_resp(conn, 204, "")
     end
   end
+  def receive(conn, _params), do: send_resp(conn, 204, "")
+
+
 
 end

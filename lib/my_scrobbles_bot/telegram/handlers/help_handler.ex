@@ -3,7 +3,8 @@ defmodule MyScrobblesBot.Telegram.Handlers.HelpHandler do
   Sends a simple help message
   """
 
-  alias MyScrobblesBot.Telegram.{Client, Message}
+  alias MyScrobblesBot.Telegram.Message
+  alias MyScrobblesBotWeb.Services.Telegram
   @behaviour MyScrobblesBot.Telegram.Handlers
 
   def handle(%Message{chat_id: c_id, message_id: m_id}) do
@@ -12,6 +13,6 @@ defmodule MyScrobblesBot.Telegram.Handlers.HelpHandler do
       reply_to_message_id: m_id,
       text: "this is just a sample message"
     }
-    |> Client.send_message()
+    |> Telegram.send_message()
   end
 end

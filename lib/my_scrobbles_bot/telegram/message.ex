@@ -49,7 +49,7 @@ defmodule MyScrobblesBot.Telegram.Message do
   defp reply_to_message_changeset(schema, params) do
     schema
     |> Changeset.cast(params, [:text, :message_id, :chat_id, :chat_type, :chat_first_name])
-    |> Changeset.validate_required([:text, :message_id])
+    |> Changeset.validate_required([:message_id])
     |> put_chat_id()
     |> put_chat_type()
     |> Changeset.cast_embed(:from, with: &from_changeset/2)
