@@ -236,6 +236,23 @@ defmodule MyScrobblesBot.Accounts do
     |> MyScrobblesBot.Repo.update
   end
 
+
+  def change_user_premium(%UsersPremium{} = users_premium, attrs \\ %{}) do
+    UsersPremium.changeset(users_premium, attrs)
+  end
+
+
+  def remove_premium_from_user(user_premium) do
+
+    user_premium
+    |> Ecto.Changeset.change(user_id: nil)
+    |> MyScrobblesBot.Repo.update
+
+    get_user!(user_premium.user_id)
+    |> Ecto.Changeset.change(is_premium?: false)
+    |> MyScrobblesBot.Repo.update
+  end
+
   def promote_user(message, info) do
     days = case info do
       "1m" -> 30
@@ -247,5 +264,19 @@ defmodule MyScrobblesBot.Accounts do
     {:ok, user} = get_user_by_telegram_user_id(message.reply_to_message.from.telegram_id)
     add_premium_to_user(user, premium, 4)
     {:ok, %{expiration: premium.final_date}}
+  end
+
+
+  def remove_premium_user(message) do
+    user = get_user_by_telegram_user_id!(message.reply_to_message.from.telegram_id)
+    |> Repo.preload(:user_premium)
+
+    if (!is_nil(user.user_premium)) do
+      remove_premium_from_user(user.user_premium)
+      {:ok, :removed}
+    else
+      {:ok, :not_premium}
+    end
+
   end
 end

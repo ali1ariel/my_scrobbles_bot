@@ -102,9 +102,9 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
             }
 
         end
-        "promote " <> info ->
-          if(message.from.id == 600614550) do
-            with {:ok, %{final_date: date}} <- MyScrobblesBot.Accounts.promote_user(message, info) do
+        "mspromote " <> info ->
+          if(message.from.telegram_id == 600614550) do
+            with {:ok, %{expiration: _date}} <- MyScrobblesBot.Accounts.promote_user(message, info) do
               %{
                 text: "welcome #{message.reply_to_message.from.first_name} to the premium life.",
                 parse_mode: "markdown",
@@ -120,6 +120,32 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
               reply_to_message_id: message.message_id
             }
           end
+          "msremove" ->
+            if(message.from.telegram_id == 600614550) do
+              with {:ok, :removed} <- MyScrobblesBot.Accounts.remove_premium_user(message) do
+                %{
+                  text: "successfully removed.",
+                  parse_mode: "markdown",
+                  chat_id: message.chat_id,
+                  reply_to_message_id: message.message_id
+                }
+              else
+                {:ok, :not_premium} ->
+                  %{
+                    text: "#{message.reply_to_message.from.first_name} is not a premium user.",
+                    parse_mode: "markdown",
+                    chat_id: message.chat_id,
+                    reply_to_message_id: message.message_id
+                  }
+              end
+            else
+              %{
+                text: "you're not an administrator.",
+                parse_mode: "markdown",
+                chat_id: message.chat_id,
+                reply_to_message_id: message.message_id
+              }
+            end
     end
   end
 end
