@@ -35,7 +35,7 @@ defmodule MyScrobblesBot.LastFm.Track do
 
   def mymusic(message) do
     %{last_fm_username: username} =
-      MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(message.from.id)
+      MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(message.from.telegram_id)
 
     {:ok, track} =
       LastFm.get_recent_track(%{username: username})
@@ -75,7 +75,7 @@ defmodule MyScrobblesBot.LastFm.Track do
 
   def mymusicmarked(message) do
     %{last_fm_username: username} =
-      MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(message.from.id)
+      MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(message.from.telegram_id)
 
     {:ok, track} =
       LastFm.get_recent_track(%{username: username})
@@ -101,7 +101,7 @@ defmodule MyScrobblesBot.LastFm.Track do
 
   def mymusictext(message) do
     %{last_fm_username: username} =
-      MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(message.from.id)
+      MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(message.from.telegram_id)
 
     {:ok, track} =
       LastFm.get_recent_track(%{username: username})
@@ -121,7 +121,7 @@ defmodule MyScrobblesBot.LastFm.Track do
 
   def mymusicphoto(message) do
     %{last_fm_username: username} =
-      MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(message.from.id)
+      MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(message.from.telegram_id)
 
     {:ok, track} =
       LastFm.get_recent_track(%{username: username})
@@ -142,16 +142,14 @@ defmodule MyScrobblesBot.LastFm.Track do
 
   def mytrack(message) do
     %{
-      message: %{
+      from: %{
+        telegram_id: user_id,
+        first_name: user_first_name
+      },
+      reply_to_message: %{
         from: %{
-          id: user_id,
-          first_name: user_first_name
-        },
-        reply_to_message: %{
-          from: %{
-            id: friend_user_id,
-            first_name: friend_first_name
-          }
+          telegram_id: friend_user_id,
+          first_name: friend_first_name
         }
       }
     } = message
@@ -179,16 +177,14 @@ defmodule MyScrobblesBot.LastFm.Track do
 
   def yourtrack(message) do
     %{
-      message: %{
+      from: %{
+        telegram_id: user_id,
+        first_name: user_first_name
+      },
+      reply_to_message: %{
         from: %{
-          id: user_id,
-          first_name: user_first_name
-        },
-        reply_to_message: %{
-          from: %{
-            id: friend_user_id,
-            first_name: friend_first_name
-          }
+          telegram_id: friend_user_id,
+          first_name: friend_first_name
         }
       }
     } = message

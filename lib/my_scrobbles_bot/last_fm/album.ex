@@ -2,32 +2,37 @@ defmodule MyScrobblesBot.LastFm.Album do
   alias MyScrobblesBot.LastFm
 
   def album(message) do
-    %{last_fm_username: username} = MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(message.from.id)
+    %{last_fm_username: username} = MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(message.from.telegram_id )
     {:ok, track} = LastFm.get_recent_track(%{username: username})
-    {:ok, attrs} = LastFm.get_album(track)
+    {:ok, attrs} = IO.inspect LastFm.get_album(track)
+
+    extra = album_tracks(attrs["tracks"]["track"], username)
+    |> IO.inspect
+    |> Enum.reduce("\n *Your power tracks*\n", fn %{track: track, userloved?: loved, playcount: count}, acc ->
+      "#{acc}#{if loved, do: "💘", else: "▪️"} *#{track}* - _#{count} plays_\n"
+    end)
 
     query =
-      Map.merge(track, attrs)
+      Map.merge(track, %{playcount: attrs["userplaycount"]})
       |> Map.merge(%{with_photo?: false, user: message.from.first_name})
 
     msg = LastFm.get_now_album(query)
-    %{text: msg, parse_mode: "markdown", chat_id: message.chat_id}
+    %{text: "#{msg}#{extra}", parse_mode: "markdown", chat_id: message.chat_id}
   end
 
   def youralbum(message) do
     %{
-      message: %{
         from: %{
-          id: user_id,
+          telegram_id: user_id,
           first_name: user_first_name
         },
         reply_to_message: %{
           from: %{
-            id: friend_user_id,
+              telegram_id: friend_user_id,
             first_name: friend_first_name
           }
         }
-      }
+
     } = message
 
     %{last_fm_username: username} = MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(user_id)
@@ -39,7 +44,7 @@ defmodule MyScrobblesBot.LastFm.Album do
     {:ok, attrs} = LastFm.get_album(%{track | username: username})
 
     query =
-      Map.merge(track, attrs)
+      Map.merge(track, %{playcount: attrs["userplaycount"]})
       |> Map.merge(%{with_photo?: true, user: user_first_name, friend: friend_first_name})
 
     msg = LastFm.get_your_album(query)
@@ -48,18 +53,17 @@ defmodule MyScrobblesBot.LastFm.Album do
 
   def myalbum(message) do
     %{
-      message: %{
         from: %{
-          id: user_id,
+          telegram_id: user_id,
           first_name: user_first_name
         },
         reply_to_message: %{
           from: %{
-            id: friend_user_id,
+              telegram_id: friend_user_id,
             first_name: friend_first_name
           }
         }
-      }
+
     } = message
 
     %{last_fm_username: username} = MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(user_id)
@@ -71,10 +75,28 @@ defmodule MyScrobblesBot.LastFm.Album do
     {:ok, attrs} = LastFm.get_album(%{track | username: friend_username})
 
     query =
-      Map.merge(track, attrs)
+      Map.merge(track, %{playcount: attrs["userplaycount"]})
       |> Map.merge(%{with_photo?: true, user: user_first_name, friend: friend_first_name})
 
     msg = LastFm.get_my_album(query)
     %{text: msg, parse_mode: "markdown", chat_id: message.chat_id}
+  end
+
+  def album_tracks(tracks, username) when is_list(tracks) do
+    Enum.map(tracks, fn %{"name" => track, "artist" => %{"name" => artist}} ->
+      {:ok, counter} = LastFm.get_track(%{trackname: track, artist: artist, username: username})
+      %{track: track}
+      |> Map.merge(counter)
+    end)
+    |> Enum.sort_by(&(&1.playcount), :desc)
+    |> Enum.take(3)
+  end
+
+  def album_tracks(track, username) do
+    %{"name" => track, "artist" => %{"name" => artist}} = track
+    {:ok, counter} = LastFm.get_track(%{trackname: track, artist: artist, username: username})
+    %{track: track}
+    |> Map.merge(counter)
+    |> then(&[&1])
   end
 end
