@@ -36,6 +36,14 @@ defmodule MyScrobblesBot.Accounts do
 
   """
   def get_user!(id), do: Repo.get!(User, id)
+  def get_user_by_telegram_user_id(telegram_id) do
+    case Repo.get_by(User, telegram_id: telegram_id) do
+      %User{} = user ->
+      {:ok, user}
+      nil ->
+      {:not_found, nil}
+    end
+  end
   def get_user_by_telegram_user_id!(telegram_id), do: Repo.get_by!(User, telegram_id: telegram_id)
 
   @doc """
@@ -56,6 +64,7 @@ defmodule MyScrobblesBot.Accounts do
     |> Repo.insert()
   end
 
+
   @doc """
   Updates a user.
 
@@ -73,6 +82,21 @@ defmodule MyScrobblesBot.Accounts do
     |> User.changeset(attrs)
     |> Repo.update()
   end
+
+  @doc """
+    Insert or update a user.
+  """
+  def insert_or_update_user(attrs) do
+    case get_user_by_telegram_user_id(attrs.telegram_id) do
+      {:ok, user} ->
+        {:updated, user |> update_user(attrs)}
+      {:not_found, nil} ->
+        {:created, create_user(attrs)}
+      error ->
+        {:error, error}
+    end
+  end
+
 
   @doc """
   Deletes a user.

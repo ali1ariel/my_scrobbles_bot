@@ -11,7 +11,7 @@ defmodule MyScrobblesBot.Accounts.User do
   schema "users" do
     field :is_premium?, :boolean, default: false
     field :last_fm_username, :string
-    field :telegram_id, :string
+    field :telegram_id, :integer
 
     has_one :user_premium, UsersPremium, foreign_key: :user_id
     has_one :premium, through: [:user_premium, :premium]
@@ -24,5 +24,6 @@ defmodule MyScrobblesBot.Accounts.User do
     user
     |> cast(attrs, [:is_premium?, :telegram_id, :last_fm_username])
     |> validate_required([:is_premium?, :telegram_id, :last_fm_username])
+    |> unique_constraint(:telegram_id)
   end
 end
