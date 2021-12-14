@@ -23,9 +23,9 @@ defmodule MyScrobblesBotWeb.Services.LastFm do
   def get_loved_tracks(attrs) do
     attrs
     |> Map.to_list()
-    |> Enum.map(fn {key, value} -> {Atom.to_string(key),  value} end)
+    |> Enum.map(fn {key, value} -> {Atom.to_string(key), value} end)
     |> then(&[{"method", "user.getlovedtracks"} | &1])
-    |> Enum.reduce(%{}, fn {key, value}, acc -> Map.merge(acc, %{key => value})  end)
+    |> Enum.reduce(%{}, fn {key, value}, acc -> Map.merge(acc, %{key => value}) end)
     |> get_answer()
   end
 
@@ -58,27 +58,27 @@ defmodule MyScrobblesBotWeb.Services.LastFm do
 
   @spec get_artist(%{:artist => String.t(), :username => String.t()}) ::
           {:error, Map.t()} | {:ok, Map.t()}
-          def get_artist(%{artist: artist, username: username}) do
-            method = "artist.getinfo"
+  def get_artist(%{artist: artist, username: username}) do
+    method = "artist.getinfo"
 
-            get_answer(%{
-              "method" => method,
-              "artist" => artist,
-              "username" => username,
-              "autocorrect" => 1
-            })
-          end
+    get_answer(%{
+      "method" => method,
+      "artist" => artist,
+      "username" => username,
+      "autocorrect" => 1
+    })
+  end
 
-          def get_artist_top_tracks(%{artist: artist, username: username}) do
-            method = "artist.gettoptracks"
+  def get_artist_top_tracks(%{artist: artist, username: username}) do
+    method = "artist.gettoptracks"
 
-            get_answer(%{
-              "method" => method,
-              "artist" => artist,
-              "username" => username,
-              "autocorrect" => 1
-            })
-          end
+    get_answer(%{
+      "method" => method,
+      "artist" => artist,
+      "username" => username,
+      "autocorrect" => 1
+    })
+  end
 
   ### query most listeneds
   # @spec get_track(%{:username => String.t(), :period => String.t()}) :: {:error, Map.t()} | {:ok, Map.t()}

@@ -19,7 +19,7 @@ defmodule MyScrobblesBot.Services.MusicXMatch do
     get_answer(%{"method" => method, "q_track" => track, "q_artist" => artist})
   end
 
-  def get_song(%{track_id: track_id }) do
+  def get_song(%{track_id: track_id}) do
     method = "track.lyrics.get"
     get_answer(%{"method" => method, "track_id" => track_id})
   end

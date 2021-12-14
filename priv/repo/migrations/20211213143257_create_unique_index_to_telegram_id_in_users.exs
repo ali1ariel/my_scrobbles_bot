@@ -6,6 +6,7 @@ defmodule MyScrobblesBot.Repo.Migrations.CreateUniqueIndexToTelegramIdInUsers do
       remove :telegram_id, :string
       add :telegram_id, :integer
     end
+
     create unique_index(:users, [:telegram_id])
   end
 end

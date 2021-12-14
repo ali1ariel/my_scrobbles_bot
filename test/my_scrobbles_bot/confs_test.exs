@@ -6,9 +6,48 @@ defmodule MyScrobblesBot.ConfsTest do
   describe "user_confs" do
     alias MyScrobblesBot.Confs.UserConfs
 
-    @valid_attrs %{ban_expiration: ~D[2010-04-17], banned?: true, conf_language: 42, continent: "some continent", country: "some country", email: "some email", language: 42, private?: true, share_username?: true, show_as_premium?: true, show_premium?: true, telegram_id: "some telegram_id"}
-    @update_attrs %{ban_expiration: ~D[2011-05-18], banned?: false, conf_language: 43, continent: "some updated continent", country: "some updated country", email: "some updated email", language: 43, private?: false, share_username?: false, show_as_premium?: false, show_premium?: false, telegram_id: "some updated telegram_id"}
-    @invalid_attrs %{ban_expiration: nil, banned?: nil, conf_language: nil, continent: nil, country: nil, email: nil, language: nil, private?: nil, share_username?: nil, show_as_premium?: nil, show_premium?: nil, telegram_id: nil}
+    @valid_attrs %{
+      ban_expiration: ~D[2010-04-17],
+      banned?: true,
+      conf_language: 42,
+      continent: "some continent",
+      country: "some country",
+      email: "some email",
+      language: 42,
+      private?: true,
+      share_username?: true,
+      show_as_premium?: true,
+      show_premium?: true,
+      telegram_id: "some telegram_id"
+    }
+    @update_attrs %{
+      ban_expiration: ~D[2011-05-18],
+      banned?: false,
+      conf_language: 43,
+      continent: "some updated continent",
+      country: "some updated country",
+      email: "some updated email",
+      language: 43,
+      private?: false,
+      share_username?: false,
+      show_as_premium?: false,
+      show_premium?: false,
+      telegram_id: "some updated telegram_id"
+    }
+    @invalid_attrs %{
+      ban_expiration: nil,
+      banned?: nil,
+      conf_language: nil,
+      continent: nil,
+      country: nil,
+      email: nil,
+      language: nil,
+      private?: nil,
+      share_username?: nil,
+      show_as_premium?: nil,
+      show_premium?: nil,
+      telegram_id: nil
+    }
 
     def user_confs_fixture(attrs \\ %{}) do
       {:ok, user_confs} =

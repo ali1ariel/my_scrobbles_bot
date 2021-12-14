@@ -10,9 +10,8 @@ defmodule MyScrobblesBot.Accounts.Premium do
   schema "premiums" do
     field :final_date, :date
     field :initial_date, :date
-    field :validate,  Ecto.Enum, values: [trial: 1, active: 2, expired: 3]
-    field :type,  Ecto.Enum, values: [personal: 1, duo: 2, group: 3]
-
+    field :validate, Ecto.Enum, values: [trial: 1, active: 2, expired: 3]
+    field :type, Ecto.Enum, values: [personal: 1, duo: 2, group: 3]
 
     has_many :user_premium, UsersPremium, foreign_key: :premium_id
     has_many :user, through: [:user_premium, :user]

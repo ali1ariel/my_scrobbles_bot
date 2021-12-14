@@ -25,7 +25,33 @@ defmodule MyScrobblesBot.Confs.UserConfs do
   @doc false
   def changeset(user_confs, attrs) do
     user_confs
-    |> cast(attrs, [:share_username?, :private?, :language, :show_premium?, :show_as_premium?, :conf_language, :telegram_id, :banned?, :ban_expiration, :country, :continent, :email])
-    |> validate_required([:share_username?, :private?, :language, :show_premium?, :show_as_premium?, :conf_language, :telegram_id, :banned?, :ban_expiration, :country, :continent, :email])
+    |> cast(attrs, [
+      :share_username?,
+      :private?,
+      :language,
+      :show_premium?,
+      :show_as_premium?,
+      :conf_language,
+      :telegram_id,
+      :banned?,
+      :ban_expiration,
+      :country,
+      :continent,
+      :email
+    ])
+    |> validate_required([
+      :share_username?,
+      :private?,
+      :language,
+      :show_premium?,
+      :show_as_premium?,
+      :conf_language,
+      :telegram_id,
+      :banned?,
+      :ban_expiration,
+      :country,
+      :continent,
+      :email
+    ])
   end
 end

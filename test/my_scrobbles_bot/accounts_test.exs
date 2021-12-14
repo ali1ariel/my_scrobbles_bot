@@ -6,8 +6,16 @@ defmodule MyScrobblesBot.AccountsTest do
   describe "users" do
     alias MyScrobblesBot.Accounts.User
 
-    @valid_attrs %{is_premium?: true, last_fm_username: "some last_fm_username", telegram_id: "some telegram_id"}
-    @update_attrs %{is_premium?: false, last_fm_username: "some updated last_fm_username", telegram_id: "some updated telegram_id"}
+    @valid_attrs %{
+      is_premium?: true,
+      last_fm_username: "some last_fm_username",
+      telegram_id: "some telegram_id"
+    }
+    @update_attrs %{
+      is_premium?: false,
+      last_fm_username: "some updated last_fm_username",
+      telegram_id: "some updated telegram_id"
+    }
     @invalid_attrs %{is_premium?: nil, last_fm_username: nil, telegram_id: nil}
 
     def user_fixture(attrs \\ %{}) do
@@ -69,8 +77,18 @@ defmodule MyScrobblesBot.AccountsTest do
   describe "premiums" do
     alias MyScrobblesBot.Accounts.Premium
 
-    @valid_attrs %{final_date: ~D[2010-04-17], initial_date: ~D[2010-04-17], type: 42, validate: 42}
-    @update_attrs %{final_date: ~D[2011-05-18], initial_date: ~D[2011-05-18], type: 43, validate: 43}
+    @valid_attrs %{
+      final_date: ~D[2010-04-17],
+      initial_date: ~D[2010-04-17],
+      type: 42,
+      validate: 42
+    }
+    @update_attrs %{
+      final_date: ~D[2011-05-18],
+      initial_date: ~D[2011-05-18],
+      type: 43,
+      validate: 43
+    }
     @invalid_attrs %{final_date: nil, initial_date: nil, type: nil, validate: nil}
 
     def premium_fixture(attrs \\ %{}) do

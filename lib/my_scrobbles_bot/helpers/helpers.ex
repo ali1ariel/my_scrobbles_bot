@@ -1,5 +1,4 @@
 defmodule MyScrobblesBot.Helpers do
-
   import MyScrobblesBot.Gettext
 
   def month(month) do
@@ -18,5 +17,4 @@ defmodule MyScrobblesBot.Helpers do
       12 -> gettext("December")
     end
   end
-
 end

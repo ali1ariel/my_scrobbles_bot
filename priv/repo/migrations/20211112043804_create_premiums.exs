@@ -11,6 +11,5 @@ defmodule MyScrobblesBot.Repo.Migrations.CreatePremiums do
 
       timestamps()
     end
-
   end
 end

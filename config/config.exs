@@ -27,7 +27,6 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
-
 config :my_scrobbles_bot, pubsub_channel: MyScrobblesBot.PubSub
 
 config :my_scrobbles_bot,

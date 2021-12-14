@@ -9,7 +9,9 @@ defmodule MyScrobblesBotWeb.Services.Telegram do
 
   # defp token, do: Application.get_env(:my_scrobbles_bot, __MODULE__)[:token]
 
-  plug Tesla.Middleware.BaseUrl, "https://api.telegram.org/bot712946629:AAFmZgW9jH9O3TxfTiHSNgulRs5aLgRovPY"
+  plug Tesla.Middleware.BaseUrl,
+       "https://api.telegram.org/bot712946629:AAFmZgW9jH9O3TxfTiHSNgulRs5aLgRovPY"
+
   plug Tesla.Middleware.Headers
   plug Tesla.Middleware.JSON
   plug Tesla.Middleware.Logger

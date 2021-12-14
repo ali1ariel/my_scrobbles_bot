@@ -9,10 +9,16 @@ defmodule MyScrobblesBot.LastFm.Artist do
     {:ok, attrs} = LastFm.get_artist(track)
     {:ok, tracks} = LastFm.get_artist_top_tracks(track)
 
-    extra = artist_tracks(tracks, username)
-    |> Enum.reduce("\n *Some of your power tracks*\n", fn %{track: track, userloved?: loved, playcount: count}, acc ->
-      "#{acc}#{if loved, do: "💘", else: "▪️"} *#{track}* - _#{count} plays_\n"
-    end)
+    extra =
+      artist_tracks(tracks, username)
+      |> Enum.reduce("\n *Some of your power tracks*\n", fn %{
+                                                              track: track,
+                                                              userloved?: loved,
+                                                              playcount: count
+                                                            },
+                                                            acc ->
+        "#{acc}#{if loved, do: "💘", else: "▪️"} *#{track}* - _#{count} plays_\n"
+      end)
 
     LastFm.get_artist_top_tracks(track)
 
@@ -103,7 +109,7 @@ defmodule MyScrobblesBot.LastFm.Artist do
     %{text: msg, parse_mode: "markdown", chat_id: message.chat_id}
   end
 
-    def myartist(message) do
+  def myartist(message) do
     %{
       message: %{
         from: %{
@@ -136,12 +142,16 @@ defmodule MyScrobblesBot.LastFm.Artist do
   end
 
   def artist_tracks(tracks, username) do
-    Enum.map(tracks["track"] |> Enum.take(20), fn %{"name" => track, "artist" => %{"name" => artist}} ->
+    Enum.map(tracks["track"] |> Enum.take(20), fn %{
+                                                    "name" => track,
+                                                    "artist" => %{"name" => artist}
+                                                  } ->
       {:ok, counter} = LastFm.get_track(%{trackname: track, artist: artist, username: username})
+
       %{track: track}
       |> Map.merge(counter)
     end)
-    |> Enum.sort_by(&(&1.playcount), :desc)
+    |> Enum.sort_by(& &1.playcount, :desc)
     |> Enum.take(3)
   end
 end

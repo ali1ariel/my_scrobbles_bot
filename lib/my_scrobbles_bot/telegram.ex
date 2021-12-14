@@ -1,10 +1,8 @@
 defmodule MyScrobblesBot.Telegram do
-
   require Logger
 
   alias MyScrobblesBot.Telegram.Message
   alias MyScrobblesBot.Events
-
 
   def build_message(params) do
     params
@@ -17,7 +15,6 @@ defmodule MyScrobblesBot.Telegram do
         {:error, changeset}
     end
   end
-
 
   @doc """
   Processes a message with its handler
@@ -37,5 +34,4 @@ defmodule MyScrobblesBot.Telegram do
   def enqueue_processing!(%Message{} = m) do
     Events.publish!(Events.TelegramMessage, m)
   end
-
 end

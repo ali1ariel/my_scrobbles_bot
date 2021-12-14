@@ -4,7 +4,6 @@ defmodule MyScrobblesBotWeb.BotController do
   require Logger
   alias MyScrobblesBot.Telegram
 
-
   def receive(conn, %{"message" => %{"text" => "/" <> _} = message} = _params) do
     with {:ok, message} <- Telegram.build_message(message),
          :ok <- Telegram.enqueue_processing!(message) do
@@ -12,15 +11,11 @@ defmodule MyScrobblesBotWeb.BotController do
       send_resp(conn, 204, "")
     else
       err ->
-        Logger.error(
-          "Failed handling telegram webhook with #{inspect(err)}, answering 204"
-        )
+        Logger.error("Failed handling telegram webhook with #{inspect(err)}, answering 204")
 
         send_resp(conn, 204, "")
     end
   end
+
   def receive(conn, _params), do: send_resp(conn, 204, "")
-
-
-
 end
