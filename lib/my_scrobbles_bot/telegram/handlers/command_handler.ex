@@ -100,7 +100,26 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
               chat_id: message.chat_id,
               reply_to_message_id: message.message_id
             }
+
         end
+        "promote " <> info ->
+          if(message.from.id == 600614550) do
+            with {:ok, %{final_date: date}} <- MyScrobblesBot.Accounts.promote_user(message, info) do
+              %{
+                text: "welcome #{message.reply_to_message.from.first_name} to the premium life.",
+                parse_mode: "markdown",
+                chat_id: message.chat_id,
+                reply_to_message_id: message.message_id
+              }
+            end
+          else
+            %{
+              text: "you're not an administrator.",
+              parse_mode: "markdown",
+              chat_id: message.chat_id,
+              reply_to_message_id: message.message_id
+            }
+          end
     end
   end
 end

@@ -20,6 +20,8 @@ defmodule MyScrobblesBot.Accounts.UsersPremium do
   def changeset(users_premium, attrs) do
     users_premium
     |> cast(attrs, [:added_method])
+    |> put_assoc(:user, attrs.user)
+    |> put_assoc(:premium, attrs.premium)
     |> validate_required([:added_method])
   end
 end

@@ -131,6 +131,7 @@ defmodule MyScrobblesBot.Accounts do
   end
 
   alias MyScrobblesBot.Accounts.Premium
+  alias MyScrobblesBot.Accounts.UsersPremium
 
   @doc """
   Returns the list of premiums.
@@ -224,5 +225,27 @@ defmodule MyScrobblesBot.Accounts do
   """
   def change_premium(%Premium{} = premium, attrs \\ %{}) do
     Premium.changeset(premium, attrs)
+  end
+
+  def add_premium_to_user(user, premium, added_method) do
+    UsersPremium.changeset(%UsersPremium{}, %{user: user, premium: premium, added_method: added_method})
+    |> MyScrobblesBot.Repo.insert()
+
+    user
+    |> Ecto.Changeset.change(is_premium?: true)
+    |> MyScrobblesBot.Repo.update
+  end
+
+  def promote_user(message, info) do
+    days = case info do
+      "1m" -> 30
+      "6m" -> 180
+      "1y" -> 360
+      "unlimited" -> 100000
+    end
+    {:ok, premium} = create_premium(%{initial_date: Date.utc_today(), final_date: Date.utc_today() |> Date.add(days), validate: (if (days == 30), do: :trial, else: :active), type: :personal})
+    {:ok, user} = get_user_by_telegram_user_id(message.reply_to_message.from.telegram_id)
+    add_premium_to_user(user, premium, 4)
+    {:ok, %{expiration: premium.final_date}}
   end
 end
