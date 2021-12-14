@@ -2,27 +2,35 @@ defmodule MyScrobblesBot.LastFm.Album do
   alias MyScrobblesBot.LastFm
 
   def album(message) do
-    %{last_fm_username: username} = user =
-      MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(message.from.telegram_id)
+    %{last_fm_username: username} =
+      user = MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(message.from.telegram_id)
 
     {:ok, track} = LastFm.get_recent_track(%{username: username})
     {:ok, attrs} = IO.inspect(LastFm.get_album(track))
 
     extra =
       if(user.is_premium?) do
-        album_tracks(attrs["tracks"]["track"], username)
-        |> IO.inspect()
-        |> Enum.reduce("\n *Your power tracks*\n", fn %{
-          track: track,
-          userloved?: loved,
-          playcount: count
-          },
-          acc ->
-            "#{acc}#{if loved, do: "💘", else: "▪️"} *#{track}* - _#{count} plays_\n"
-          end)
-        else
-          ""
+        data = album_tracks(attrs["tracks"]["track"], username)
+
+        case Enum.count(data) do
+          0 ->
+            ""
+
+          _ ->
+            data
+            |> Enum.reduce("\n *Your power tracks*\n", fn %{
+                                                            track: track,
+                                                            userloved?: loved,
+                                                            playcount: count
+                                                          },
+                                                          acc ->
+              "#{acc}#{if loved, do: "💘", else: "▪️"} *#{track}* - _#{count} plays_\n"
+            end)
         end
+      else
+        ""
+      end
+
     query =
       Map.merge(track, %{playcount: attrs["userplaycount"]})
       |> Map.merge(%{with_photo?: false, user: message.from.first_name})
@@ -101,6 +109,8 @@ defmodule MyScrobblesBot.LastFm.Album do
     |> Enum.sort_by(& &1.playcount, :desc)
     |> Enum.take(3)
   end
+
+  def album_tracks(track, username) when is_nil(track), do: []
 
   def album_tracks(track, username) do
     %{"name" => track, "artist" => %{"name" => artist}} = track

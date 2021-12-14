@@ -7,6 +7,7 @@ defmodule MyScrobblesBot.Accounts do
   alias MyScrobblesBot.Repo
 
   alias MyScrobblesBot.Accounts.User
+  alias MyScrobblesBot.Telegram.Message
 
   @doc """
   Returns the list of users.
@@ -253,7 +254,7 @@ defmodule MyScrobblesBot.Accounts do
     |> MyScrobblesBot.Repo.update
   end
 
-  def promote_user(message, info) do
+  def promote_user(%Message{} = message, info) do
     days = case info do
       "1m" -> 30
       "6m" -> 180
@@ -267,8 +268,26 @@ defmodule MyScrobblesBot.Accounts do
   end
 
 
-  def remove_premium_user(message) do
-    user = get_user_by_telegram_user_id!(message.reply_to_message.from.telegram_id)
+  def promote_user(%User{} = user, info) do
+    days = case info do
+      "1m" -> 30
+      "6m" -> 180
+      "1y" -> 360
+      "unlimited" -> 100000
+    end
+    {:ok, premium} = create_premium(%{initial_date: Date.utc_today(), final_date: Date.utc_today() |> Date.add(days), validate: (if (days == 30), do: :trial, else: :active), type: :personal})
+    add_premium_to_user(user, premium, 4)
+    {:ok, %{expiration: premium.final_date}}
+  end
+
+  def remove_premium_user(%Message{} = message) do
+    get_user_by_telegram_user_id!(message.reply_to_message.from.telegram_id)
+    |> remove_premium_user()
+  end
+
+
+  def remove_premium_user(%User{} = user) do
+    user = user
     |> Repo.preload(:user_premium)
 
     if (!is_nil(user.user_premium)) do

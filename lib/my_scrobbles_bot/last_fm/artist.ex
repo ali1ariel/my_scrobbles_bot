@@ -12,15 +12,21 @@ defmodule MyScrobblesBot.LastFm.Artist do
     if(user.is_premium?) do
       {:ok, tracks} = LastFm.get_artist_top_tracks(track)
 
-        artist_tracks(tracks, username)
-        |> Enum.reduce("\n *Some of your power tracks*\n", fn %{
-                                                                track: track,
-                                                                userloved?: loved,
-                                                                playcount: count
-                                                              },
-                                                              acc ->
-          "#{acc}#{if loved, do: "💘", else: "▪️"} *#{track}* - _#{count} plays_\n"
-        end)
+        data = artist_tracks(tracks, username)
+        case Enum.count(data) do
+          0 ->
+            ""
+          _ ->
+            data
+            |> Enum.reduce("\n *Some of your power tracks*\n", fn %{
+                                                                    track: track,
+                                                                    userloved?: loved,
+                                                                    playcount: count
+                                                                  },
+                                                                  acc ->
+              "#{acc}#{if loved, do: "💘", else: "▪️"} *#{track}* - _#{count} plays_\n"
+            end)
+        end
     else
       ""
     end
@@ -97,7 +103,7 @@ defmodule MyScrobblesBot.LastFm.Artist do
     %{text: msg, parse_mode: "markdown", chat_id: message.chat_id}
   end
 
-  def artist_tracks(tracks, username) do
+  def artist_tracks(tracks, username) when is_list(tracks) do
     Enum.map(tracks["track"] |> Enum.take(20), fn %{
                                                     "name" => track,
                                                     "artist" => %{"name" => artist}
@@ -110,4 +116,6 @@ defmodule MyScrobblesBot.LastFm.Artist do
     |> Enum.sort_by(& &1.playcount, :desc)
     |> Enum.take(3)
   end
+  def artist_tracks(track, username) when is_nil(track), do: []
+
 end
