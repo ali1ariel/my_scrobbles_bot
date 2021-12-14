@@ -347,8 +347,8 @@ defmodule MyScrobblesBot.LastFm do
       {"1", true} -> "is listening for the *#{String.to_integer(playcount) + 1}nd* time"
       {"2", true} -> "is listening for the *#{String.to_integer(playcount) + 1}rd* time"
       {_, true} -> "is listening for the *#{String.to_integer(playcount) + 1}th* time"
-      {"0", false} -> "_never_ listened"
-      {"1", false} -> "listened only _once_"
+      {"0", false} when playcount == "0" -> "_never_ listened"
+      {"1", false} when playcount == "1" -> "listened only _once_"
       {_, false} -> "listened _#{playcount}_ times"
     end
   end
