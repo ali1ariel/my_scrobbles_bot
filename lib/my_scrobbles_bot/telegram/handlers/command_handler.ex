@@ -72,7 +72,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
       x when x in ["register"] ->
         MyScrobblesBot.LastFm.User.register(message)
 
-      "msbregister " <> username ->
+      "msregister " <> username ->
         case MyScrobblesBot.Accounts.insert_or_update_user(%{
                last_fm_username: username,
                telegram_id: message.from.telegram_id
@@ -100,13 +100,34 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
               chat_id: message.chat_id,
               reply_to_message_id: message.message_id
             }
-
         end
-        "mspromote " <> info ->
-          if(message.from.telegram_id == 600614550) do
-            with {:ok, %{expiration: _date}} <- MyScrobblesBot.Accounts.promote_user(message, info) do
+
+      "msgetuser " <> info ->
+        if(message.from.telegram_id == 600_614_550) do
+          with user = %MyScrobblesBot.Accounts.User{} <-
+            MyScrobblesBot.Repo.get_by(MyScrobblesBot.Accounts.User, last_fm_username: info) do
+            %{
+              text: "_user: #{user.telegram_id}, ispremium: #{user.is_premium?} _",
+              parse_mode: "markdown",
+              chat_id: message.chat_id,
+              reply_to_message_id: message.message_id
+            }
+          end
+        else
+          %{
+            text: "you're not an administrator.",
+            parse_mode: "markdown",
+            chat_id: message.chat_id,
+            reply_to_message_id: message.message_id
+          }
+        end
+
+        "msgetuser" ->
+          if(message.from.telegram_id == 600_614_550) do
+            with {:ok, user} <-
+                   MyScrobblesBot.Accounts.get_user_by_telegram_user_id(message.reply_to_message.from.telegram_id) do
               %{
-                text: "welcome #{message.reply_to_message.from.first_name} to the premium life.",
+                text: "user: #{user.telegram_id}, ispremium: #{user.is_premium?}",
                 parse_mode: "markdown",
                 chat_id: message.chat_id,
                 reply_to_message_id: message.message_id
@@ -120,32 +141,94 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
               reply_to_message_id: message.message_id
             }
           end
-          "msremove" ->
-            if(message.from.telegram_id == 600614550) do
-              with {:ok, :removed} <- MyScrobblesBot.Accounts.remove_premium_user(message) do
-                %{
-                  text: "successfully removed.",
-                  parse_mode: "markdown",
-                  chat_id: message.chat_id,
-                  reply_to_message_id: message.message_id
-                }
-              else
-                {:ok, :not_premium} ->
-                  %{
-                    text: "#{message.reply_to_message.from.first_name} is not a premium user.",
-                    parse_mode: "markdown",
-                    chat_id: message.chat_id,
-                    reply_to_message_id: message.message_id
-                  }
-              end
-            else
+
+      "mspromoteid " <> info ->
+        if(message.from.telegram_id == 600_614_550) do
+          infos = String.split(info)
+          %MyScrobblesBot.Accounts.User{} = user =
+            MyScrobblesBot.Repo.get_by(MyScrobblesBot.Accounts.User, last_fm_username: List.first(infos))
+          with {:ok, %{expiration: _date}} <- MyScrobblesBot.Accounts.promote_user(user, List.last(infos)) do
+            %{
+              text: "_user added with successful to the premium life._",
+              parse_mode: "markdown",
+              chat_id: message.chat_id,
+              reply_to_message_id: message.message_id
+            }
+          end
+        else
+          %{
+            text: "you're not an administrator.",
+            parse_mode: "markdown",
+            chat_id: message.chat_id,
+            reply_to_message_id: message.message_id
+          }
+        end
+
+      "mspromote " <> info ->
+        if(message.from.telegram_id == 600_614_550) do
+          with {:ok, %{expiration: _date}} <- MyScrobblesBot.Accounts.promote_user(message, info) do
+            %{
+              text: "welcome #{message.reply_to_message.from.first_name} to the premium life.",
+              parse_mode: "markdown",
+              chat_id: message.chat_id,
+              reply_to_message_id: message.message_id
+            }
+          end
+        else
+          %{
+            text: "you're not an administrator.",
+            parse_mode: "markdown",
+            chat_id: message.chat_id,
+            reply_to_message_id: message.message_id
+          }
+        end
+
+      "msremove" ->
+        if(message.from.telegram_id == 600_614_550) do
+          with {:ok, :removed} <- MyScrobblesBot.Accounts.remove_premium_user(message) do
+            %{
+              text: "successfully removed.",
+              parse_mode: "markdown",
+              chat_id: message.chat_id,
+              reply_to_message_id: message.message_id
+            }
+          else
+            {:ok, :not_premium} ->
               %{
-                text: "you're not an administrator.",
+                text: "#{message.reply_to_message.from.first_name} is not a premium user.",
+                parse_mode: "markdown",
+                chat_id: message.chat_id,
+                reply_to_message_id: message.message_id
+              }
+          end
+        else
+          %{
+            text: "you're not an administrator.",
+            parse_mode: "markdown",
+            chat_id: message.chat_id,
+            reply_to_message_id: message.message_id
+          }
+        end
+        "msremoveid " <> info ->
+          if(message.from.telegram_id == 600_614_550) do
+            %MyScrobblesBot.Accounts.User{} = user =
+              MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(info)
+            with {:ok, :removed} <- MyScrobblesBot.Accounts.remove_premium_user(user) do
+              %{
+                text: "_usuccessfully removed._",
                 parse_mode: "markdown",
                 chat_id: message.chat_id,
                 reply_to_message_id: message.message_id
               }
             end
+          else
+            %{
+              text: "you're not an administrator.",
+              parse_mode: "markdown",
+              chat_id: message.chat_id,
+              reply_to_message_id: message.message_id
+            }
+          end
     end
   end
 end
