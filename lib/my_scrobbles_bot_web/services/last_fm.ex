@@ -6,7 +6,7 @@ defmodule MyScrobblesBotWeb.Services.LastFm do
   require Logger
   use Tesla
 
-  @token Application.get_env(:app, :last_fm_token)
+  @token Application.get_env(:my_scrobbles_bot, :last_fm_token)
   @configs "?format=json&api_key=#{@token}&"
 
   plug(Tesla.Middleware.BaseUrl, "http://ws.audioscrobbler.com/2.0")
@@ -18,6 +18,15 @@ defmodule MyScrobblesBotWeb.Services.LastFm do
   def get_user(%{username: username}) do
     method = "user.getinfo"
     get_answer(%{"method" => method, "user" => username})
+  end
+
+  def get_loved_tracks(attrs) do
+    attrs
+    |> Map.to_list()
+    |> Enum.map(fn {key, value} -> {Atom.to_string(key),  value} end)
+    |> then(&[{"method", "user.getlovedtracks"} | &1])
+    |> Enum.reduce(%{}, fn {key, value}, acc -> Map.merge(acc, %{key => value})  end)
+    |> get_answer()
   end
 
   @spec get_album(%{:album => String.t(), :artist => String.t(), :username => String.t()}) ::
@@ -49,16 +58,27 @@ defmodule MyScrobblesBotWeb.Services.LastFm do
 
   @spec get_artist(%{:artist => String.t(), :username => String.t()}) ::
           {:error, Map.t()} | {:ok, Map.t()}
-  def get_artist(%{artist: artist, username: username}) do
-    method = "artist.getinfo"
+          def get_artist(%{artist: artist, username: username}) do
+            method = "artist.getinfo"
 
-    get_answer(%{
-      "method" => method,
-      "artist" => artist,
-      "username" => username,
-      "autocorrect" => 1
-    })
-  end
+            get_answer(%{
+              "method" => method,
+              "artist" => artist,
+              "username" => username,
+              "autocorrect" => 1
+            })
+          end
+
+          def get_artist_top_tracks(%{artist: artist, username: username}) do
+            method = "artist.gettoptracks"
+
+            get_answer(%{
+              "method" => method,
+              "artist" => artist,
+              "username" => username,
+              "autocorrect" => 1
+            })
+          end
 
   ### query most listeneds
   # @spec get_track(%{:username => String.t(), :period => String.t()}) :: {:error, Map.t()} | {:ok, Map.t()}
