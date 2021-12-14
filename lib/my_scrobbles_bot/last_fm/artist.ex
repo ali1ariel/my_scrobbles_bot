@@ -3,24 +3,27 @@ defmodule MyScrobblesBot.LastFm.Artist do
 
   def artist(message) do
     %{last_fm_username: username} =
-      MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(message.from.telegram_id)
+      user = MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(message.from.telegram_id)
 
     {:ok, track} = LastFm.get_recent_track(%{username: username})
     {:ok, attrs} = LastFm.get_artist(track)
-    {:ok, tracks} = LastFm.get_artist_top_tracks(track)
 
     extra =
-      artist_tracks(tracks, username)
-      |> Enum.reduce("\n *Some of your power tracks*\n", fn %{
-                                                              track: track,
-                                                              userloved?: loved,
-                                                              playcount: count
-                                                            },
-                                                            acc ->
-        "#{acc}#{if loved, do: "💘", else: "▪️"} *#{track}* - _#{count} plays_\n"
-      end)
+    if(user.is_premium?) do
+      {:ok, tracks} = LastFm.get_artist_top_tracks(track)
 
-    LastFm.get_artist_top_tracks(track)
+        artist_tracks(tracks, username)
+        |> Enum.reduce("\n *Some of your power tracks*\n", fn %{
+                                                                track: track,
+                                                                userloved?: loved,
+                                                                playcount: count
+                                                              },
+                                                              acc ->
+          "#{acc}#{if loved, do: "💘", else: "▪️"} *#{track}* - _#{count} plays_\n"
+        end)
+    else
+      ""
+    end
 
     query =
       Map.merge(track, %{playcount: attrs["stats"]["userplaycount"]})
@@ -28,21 +31,6 @@ defmodule MyScrobblesBot.LastFm.Artist do
 
     msg = LastFm.get_now_artist(query)
     %{text: "#{msg}#{extra}", parse_mode: "markdown", chat_id: message.chat_id}
-  end
-
-  def artistplus(message) do
-    %{last_fm_username: username} =
-      MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(message.from.telegram_id)
-
-    {:ok, track} = LastFm.get_recent_track(%{username: username})
-    {:ok, attrs} = LastFm.get_artist(track)
-
-    query =
-      Map.merge(track, attrs)
-      |> Map.merge(%{with_photo?: false, user: message.from.first_name})
-
-    msg = LastFm.get_now_artist(query)
-    %{text: msg, parse_mode: "markdown", chat_id: message.chat_id}
   end
 
   def yourartist(message) do
