@@ -19,6 +19,28 @@ defmodule MyScrobblesBot.LastFm do
     end
   end
 
+  def get_user_plus(attrs) do
+    with {:ok, %{"user" => user}} <- MyScrobblesBotWeb.Services.LastFm.get_user(attrs),
+    {:ok, %{"lovedtracks" => %{"@attr" => %{"total" => total}}}} <- MyScrobblesBotWeb.Services.LastFm.get_loved_tracks(attrs |> Map.merge(%{limit: 1})),
+    {:ok, %{"lovedtracks" => %{"track" => all_tracks}}} <- MyScrobblesBotWeb.Services.LastFm.get_loved_tracks(Map.merge(attrs, %{page: (div((total |> String.to_integer), 50) + 1 |> :rand.uniform)})) do
+
+      tracks = all_tracks
+      |> Enum.shuffle()
+      |> Enum.take(3)
+
+
+        date =
+          user["registered"]["unixtime"]
+          |> String.to_integer()
+          |> DateTime.from_unix!(:second)
+
+        "[👥](#{Enum.at(user["image"], 2)["#text"]}) *#{Map.get(user, "name")}* got _#{Map.get(user, "playcount")} scrobbles_ since #{MyScrobblesBot.Helpers.month(date.month)} #{date.day}, #{date.year}.\n\n*Some loved tracks*\n#{Enum.map(tracks, fn track -> "💘 #{track["artist"]["name"]} - #{track["name"]}\n" end)}"
+      else
+      {:error, error} ->
+        "error: #{error}"
+    end
+  end
+
   @spec get_recent_track(%{username: String.t()}) ::
           {:error, any}
           | {:ok,
@@ -71,7 +93,7 @@ defmodule MyScrobblesBot.LastFm do
         {:ok,
          %{
            userloved?: if(track["userloved"] == "1", do: true, else: false),
-           playcount: track["userplaycount"]
+           playcount: track["userplaycount"] |> String.to_integer
          }}
 
       {:error, error} ->
@@ -88,7 +110,7 @@ defmodule MyScrobblesBot.LastFm do
   def get_album(attrs) do
     case MyScrobblesBotWeb.Services.LastFm.get_album(attrs) do
       {:ok, %{"album" => album}} ->
-        {:ok, %{playcount: album["userplaycount"]}}
+        {:ok, album}
 
       {:error, error} ->
         {:error, error}
@@ -101,19 +123,29 @@ defmodule MyScrobblesBot.LastFm do
              %{
                playcount: String.t()
              }}
-  def get_artist(attrs) do
-    case MyScrobblesBotWeb.Services.LastFm.get_artist(attrs) do
-      {:ok, %{"artist" => artist}} ->
-        {:ok, %{artist: artist["name"], playcount: artist["stats"]["userplaycount"]}}
+             def get_artist(attrs) do
+               case MyScrobblesBotWeb.Services.LastFm.get_artist(attrs) do
+                 {:ok, %{"artist" => artist}} ->
+                   {:ok, artist}
 
-      {:error, error} ->
-        {:error, error}
-    end
-  end
+                 {:error, error} ->
+                   {:error, error}
+               end
+             end
+        def get_artist_top_tracks(attrs) do
+          case MyScrobblesBotWeb.Services.LastFm.get_artist_top_tracks(attrs) do
+            {:ok, %{"toptracks" => artist}} ->
+              {:ok, artist}
+
+            {:error, error} ->
+              {:error, error}
+          end
+        end
 
   def get_now_track(%{user: user, playing?: now, playcount: playcount, trackname: track, artist: artist, album: album, userloved?: loved, photo: photo_link, with_photo?: with_photo}) do
     "*#{user}* #{playcount_user_text(playcount, now)} to:
-    #{ (if with_photo, do: "[🎶](#{photo_link})", else: "🎶")} #{track}
+
+    #{ (if with_photo, do: "[🎶](#{photo_link})", else: "🎶")} *#{track}*
     💿 #{album}
     👥 #{artist}
     #{if loved, do: "💘"}
@@ -123,10 +155,12 @@ defmodule MyScrobblesBot.LastFm do
 
   def lyrics(%{user: user, playing?: now, playcount: playcount, trackname: track, artist: artist, album: album, userloved?: loved, photo: photo_link, with_photo?: with_photo, verse: verse}) do
     "*#{user}* #{playcount_user_text(playcount, now)} time to:
-    #{ (if with_photo, do: "[🎶](#{photo_link})", else: "🎶")} #{track}
+
+    #{ (if with_photo, do: "[🎶](#{photo_link})", else: "🎶")} *#{track}*
     💿 #{album}
     👥 #{artist}
     #{if loved, do: "💘"}
+
     `#{verse}`
     "
   end
@@ -135,65 +169,78 @@ defmodule MyScrobblesBot.LastFm do
   def get_now_album(%{user: user, playcount: playcount, playing?: now, artist: artist, album: album, photo: photo_link}) do
 
     "*#{user}* #{playcount_user_text(playcount, now)} to:
-    [💿](#{photo_link}) #{album}
+
+    [💿](#{photo_link}) *#{album}*
     👥 #{artist}
     "
   end
 
   # @spec get_now_artist(%{username: String.t(), user: String.t()}) :: String.t()
   def get_now_artist(%{user: user, playcount: playcount, playing?: now, artist: artist, photo: photo_link}) do
-
     "*#{user}* #{playcount_user_text(playcount, now)} to:
-    [👥](#{photo_link}) #{artist}
+
+    [👥](#{photo_link}) *#{artist}*
     "
   end
 
 
   def get_your_music(%{user: user, friend: friend, playcount: playcount, trackname: track, artist: artist, album: album, userloved?: loved, photo: photo_link}) do
     "*#{user}* #{playcount_text(playcount)} to:
-    [🎶](#{photo_link}) #{track}
+
+    [🎶](#{photo_link}) *#{track}*
     💿 #{album}
     👥 #{artist}
     #{if loved, do: "💘"}
+
     `listening by #{friend}`
     "
   end
 
   def get_my_music(%{user: user, friend: friend, playcount: playcount, trackname: track, artist: artist, album: album, userloved?: loved, photo: photo_link, with_photo?: with_photo}) do
     "*#{friend}* #{playcount_text(playcount)} to:
-    #{ (if with_photo, do: "[🎶](#{photo_link})", else: "🎶")} #{track}
+
+    #{ (if with_photo, do: "[🎶](#{photo_link})", else: "🎶")} *#{track}*
     💿 #{album}
     👥 #{artist}
     #{if loved, do: "💘"}
+
     `resquested by #{user}`
     "
   end
   def get_your_album(%{user: user, friend: friend, playcount: playcount, artist: artist, album: album, photo: photo_link}) do
     "*#{user}* #{playcount_text(playcount)} to:
-    [💿](#{photo_link}) #{album}
+
+    [💿](#{photo_link}) *#{album}*
     👥 #{artist}
+
     `listening by #{friend}`
     "
   end
 
   def get_my_album(%{user: user, friend: friend, playcount: playcount, artist: artist, album: album, photo: photo_link}) do
     "*#{friend}* #{playcount_text(playcount)} to:
-    [💿](#{photo_link}) #{album}
+
+    [💿](#{photo_link}) *#{album}*
     👥 #{artist}
+
     `resquested by #{user}`
     "
   end
 
   def get_your_artist(%{user: user, friend: friend, playcount: playcount, artist: artist, photo: photo_link}) do
     "*#{user}* #{playcount_text(playcount)} to:
-    [👥](#{photo_link}) #{artist}
+
+    [👥](#{photo_link}) *#{artist}*
+
     `listening by #{friend}`
     "
   end
 
   def get_my_artist(%{user: user, friend: friend, playcount: playcount, artist: artist, photo: photo_link}) do
     "*#{friend}* #{playcount_text(playcount)} to:
-    [👥](#{photo_link}) #{artist}
+
+    [👥](#{photo_link}) *#{artist}*
+
     `resquested by #{user}`
     "
   end
@@ -207,8 +254,11 @@ defmodule MyScrobblesBot.LastFm do
   end
 
 
+
+
   def playcount_text(playcount) when is_integer(playcount), do: playcount_text(Integer.to_string(playcount))
 
+  def playcount_text(playcount) when is_integer(playcount), do: playcount_text(Integer.to_string(playcount))
 
   def playcount_user_text(playcount, now) when is_binary(playcount) do
     case {String.last(playcount), now} do
