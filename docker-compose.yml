@@ -1,0 +1,45 @@
+version: '3'
+services:
+  phoenix:
+    build:
+      context: . 
+    environment:
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGDATABASE: my_scrobbles_bot_prod
+      PGPORT: 5432
+      PGHOST: db
+    ports:
+      - "5544:5544"
+    depends_on: 
+      - db
+    volumes:
+            - ./uploads:/app/uploads
+
+  db:
+    image: postgres:9.6
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /var/lib/postgresql/data/pgdata
+    restart: always
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 7856:8080
+  
+  files:
+    image: "busybox"
+    volumes:
+      - /home/ubuntu/somali_live_project/uploads
+    command: "true"
+
+
+volumes:
+  pgdata:
+  uploads:
