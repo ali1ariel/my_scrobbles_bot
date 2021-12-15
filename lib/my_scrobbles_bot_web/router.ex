@@ -20,7 +20,7 @@ defmodule MyScrobblesBotWeb.Router do
     live "/", PageLive, :index
   end
 
-  scope "/", MyScrobblesBotWeb do
+  scope "/myscrobblesbot", MyScrobblesBotWeb do
     pipe_through :api
 
     post "/webhooks", BotController, :receive
