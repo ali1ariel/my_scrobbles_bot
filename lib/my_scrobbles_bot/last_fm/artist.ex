@@ -9,48 +9,51 @@ defmodule MyScrobblesBot.LastFm.Artist do
     {:ok, attrs} = LastFm.get_artist(track)
 
     extra =
-    if(user.is_premium?) do
-      {:ok, tracks} = LastFm.get_artist_top_tracks(track)
+      if(user.is_premium?) do
+        {:ok, tracks} = LastFm.get_artist_top_tracks(track)
 
-        data = artist_tracks(tracks, username)
+        data = artist_tracks(tracks["track"], username)
+
         case Enum.count(data) do
           0 ->
-            ""
+            "\n🎧 _It comes from_ *#{track.trackname}*\n"
+
           _ ->
             data
-            |> Enum.reduce("\n *Some of your power tracks*\n", fn %{
-                                                                    track: track,
-                                                                    userloved?: loved,
-                                                                    playcount: count
-                                                                  },
-                                                                  acc ->
-              "#{acc}#{if loved, do: "💘", else: "▪️"} *#{track}* - _#{count} plays_\n"
-            end)
+            |> Enum.reduce(
+              "\n🎧 _It comes from_ *#{track.trackname}*\n\n*Your plays of the most famous tracks:*\n",
+              fn %{
+                   track: track,
+                   userloved?: loved,
+                   playcount: count
+                 },
+                 acc ->
+                "#{acc}#{if loved, do: "💘", else: "▪️"} *#{track}* - _#{count} plays_\n"
+              end
+            )
         end
-    else
-      ""
-    end
+      else
+        ""
+      end
 
     query =
       Map.merge(track, %{playcount: attrs["stats"]["userplaycount"]})
       |> Map.merge(%{with_photo?: false, user: message.from.first_name})
 
     msg = LastFm.get_now_artist(query)
-    %{text: "#{msg}#{extra}", parse_mode: "markdown", chat_id: message.chat_id}
+    %{text: "#{msg}#{extra}`---premium---`\n", parse_mode: "markdown", chat_id: message.chat_id}
   end
 
   def yourartist(message) do
     %{
-      message: %{
+      from: %{
+        telegram_id: user_id,
+        first_name: user_first_name
+      },
+      reply_to_message: %{
         from: %{
-          telegram_id: user_id,
-          first_name: user_first_name
-        },
-        reply_to_message: %{
-          from: %{
-            telegram_id: friend_user_id,
-            first_name: friend_first_name
-          }
+          telegram_id: friend_user_id,
+          first_name: friend_first_name
         }
       }
     } = message
@@ -73,16 +76,14 @@ defmodule MyScrobblesBot.LastFm.Artist do
 
   def myartist(message) do
     %{
-      message: %{
+      from: %{
+        telegram_id: user_id,
+        first_name: user_first_name
+      },
+      reply_to_message: %{
         from: %{
-          telegram_id: user_id,
-          first_name: user_first_name
-        },
-        reply_to_message: %{
-          from: %{
-            telegram_id: friend_user_id,
-            first_name: friend_first_name
-          }
+          telegram_id: friend_user_id,
+          first_name: friend_first_name
         }
       }
     } = message
@@ -94,6 +95,7 @@ defmodule MyScrobblesBot.LastFm.Artist do
 
     {:ok, track} = LastFm.get_recent_track(%{username: username})
     {:ok, attrs} = LastFm.get_artist(%{track | username: friend_username})
+    # {:ok, attrs} = LastFm.get_artist(%{track | username: username})
 
     query =
       Map.merge(track, attrs)
@@ -104,18 +106,22 @@ defmodule MyScrobblesBot.LastFm.Artist do
   end
 
   def artist_tracks(tracks, username) when is_list(tracks) do
-    Enum.map(tracks["track"] |> Enum.take(20), fn %{
-                                                    "name" => track,
-                                                    "artist" => %{"name" => artist}
-                                                  } ->
-      {:ok, counter} = LastFm.get_track(%{trackname: track, artist: artist, username: username})
+    Enum.map(tracks |> Enum.take(20), fn %{
+                                           "name" => track,
+                                           "artist" => %{"name" => artist}
+                                         } ->
+      Task.async(fn ->
+        {:ok, counter} = LastFm.get_track(%{trackname: track, artist: artist, username: username})
 
-      %{track: track}
-      |> Map.merge(counter)
+        %{track: track}
+        |> Map.merge(counter)
+      end)
     end)
+    |> Enum.map(&Task.await/1)
     |> Enum.sort_by(& &1.playcount, :desc)
+    |> Enum.uniq_by(& &1.track)
     |> Enum.take(3)
   end
-  def artist_tracks(track, username) when is_nil(track), do: []
 
+  def artist_tracks(track, username) when is_nil(track), do: []
 end

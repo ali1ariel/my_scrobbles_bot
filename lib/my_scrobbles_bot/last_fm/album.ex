@@ -6,7 +6,7 @@ defmodule MyScrobblesBot.LastFm.Album do
       user = MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(message.from.telegram_id)
 
     {:ok, track} = LastFm.get_recent_track(%{username: username})
-    {:ok, attrs} = IO.inspect(LastFm.get_album(track))
+    {:ok, attrs} = LastFm.get_album(track)
 
     extra =
       if(user.is_premium?) do
@@ -14,18 +14,21 @@ defmodule MyScrobblesBot.LastFm.Album do
 
         case Enum.count(data) do
           0 ->
-            ""
+            "\n🎧 _It comes from_ *#{track.trackname}*\n"
 
           _ ->
             data
-            |> Enum.reduce("\n *Your power tracks*\n", fn %{
-                                                            track: track,
-                                                            userloved?: loved,
-                                                            playcount: count
-                                                          },
-                                                          acc ->
-              "#{acc}#{if loved, do: "💘", else: "▪️"} *#{track}* - _#{count} plays_\n"
-            end)
+            |> Enum.reduce(
+              "\n🎧 _It comes from_ *#{track.trackname}*\n\n*Your power tracks of this album:*\n",
+              fn %{
+                   track: track,
+                   userloved?: loved,
+                   playcount: count
+                 },
+                 acc ->
+                "#{acc}#{if loved, do: "💘", else: "▪️"} *#{track}* - _#{count} plays_\n"
+              end
+            )
         end
       else
         ""
@@ -36,7 +39,7 @@ defmodule MyScrobblesBot.LastFm.Album do
       |> Map.merge(%{with_photo?: false, user: message.from.first_name})
 
     msg = LastFm.get_now_album(query)
-    %{text: "#{msg}#{extra}", parse_mode: "markdown", chat_id: message.chat_id}
+    %{text: "#{msg}#{extra}`---premium---`\n", parse_mode: "markdown", chat_id: message.chat_id}
   end
 
   def youralbum(message) do
@@ -101,16 +104,20 @@ defmodule MyScrobblesBot.LastFm.Album do
 
   def album_tracks(tracks, username) when is_list(tracks) do
     Enum.map(tracks, fn %{"name" => track, "artist" => %{"name" => artist}} ->
-      {:ok, counter} = LastFm.get_track(%{trackname: track, artist: artist, username: username})
+      Task.async(fn ->
+        {:ok, counter} = LastFm.get_track(%{trackname: track, artist: artist, username: username})
 
-      %{track: track}
-      |> Map.merge(counter)
+        %{track: track}
+        |> Map.merge(counter)
+      end)
     end)
+    |> Enum.map(&Task.await/1)
     |> Enum.sort_by(& &1.playcount, :desc)
+    |> Enum.uniq_by(& &1.track)
     |> Enum.take(3)
   end
 
-  def album_tracks(track, username) when is_nil(track), do: []
+  def album_tracks(track, _username) when is_nil(track), do: []
 
   def album_tracks(track, username) do
     %{"name" => track, "artist" => %{"name" => artist}} = track

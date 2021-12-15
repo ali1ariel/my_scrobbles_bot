@@ -256,6 +256,7 @@ defmodule MyScrobblesBot.Accounts do
 
   def promote_user(%Message{} = message, info) do
     days = case info do
+      "1w" -> 7
       "1m" -> 30
       "6m" -> 180
       "1y" -> 360
@@ -270,6 +271,7 @@ defmodule MyScrobblesBot.Accounts do
 
   def promote_user(%User{} = user, info) do
     days = case info do
+      "1w" -> 7
       "1m" -> 30
       "6m" -> 180
       "1y" -> 360
