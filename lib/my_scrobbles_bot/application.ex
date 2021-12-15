@@ -15,6 +15,8 @@ defmodule MyScrobblesBot.Application do
       {Phoenix.PubSub, name: MyScrobblesBot.PubSub},
       # Start the consumer for telegram messages
       MyScrobblesBot.Telegram.Consumers.MessageHandler,
+      # Start the consumer for telegram inline queries
+      MyScrobblesBot.Telegram.Consumers.InlineHandler,
       # Start the Endpoint (http/https)
       MyScrobblesBotWeb.Endpoint
       # Start a worker by calling: MyScrobblesBot.Worker.start_link(arg)

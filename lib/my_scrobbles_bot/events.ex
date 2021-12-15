@@ -9,7 +9,8 @@ defmodule MyScrobblesBot.Events do
   alias Phoenix.PubSub
 
   @events [
-    MyScrobblesBot.Events.TelegramMessage
+    MyScrobblesBot.Events.TelegramMessage,
+    MyScrobblesBot.Events.TelegramInlineQuery
   ]
 
   @doc """

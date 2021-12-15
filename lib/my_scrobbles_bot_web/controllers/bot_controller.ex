@@ -17,5 +17,17 @@ defmodule MyScrobblesBotWeb.BotController do
     end
   end
 
+  def receive(conn, %{"inline_query" => %{"query" => _} = message} = _params) do
+    with {:ok, message} <- IO.inspect(Telegram.build_inline_query(message)),
+    :ok <- Telegram.enqueue_processing!(message) do
+      Logger.info("Message enqueued for later processing")
+      send_resp(conn, 204, "")
+    else
+      err ->
+        Logger.error("Failed handling telegram webhook with #{inspect(err)}, answering 204")
+        send_resp(conn, 204, "")
+    end
+  end
+
   def receive(conn, _params), do: send_resp(conn, 204, "")
 end

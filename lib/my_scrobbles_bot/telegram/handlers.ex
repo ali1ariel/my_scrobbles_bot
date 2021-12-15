@@ -6,7 +6,8 @@ defmodule MyScrobblesBot.Telegram.Handlers do
   """
 
   alias MyScrobblesBot.Telegram.Message
-  alias MyScrobblesBot.Telegram.Handlers.{DefaultHandler, HelpHandler, CommandHandler}
+  alias MyScrobblesBot.Telegram.InlineQuery
+  alias MyScrobblesBot.Telegram.Handlers.{DefaultHandler, HelpHandler, CommandHandler, InlineQueryHandler}
 
   @callback handle(Message.t()) :: {:ok, term()} | {:error, term()}
 
@@ -15,5 +16,6 @@ defmodule MyScrobblesBot.Telegram.Handlers do
   """
   def get_handler(%Message{text: "/help" <> ""}), do: {:ok, HelpHandler}
   def get_handler(%Message{text: "/" <> _command}), do: {:ok, CommandHandler}
+  def get_handler(%InlineQuery{}), do: {:ok, InlineQueryHandler}
   def get_handler(_), do: {:ok, DefaultHandler}
 end

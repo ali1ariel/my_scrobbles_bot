@@ -39,7 +39,7 @@
   "update_id" => 291601380
 }
 
-# chamado de comando 
+# chamado de comando
 %{
     "message" => %{
       "chat" => %{
@@ -62,8 +62,8 @@
     "update_id" => 291601381
   }
 
-  novo membro adicionado
-  %{
+novo membro adicionado
+%{
     "message" => %{
       "chat" => %{
         "id" => -1001294571722,
@@ -103,9 +103,9 @@
     "update_id" => 291601382
   }
 
-  #um gif enviado pelo usuario no privado
+#um gif enviado pelo usuario no privado
 
-    %{
+%{
         "message" => %{
           "animation" => %{
             "duration" => 4,
@@ -157,7 +157,7 @@
         "update_id" => 291601383
       }
 
-      #Usuario removido do grupo
+#Usuario removido do grupo
 
 %{
     "message" => %{
@@ -191,8 +191,8 @@
     "update_id" => 291601386
   }
 
-  #entrou pelo link
-  %{
+#entrou pelo link
+%{
     "message" => %{
       "chat" => %{
         "id" => -1001294571722,
@@ -230,3 +230,58 @@
     },
     "update_id" => 291601389
   }
+
+
+  #Bot with inline keyboard
+%{"edited_message" => 
+  %{"caption" => 
+    "alis🔜👀🍍's 1month artist collage", 
+    "chat" => 
+      %{
+        "first_name" => "alis🔜👀🍍", 
+        "id" => 600614550, 
+        "type" => "private", 
+        "username" => "AlissonMachad0"
+      }, 
+    "date" => 1639521530, 
+    "edit_date" => 1639521532, 
+    "from" => 
+      %{
+        "first_name" => "alis🔜👀🍍", 
+        "id" => 600614550, 
+        "is_bot" => false, 
+        "language_code" => "en", 
+        "username" => "AlissonMachad0"
+      }, 
+    "message_id" => 414, 
+    "photo" => [
+      %{
+        "file_id" => "AgACAgQAAxkBAAIBnmG5HPxElg2SAAF8Dhj2FOQN2MTDYgACKa0xG3_qzVHMhbzdtpLSFgEAAwIAA3MAAyME", 
+        "file_size" => 2864, 
+        "file_unique_id" => "AQADKa0xG3_qzVF4", 
+        "height" => 90, "width" => 90
+      }, 
+        %{"file_id" => 
+          "AgACAgQAAxkBAAIBnmG5HPxElg2SAAF8Dhj2FOQN2MTDYgACKa0xG3_qzVHMhbzdtpLSFgEAAwIAA20AAyME", 
+          "file_size" => 42838, 
+          "file_unique_id" => 
+          "AQADKa0xG3_qzVFy", "
+          height" => 320, 
+          "width" => 320
+        }, %{
+          "file_id" => "AgACAgQAAxkBAAIBnmG5HPxElg2SAAF8Dhj2FOQN2MTDYgACKa0xG3_qzVHMhbzdtpLSFgEAAwIAA3gAAyME", 
+          "file_size" => 196084, "file_unique_id" => "AQADKa0xG3_qzVF9", "height" => 800, "width" => 800
+        }, %{
+            "file_id" => "AgACAgQAAxkBAAIBnmG5HPxElg2SAAF8Dhj2FOQN2MTDYgACKa0xG3_qzVHMhbzdtpLSFgEAAwIAA3kAAyME", 
+            "file_size" => 206330, "file_unique_id" => "AQADKa0xG3_qzVF-", "height" => 900, "width" => 900
+          }],
+    "reply_markup" => %{
+      "inline_keyboard" => [
+        [
+          %{"callback_data" => "collagePlus 3x3|1month|artist1824rn|600614550u", "text" => "➕"}, 
+          %{"callback_data" => "collageMinus 3x3|1month|artist1824rn|600614550u", "text" => "➖"}, 
+          %{"callback_data" => "collageHideNames 3x3|1month|artist1824rn|600614550u", "text" => "hide names"}]]}, 
+    "via_bot" => %{"first_name" => "LastFM Robot", "id" => 296635833, "is_bot" => true, "username" => "lastfmrobot"}
+  }, 
+  "update_id" => 291602163
+}

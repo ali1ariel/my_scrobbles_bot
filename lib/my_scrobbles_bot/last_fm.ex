@@ -38,7 +38,7 @@ defmodule MyScrobblesBot.LastFm do
         |> String.to_integer()
         |> DateTime.from_unix!(:second)
 
-      "[👥](#{Enum.at(user["image"], 2)["#text"]}) *#{Map.get(user, "name")}* got _#{Map.get(user, "playcount")} scrobbles_ since #{MyScrobblesBot.Helpers.month(date.month)} #{date.day}, #{date.year}.\n\n*Some loved tracks*\n#{Enum.map(tracks, fn track -> "💘 #{track["artist"]["name"]} - #{track["name"]}\n" end)}"
+      "[👥](#{Enum.at(user["image"], 2)["#text"]}) *#{Map.get(user, "name")}* got _#{Map.get(user, "playcount")} scrobbles_ since #{MyScrobblesBot.Helpers.month(date.month)} #{date.day}, #{date.year}.\n\n*Some loved tracks*\n#{Enum.map(tracks, fn track -> "💘 #{track["artist"]["name"]} - #{track["name"]}\n" end)}\n`---premium---`\n"
     else
       {:error, error} ->
         "error: #{error}"
@@ -298,13 +298,13 @@ defmodule MyScrobblesBot.LastFm do
   end
 
   def get_your_artist(%{
-        user: user,
-        friend: friend,
-        playcount: playcount,
-        artist: artist,
-        photo: photo_link
+        :user => user,
+        :friend => friend,
+        "stats" => stats,
+        :artist => artist,
+        :photo => photo_link
       }) do
-    "*#{user}* #{playcount_text(playcount)} to:
+    "*#{user}* #{playcount_text(stats["userplaycount"])} to:
 
     [👥](#{photo_link}) *#{artist}*
 
@@ -313,13 +313,13 @@ defmodule MyScrobblesBot.LastFm do
   end
 
   def get_my_artist(%{
-        user: user,
-        friend: friend,
-        playcount: playcount,
-        artist: artist,
-        photo: photo_link
+        :user => user,
+        :friend => friend,
+        "stats" => stats,
+        :artist => artist,
+        :photo => photo_link
       }) do
-    "*#{friend}* #{playcount_text(playcount)} to:
+    "*#{friend}* #{playcount_text(stats["userplaycount"])} to:
 
     [👥](#{photo_link}) *#{artist}*
 
