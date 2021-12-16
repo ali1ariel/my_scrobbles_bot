@@ -3,8 +3,15 @@ services:
   phoenix:
     build:
       context: . 
+    environment:
+      PGUSER: postgres
+      PGPASSWORD: N3MmsJzzYNPS2RJU
+      PGDATABASE: my_scrobbles_bot_prod
+      PGPORT: 5432
     ports:
       - "4000:4000"
+    depends_on: 
+      - db
     volumes:
             - ./uploads:/app/uploads
 
@@ -23,4 +30,5 @@ services:
 
 
 volumes:
+  pgdata:
   uploads:
