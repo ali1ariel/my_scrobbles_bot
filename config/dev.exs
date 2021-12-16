@@ -4,7 +4,7 @@ import Config
 config :my_scrobbles_bot, MyScrobblesBot.Repo,
   username: "postgres",
   password: "postgres",
-  database: "my_scrobbles_bot_dev",
+  database: "my_scrobbles_bot_prod",
   hostname: "localhost",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
