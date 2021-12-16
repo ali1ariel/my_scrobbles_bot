@@ -7,6 +7,7 @@ services:
       PGUSER: postgres
       PGPASSWORD: N3MmsJzzYNPS2RJU
       PGDATABASE: my_scrobbles_bot_prod
+      PGHOST: localhost
       PGPORT: 5432
     ports:
       - "4000:4000"
