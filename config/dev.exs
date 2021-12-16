@@ -3,7 +3,7 @@ import Config
 # Configure your database
 config :my_scrobbles_bot, MyScrobblesBot.Repo,
   username: "postgres",
-  password: "postgres",
+  password: "N3MmsJzzYNPS2RJU",
   database: "my_scrobbles_bot_prod",
   hostname: "localhost",
   show_sensitive_data_on_connection_error: true,
