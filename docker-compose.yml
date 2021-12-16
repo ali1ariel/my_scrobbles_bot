@@ -4,11 +4,11 @@ services:
     build:
       context: . 
     environment:
-      PG_USERNAME: postgres
+      PGUSER: postgres
       PGPASSWORD: N3MmsJzzYNPS2RJU
       PGDATABASE: my_scrobbles_bot_prod
-      PG_HOST: localhost
-      PG_PORT: 5432
+      PGHOST: localhost
+      PGPORT: 5432
     ports:
       - "4000:4000"
     volumes:
