@@ -123,5 +123,5 @@ defmodule MyScrobblesBot.LastFm.Artist do
     |> Enum.take(3)
   end
 
-  def artist_tracks(track, username) when is_nil(track), do: []
+  def artist_tracks(track, _username) when is_nil(track), do: []
 end

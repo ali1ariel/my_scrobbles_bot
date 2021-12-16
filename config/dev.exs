@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 # Configure your database
 config :my_scrobbles_bot, MyScrobblesBot.Repo,
