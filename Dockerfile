@@ -1,7 +1,7 @@
 FROM elixir:latest AS builder
 
 RUN apt-get update && \
-    apt-get install -y postgresql-client
+    apt-get install -y postgresql-client zip
 
 RUN mkdir /app
 COPY . /app

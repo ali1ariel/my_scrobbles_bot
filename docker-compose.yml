@@ -17,14 +17,17 @@ services:
             - ./uploads:/app/uploads
 
   db:
-    image: postgres:9.6
+    image: postgres
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: N3MmsJzzYNPS2RJU
       PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_DB: my_scrobbles_bot_prod
     restart: always
     volumes:
       - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
 
 
   adminer:
