@@ -7,6 +7,12 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
   alias MyScrobblesBotWeb.Services.Telegram
   @behaviour MyScrobblesBot.Telegram.Handlers
 
+  @allowed_groups [
+    -1001294571722,
+    -1001156236779
+  ]
+
+
   def handle(%Message{} = message) do
     match_command(message)
     |> Telegram.send_message()
@@ -20,7 +26,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
     # }
   end
 
-  def match_command(%Message{text: "/" <> command} = message) do
+  def match_command(%Message{text: "/" <> command, chat_type: type, chat_id: id} = message) when type == "private" or (type == "supergroup" and id in @allowed_groups) do
     command = String.downcase(command)
 
     case command do
@@ -231,4 +237,14 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
           end
     end
   end
+
+  def match_command(%Message{text: "/" <> command} = message) when command in ["lt", "artist", "album"] do
+    %{
+      text: "Esse bot está em BETA e grupo não está autorizado no momento, por favor, me removam do grupo, para me usar, entrem em @mygroupfm ou me usem no privado, porém, no momento recomendamos usar o @MeuLastFMBot.\n This bot is in BETA and this group is not allowed at this moment, please remove me, to use, please come to @mygroupfm or talk to me on my private, but we recommend to use @MeuLastFMBot.\n",
+      parse_mode: "markdown",
+      chat_id: message.chat_id,
+      reply_to_message_id: message.message_id
+    }
+  end
+
 end
