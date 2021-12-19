@@ -20,6 +20,12 @@ defmodule MyScrobblesBotWeb.Router do
     live "/", PageLive, :index
   end
 
+  scope "/", MyScrobblesBotWeb do
+    pipe_through :api
+
+    get "/health-check", BotController, :health_check
+  end
+
   scope "/myscrobblesbot", MyScrobblesBotWeb do
     pipe_through :api
 

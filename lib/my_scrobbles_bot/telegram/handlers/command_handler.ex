@@ -12,6 +12,10 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
     -1001156236779
   ]
 
+  @admins [
+    600_614_550,
+  ]
+
 
   def handle(%Message{} = message) do
     match_command(message)
@@ -129,7 +133,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
         end
 
         "msgetuser" ->
-          if(message.from.telegram_id == 600_614_550) do
+          if(message.from.telegram_id in @admins) do
             with {:ok, user} <-
                    MyScrobblesBot.Accounts.get_user_by_telegram_user_id(message.reply_to_message.from.telegram_id) do
               %{

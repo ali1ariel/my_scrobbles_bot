@@ -30,4 +30,7 @@ defmodule MyScrobblesBotWeb.BotController do
   end
 
   def receive(conn, _params), do: send_resp(conn, 204, "")
+
+  @spec health_check(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def health_check(conn, _params), do: send_resp(conn, 204, "")
 end
