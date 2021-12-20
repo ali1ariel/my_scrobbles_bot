@@ -89,10 +89,7 @@ defmodule MyScrobblesBotWeb.Services.LastFm do
 
   @spec get_answer(Map.t()) :: {:error, Map.t()} | {:ok, Map.t()}
   def get_answer(args) do
-    IO.inspect args =
-      Map.merge(args, %{"format" => "json", "api_key" => "#{@token}"})
-      |> Map.to_list()
-
+    IO.inspect @configs
     IO.inspect get!(@configs, query: args)
     |> response_handler()
   end
