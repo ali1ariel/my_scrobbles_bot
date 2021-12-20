@@ -93,7 +93,7 @@ defmodule MyScrobblesBotWeb.Services.LastFm do
       Map.merge(args, %{"format" => "json", "api_key" => "#{@token}"})
       |> Map.to_list()
 
-    get!(@configs, query: args)
+    IO.inspect get!(@configs, query: args)
     |> response_handler()
   end
 
