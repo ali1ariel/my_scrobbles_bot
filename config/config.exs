@@ -30,9 +30,9 @@ config :phoenix, :json_library, Jason
 config :my_scrobbles_bot, pubsub_channel: MyScrobblesBot.PubSub
 
 config :my_scrobbles_bot,
-  bot_name: "Boiola bot",
-  last_fm_token: System.get_env("LAST_FM_TOKEN") || "92948e038ad0708dbbed57e977db5fce",
-  music_x_match_token: System.get_env("MUSIC_X_MATCH_TOKEN") || "f1b5674f072c7c7b775118528762ec0d"
+  bot_name: "My Scrobbles Bot",
+  last_fm_token: System.get_env("LAST_FM_TOKEN"),
+  music_x_match_token: System.get_env("MUSIC_X_MATCH_TOKEN")
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
