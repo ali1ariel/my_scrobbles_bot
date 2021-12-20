@@ -33,6 +33,7 @@ defmodule MyScrobblesBot.LastFm.Artist do
                 "#{acc}#{if loved, do: "💘", else: "▪️"} *#{track}* - _#{count} plays_\n"
               end
             )
+            |> then(&("#{&1}`---premium---`\n"))
         end
       else
         ""
@@ -43,7 +44,7 @@ defmodule MyScrobblesBot.LastFm.Artist do
       |> Map.merge(%{with_photo?: false, user: message.from.first_name})
 
     msg = LastFm.get_now_artist(query)
-    %{text: "#{msg}#{extra}`---premium---`\n", parse_mode: "markdown", chat_id: message.chat_id}
+    %{text: "#{msg}#{extra}", parse_mode: "markdown", chat_id: message.chat_id}
   end
 
   def yourartist(message) do
