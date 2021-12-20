@@ -6,7 +6,7 @@ services:
     environment:
       PG_USERNAME: postgres
       PGPASSWORD: postgres
-      PGDATABASE: my_scrobbles_bot_prod
+      PG_DATABASE: my_scrobbles_bot_prod
       PG_PORT: 5432
       PG_HOST: db
     depends_on: 
