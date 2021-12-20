@@ -9,6 +9,8 @@ services:
       PG_DATABASE: my_scrobbles_bot_prod
       PG_PORT: 5432
       PG_HOST: db
+    ports:
+      - "4000:4000"
     depends_on: 
       - db
     volumes:
