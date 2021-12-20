@@ -34,6 +34,14 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
     command = String.downcase(command)
 
     case command do
+      "start" ->
+        %{
+          text: "welcome, please, register with /msregister yourlastfmusername, changing yourlastfmusername with your last fm username.",
+          parse_mode: "markdown",
+          chat_id: message.chat_id,
+          reply_to_message_id: message.message_id
+        }
+
       x when x in ["lt", "listen", "mymusic", "mm"] ->
         MyScrobblesBot.LastFm.Track.mymusic(message)
 
