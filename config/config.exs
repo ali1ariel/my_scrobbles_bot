@@ -31,7 +31,6 @@ config :my_scrobbles_bot, pubsub_channel: MyScrobblesBot.PubSub
 
 config :my_scrobbles_bot,
   bot_name: "My Scrobbles Bot",
-  last_fm_token: System.get_env("LAST_FM_TOKEN"),
   music_x_match_token: System.get_env("MUSIC_X_MATCH_TOKEN")
 
 # Import environment specific config. This must remain at the bottom

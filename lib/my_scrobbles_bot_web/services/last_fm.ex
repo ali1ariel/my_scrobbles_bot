@@ -6,7 +6,7 @@ defmodule MyScrobblesBotWeb.Services.LastFm do
   require Logger
   use Tesla
 
-  @token Application.get_env(:my_scrobbles_bot, :last_fm_token)
+  @token System.get_env("LAST_FM_TOKEN")
   @configs "?format=json&api_key=#{@token}&"
 
   plug(Tesla.Middleware.BaseUrl, "http://ws.audioscrobbler.com/2.0")
