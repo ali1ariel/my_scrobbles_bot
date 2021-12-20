@@ -50,7 +50,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
       _ ->
         %{
           text:
-            "User not found, please, register yourself.",
+          " _User not found, do you did your register? please \"/msregister yourlastfmusername\" to register your last fm username._ \n _Usuário não encontrado, você já se registrou?  registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pelo seu user do last fm._ ",
           parse_mode: "markdown",
           chat_id: message.chat_id,
           reply_to_message_id: message.message_id

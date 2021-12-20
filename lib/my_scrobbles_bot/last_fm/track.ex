@@ -208,12 +208,4 @@ defmodule MyScrobblesBot.LastFm.Track do
     %{text: msg, parse_mode: "markdown", chat_id: message.chat_id}
   end
 
-  def user_not_found(%Message{} = message) do
-    %{
-      text:
-        "User not found, do you did your register? please \"/msregister yourlastfmusername\" to register your last fm username.",
-      parse_mode: "markdown",
-      chat_id: message.chat_id
-    }
-  end
 end
