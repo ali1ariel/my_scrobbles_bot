@@ -56,5 +56,4 @@ defmodule MyScrobblesBot.Telegram.InlineQuery do
       Changeset.get_change(changeset, :telegram_id, params["id"])
     )
   end
-
 end

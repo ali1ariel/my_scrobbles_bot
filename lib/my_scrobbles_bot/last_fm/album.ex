@@ -1,9 +1,11 @@
 defmodule MyScrobblesBot.LastFm.Album do
   alias MyScrobblesBot.LastFm
 
-  def album(message) do
-    %{last_fm_username: username} =
-      user = MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(message.from.telegram_id)
+  alias MyScrobblesBot.Accounts.User
+  alias MyScrobblesBot.Telegram.Message
+
+  def album(%Message{} = message, %User{} = user) do
+    %{last_fm_username: username} = user
 
     {:ok, track} = LastFm.get_recent_track(%{username: username})
     {:ok, attrs} = LastFm.get_album(track)

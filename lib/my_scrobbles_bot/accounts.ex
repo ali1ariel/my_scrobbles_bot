@@ -229,55 +229,73 @@ defmodule MyScrobblesBot.Accounts do
   end
 
   def add_premium_to_user(user, premium, added_method) do
-    UsersPremium.changeset(%UsersPremium{}, %{user: user, premium: premium, added_method: added_method})
+    UsersPremium.changeset(%UsersPremium{}, %{
+      user: user,
+      premium: premium,
+      added_method: added_method
+    })
     |> MyScrobblesBot.Repo.insert()
 
     user
     |> Ecto.Changeset.change(is_premium?: true)
-    |> MyScrobblesBot.Repo.update
+    |> MyScrobblesBot.Repo.update()
   end
-
 
   def change_user_premium(%UsersPremium{} = users_premium, attrs \\ %{}) do
     UsersPremium.changeset(users_premium, attrs)
   end
 
-
   def remove_premium_from_user(user_premium) do
-
     user_premium
     |> Ecto.Changeset.change(user_id: nil)
-    |> MyScrobblesBot.Repo.update
+    |> MyScrobblesBot.Repo.update()
 
     get_user!(user_premium.user_id)
     |> Ecto.Changeset.change(is_premium?: false)
-    |> MyScrobblesBot.Repo.update
+    |> MyScrobblesBot.Repo.update()
   end
 
   def promote_user(%Message{} = message, info) do
-    days = case info do
-      "1w" -> 7
-      "1m" -> 30
-      "6m" -> 180
-      "1y" -> 360
-      "unlimited" -> 100000
-    end
-    {:ok, premium} = create_premium(%{initial_date: Date.utc_today(), final_date: Date.utc_today() |> Date.add(days), validate: (if (days == 30), do: :trial, else: :active), type: :personal})
+    days =
+      case info do
+        "1w" -> 7
+        "1m" -> 30
+        "6m" -> 180
+        "1y" -> 360
+        "unlimited" -> 100_000
+      end
+
+    {:ok, premium} =
+      create_premium(%{
+        initial_date: Date.utc_today(),
+        final_date: Date.utc_today() |> Date.add(days),
+        validate: if(days == 30, do: :trial, else: :active),
+        type: :personal
+      })
+
     {:ok, user} = get_user_by_telegram_user_id(message.reply_to_message.from.telegram_id)
     add_premium_to_user(user, premium, 4)
     {:ok, %{expiration: premium.final_date}}
   end
 
-
   def promote_user(%User{} = user, info) do
-    days = case info do
-      "1w" -> 7
-      "1m" -> 30
-      "6m" -> 180
-      "1y" -> 360
-      "unlimited" -> 100000
-    end
-    {:ok, premium} = create_premium(%{initial_date: Date.utc_today(), final_date: Date.utc_today() |> Date.add(days), validate: (if (days == 30), do: :trial, else: :active), type: :personal})
+    days =
+      case info do
+        "1w" -> 7
+        "1m" -> 30
+        "6m" -> 180
+        "1y" -> 360
+        "unlimited" -> 100_000
+      end
+
+    {:ok, premium} =
+      create_premium(%{
+        initial_date: Date.utc_today(),
+        final_date: Date.utc_today() |> Date.add(days),
+        validate: if(days == 30, do: :trial, else: :active),
+        type: :personal
+      })
+
     add_premium_to_user(user, premium, 4)
     {:ok, %{expiration: premium.final_date}}
   end
@@ -287,17 +305,16 @@ defmodule MyScrobblesBot.Accounts do
     |> remove_premium_user()
   end
 
-
   def remove_premium_user(%User{} = user) do
-    user = user
-    |> Repo.preload(:user_premium)
+    user =
+      user
+      |> Repo.preload(:user_premium)
 
-    if (!is_nil(user.user_premium)) do
+    if !is_nil(user.user_premium) do
       remove_premium_from_user(user.user_premium)
       {:ok, :removed}
     else
       {:ok, :not_premium}
     end
-
   end
 end

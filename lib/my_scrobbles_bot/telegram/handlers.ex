@@ -7,7 +7,13 @@ defmodule MyScrobblesBot.Telegram.Handlers do
 
   alias MyScrobblesBot.Telegram.Message
   alias MyScrobblesBot.Telegram.InlineQuery
-  alias MyScrobblesBot.Telegram.Handlers.{DefaultHandler, HelpHandler, CommandHandler, InlineQueryHandler}
+
+  alias MyScrobblesBot.Telegram.Handlers.{
+    DefaultHandler,
+    HelpHandler,
+    CommandHandler,
+    InlineQueryHandler
+  }
 
   @callback handle(Message.t()) :: {:ok, term()} | {:error, term()}
 

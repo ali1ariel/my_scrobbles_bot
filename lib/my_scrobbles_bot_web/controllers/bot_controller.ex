@@ -19,7 +19,7 @@ defmodule MyScrobblesBotWeb.BotController do
 
   def receive(conn, %{"inline_query" => %{"query" => _} = message} = _params) do
     with {:ok, message} <- IO.inspect(Telegram.build_inline_query(message)),
-    :ok <- Telegram.enqueue_processing!(message) do
+         :ok <- Telegram.enqueue_processing!(message) do
       Logger.info("Message enqueued for later processing")
       send_resp(conn, 204, "")
     else

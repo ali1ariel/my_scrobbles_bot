@@ -32,7 +32,8 @@ defmodule MyScrobblesBot.Services.MusicXMatch do
 
     get!(@configs, query: args)
     |> response_handler()
-    |> (fn {status, body} -> {status, Poison.decode!(body)} end).()
+
+    # |> (fn {status, body} -> {status, Poison.decode!(body)} end).()
   end
 
   defp response_handler(response) do

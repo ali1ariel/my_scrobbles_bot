@@ -17,7 +17,6 @@ defmodule MyScrobblesBot.Telegram do
     end
   end
 
-
   def build_inline_query(params) do
     params
     |> InlineQuery.cast()
@@ -45,24 +44,27 @@ defmodule MyScrobblesBot.Telegram do
   """
   def process_inline_query(%InlineQuery{} = iq) do
     with {:ok, handler} <- MyScrobblesBot.Telegram.Handlers.get_handler(iq) do
-      Logger.info("Processing inline query #{inspect(iq.inline_query_id)} with handler #{inspect(handler)}")
+      Logger.info(
+        "Processing inline query #{inspect(iq.inline_query_id)} with handler #{inspect(handler)}"
+      )
+
       handler.handle(iq)
     end
   end
 
   @doc """
-  Enqueues processing for a message
+    Enqueues processing for a message
 
-  Publishes it as an event in the pubsub
+    Publishes it as an event in the pubsub
   """
   def enqueue_processing!(%Message{} = m) do
     Events.publish!(Events.TelegramMessage, m)
   end
 
   @doc """
-  Enqueues processing for a inline query
+    Enqueues processing for a inline query
 
-  Publishes it as an event in the pubsub
+    Publishes it as an event in the pubsub
   """
   def enqueue_processing!(%InlineQuery{} = iq) do
     Events.publish!(Events.TelegramInlineQuery, iq)

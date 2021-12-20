@@ -22,7 +22,6 @@ defmodule MyScrobblesBot.Telegram.ClientInputs.SendInlineBotResults do
     field :thumb, :string
     field :content, :string
 
-
     embeds_one :send_message, InputBotInlineMessage
   end
 
