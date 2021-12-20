@@ -33,7 +33,11 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
   end
 
   def match_user(%Message{} = message) do
-    {message, MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(message.from.telegram_id)}
+    case MyScrobblesBot.Accounts.get_user_by_telegram_user_id(message.from.telegram_id) do
+      {:ok, %User{} = user} ->
+        {message, user}
+      _ -> {message, nil}
+    end
   end
 
   def match_command({%Message{text: "/" <> command, chat_type: type, chat_id: id} = message, nil})
