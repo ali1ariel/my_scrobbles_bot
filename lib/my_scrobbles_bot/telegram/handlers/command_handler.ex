@@ -11,11 +11,12 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
   @allowed_groups [
     -1_001_294_571_722,
     -1_001_156_236_779,
-    -657_227_681
+    -1_001_786_739_075
   ]
 
   @admins [
-    600_614_550
+    600_614_550,
+    1_360_830_999
   ]
 
   def handle(%Message{} = message) do
