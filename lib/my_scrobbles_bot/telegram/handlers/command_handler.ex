@@ -10,13 +10,14 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
 
   @allowed_groups [
     -1_001_294_571_722,
-    -1_001_156_236_779,
-    -1_001_786_739_075
+    -1_001_156_236_779, #meu last fm bot sac
+    -1_001_786_739_075 #MSB - grupo BETA
   ]
 
   @admins [
-    600_614_550,
-    1_360_830_999
+    600_614_550, # ALisson
+    1_360_830_999, #Josue
+    1_224_040_266 #Felipe
   ]
 
   def handle(%Message{} = message) do
@@ -38,7 +39,9 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
     case MyScrobblesBot.Accounts.get_user_by_telegram_user_id(message.from.telegram_id) do
       {:ok, %User{} = user} ->
         {message, user}
-      _ -> {message, nil}
+
+      _ ->
+        {message, nil}
     end
   end
 
@@ -48,11 +51,12 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
 
     case command do
       "msregister " <> username ->
-          register(message, username)
+        register(message, username)
+
       _ ->
         %{
           text:
-          " _User not found, do you did your register? please \"/msregister yourlastfmusername\" to register your last fm username._ \n _Usuário não encontrado, você já se registrou?  registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pelo seu user do last fm._ ",
+            " _User not found, do you did your register? please \"/msregister yourlastfmusername\" to register your last fm username._ \n _Usuário não encontrado, você já se registrou?  registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pelo seu user do last fm._ ",
           parse_mode: "markdown",
           chat_id: message.chat_id,
           reply_to_message_id: message.message_id
@@ -131,7 +135,6 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
           chat_id: message.chat_id,
           reply_to_message_id: message.message_id
         }
-
 
       "msregister " <> username ->
         register(message, username)
@@ -276,7 +279,6 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
     end
   end
 
-
   def match_command({%Message{text: "/" <> command} = message, _})
       when command in ["lt", "artist", "album"] do
     %{
@@ -290,9 +292,9 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
 
   def register(%Message{} = message, username) do
     case MyScrobblesBot.Accounts.insert_or_update_user(%{
-            last_fm_username: username,
-            telegram_id: message.from.telegram_id
-          }) do
+           last_fm_username: username,
+           telegram_id: message.from.telegram_id
+         }) do
       {:created, _user} ->
         %{
           text: "_user created successfully._",
@@ -316,6 +318,6 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
           chat_id: message.chat_id,
           reply_to_message_id: message.message_id
         }
-      end
+    end
   end
 end

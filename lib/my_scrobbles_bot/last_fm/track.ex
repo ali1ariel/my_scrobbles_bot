@@ -56,7 +56,9 @@ defmodule MyScrobblesBot.LastFm.Track do
 
   def yourmusic(%Message{} = message) do
     %{last_fm_username: username} =
-      MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(message.reply_to_message.from.telegram_id)
+      MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(
+        message.reply_to_message.from.telegram_id
+      )
 
     {:ok, track} =
       LastFm.get_recent_track(%{username: username})
@@ -207,5 +209,4 @@ defmodule MyScrobblesBot.LastFm.Track do
     msg = LastFm.get_your_music(query)
     %{text: msg, parse_mode: "markdown", chat_id: message.chat_id}
   end
-
 end

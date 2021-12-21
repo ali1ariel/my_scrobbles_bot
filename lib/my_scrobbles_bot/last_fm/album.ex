@@ -31,7 +31,7 @@ defmodule MyScrobblesBot.LastFm.Album do
                 "#{acc}#{if loved, do: "💘", else: "▪️"} *#{track}* - _#{count} plays_\n"
               end
             )
-            |> then(&("#{&1}`---premium---`"))
+            |> then(&"#{&1}`---premium---`")
         end
       else
         ""
