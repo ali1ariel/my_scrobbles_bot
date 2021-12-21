@@ -10,7 +10,8 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
 
   @allowed_groups [
     -1_001_294_571_722,
-    -1_001_156_236_779
+    -1_001_156_236_779,
+    -657_227_681
   ]
 
   @admins [
