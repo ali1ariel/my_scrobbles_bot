@@ -19,8 +19,8 @@ defmodule MyScrobblesBot.Helpers do
   end
 
   def escape_markdown(string) do
-    if String.contains?(string, "*"), do: String.replace(string, "*", "\*")
-    if String.contains?(string, "_"), do: String.replace(string, "_", "\_")
-    if String.contains?(string, "`"), do: String.replace(string, "`", "\`")
+    if String.contains?(string, "*"), do: String.replace(string, "*", "\*"), else: string
+    if String.contains?(string, "_"), do: String.replace(string, "_", "\_"), else: string
+    if String.contains?(string, "`"), do: String.replace(string, "`", "\`"), else: string
   end
 end
