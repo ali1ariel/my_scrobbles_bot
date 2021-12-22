@@ -1,4 +1,6 @@
 defmodule MyScrobblesBot.LastFm do
+
+  alias MyScrobblesBot.Helpers
   @doc """
   request user information in Last FM API
   """
@@ -160,9 +162,9 @@ defmodule MyScrobblesBot.LastFm do
       }) do
     "*#{user}* #{playcount_user_text(playcount, now)} to:
 
-    #{if with_photo, do: "[🎶](#{photo_link})", else: "🎶"} *#{track}*
-    💿 #{album}
-    👥 #{artist}
+    #{if with_photo, do: "[🎶](#{photo_link})", else: "🎶"} *#{track |> Helpers.escape_markdown()}*
+    💿 #{album |> Helpers.escape_markdown()}
+    👥 #{artist |> Helpers.escape_markdown()}
     #{if loved, do: "💘"}
     "
   end
@@ -181,9 +183,9 @@ defmodule MyScrobblesBot.LastFm do
       }) do
     "*#{user}* #{playcount_user_text(playcount, now)} time to:
 
-    #{if with_photo, do: "[🎶](#{photo_link})", else: "🎶"} *#{track}*
-    💿 #{album}
-    👥 #{artist}
+    #{if with_photo, do: "[🎶](#{photo_link})", else: "🎶"} *#{track |> Helpers.escape_markdown()}*
+    💿 #{album |> Helpers.escape_markdown()}
+    👥 #{artist |> Helpers.escape_markdown()}
     #{if loved, do: "💘"}
 
     `#{verse}`
@@ -201,8 +203,8 @@ defmodule MyScrobblesBot.LastFm do
       }) do
     "*#{user}* #{playcount_user_text(playcount, now)} to:
 
-    [💿](#{photo_link}) *#{album}*
-    👥 #{artist}
+    [💿](#{photo_link}) *#{album |> Helpers.escape_markdown()}*
+    👥 #{artist |> Helpers.escape_markdown()}
     "
   end
 
@@ -216,7 +218,7 @@ defmodule MyScrobblesBot.LastFm do
       }) do
     "*#{user}* #{playcount_user_text(playcount, now)} to:
 
-    [👥](#{photo_link}) *#{artist}*
+    [👥](#{photo_link}) *#{artist |> Helpers.escape_markdown()}*
     "
   end
 
@@ -232,9 +234,9 @@ defmodule MyScrobblesBot.LastFm do
       }) do
     "*#{user}* #{playcount_text(playcount)} to:
 
-    [🎶](#{photo_link}) *#{track}*
-    💿 #{album}
-    👥 #{artist}
+    [🎶](#{photo_link}) *#{track |> Helpers.escape_markdown()}*
+    💿 #{album |> Helpers.escape_markdown()}
+    👥 #{artist |> Helpers.escape_markdown()}
     #{if loved, do: "💘"}
 
     `listening by #{friend}`
@@ -254,9 +256,9 @@ defmodule MyScrobblesBot.LastFm do
       }) do
     "*#{friend}* #{playcount_text(playcount)} to:
 
-    #{if with_photo, do: "[🎶](#{photo_link})", else: "🎶"} *#{track}*
-    💿 #{album}
-    👥 #{artist}
+    #{if with_photo, do: "[🎶](#{photo_link})", else: "🎶"} *#{track |> Helpers.escape_markdown()}*
+    💿 #{album |> Helpers.escape_markdown()}
+    👥 #{artist |> Helpers.escape_markdown()}
     #{if loved, do: "💘"}
 
     `resquested by #{user}`
@@ -273,8 +275,8 @@ defmodule MyScrobblesBot.LastFm do
       }) do
     "*#{user}* #{playcount_text(playcount)} to:
 
-    [💿](#{photo_link}) *#{album}*
-    👥 #{artist}
+    [💿](#{photo_link}) *#{album |> Helpers.escape_markdown()}*
+    👥 #{artist |> Helpers.escape_markdown()}
 
     `listening by #{friend}`
     "
@@ -290,8 +292,8 @@ defmodule MyScrobblesBot.LastFm do
       }) do
     "*#{friend}* #{playcount_text(playcount)} to:
 
-    [💿](#{photo_link}) *#{album}*
-    👥 #{artist}
+    [💿](#{photo_link}) *#{album |> Helpers.escape_markdown()}*
+    👥 #{artist |> Helpers.escape_markdown()}
 
     `resquested by #{user}`
     "
@@ -306,7 +308,7 @@ defmodule MyScrobblesBot.LastFm do
       }) do
     "*#{user}* #{playcount_text(stats["userplaycount"])} to:
 
-    [👥](#{photo_link}) *#{artist}*
+    [👥](#{photo_link}) *#{artist |> Helpers.escape_markdown()}*
 
     `listening by #{friend}`
     "
@@ -321,7 +323,7 @@ defmodule MyScrobblesBot.LastFm do
       }) do
     "*#{friend}* #{playcount_text(stats["userplaycount"])} to:
 
-    [👥](#{photo_link}) *#{artist}*
+    [👥](#{photo_link}) *#{artist |> Helpers.escape_markdown()}*
 
     `resquested by #{user}`
     "

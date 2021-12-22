@@ -30,7 +30,7 @@ defmodule MyScrobblesBot.LastFm.Artist do
                    playcount: count
                  },
                  acc ->
-                "#{acc}#{if loved, do: "💘", else: "▪️"} *#{track}* - _#{count} plays_\n"
+                "#{acc}#{if loved, do: "💘", else: "▪️"} *#{track |> Helpers.escape_markdown()}* - _#{count} plays_\n"
               end
             )
             |> then(&"#{&1}`---premium---`\n")
