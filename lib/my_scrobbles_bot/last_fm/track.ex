@@ -4,6 +4,8 @@ defmodule MyScrobblesBot.LastFm.Track do
   alias MyScrobblesBot.Telegram.Message
   alias MyScrobblesBot.Accounts.User
 
+  alias MyScrobblesBot.Helpers
+
   def error_handler(request, %Message{} = message) do
     case request do
       {:ok, info} ->
