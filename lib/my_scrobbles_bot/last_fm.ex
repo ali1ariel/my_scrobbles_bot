@@ -194,7 +194,7 @@ defmodule MyScrobblesBot.LastFm do
     👥 #{artist}
     #{if loved, do: "💘"}
 
-    `#{verse}`
+    <u><i>#{verse}</i></u>
     "
   end
 
@@ -244,7 +244,7 @@ defmodule MyScrobblesBot.LastFm do
     👥 #{artist}
     #{if loved, do: "💘"}
 
-    `listening by #{friend}`
+    <u><i>listening by #{friend}</i></u>
     "
   end
 
@@ -266,7 +266,7 @@ defmodule MyScrobblesBot.LastFm do
     👥 #{artist}
     #{if loved, do: "💘"}
 
-    `resquested by #{user}`
+    </i></u>resquested by #{user}</i></u>
     "
   end
 
@@ -283,7 +283,7 @@ defmodule MyScrobblesBot.LastFm do
     <a href=\"#{photo_link}\">💿</a> <b>#{album}</b>
     👥 #{artist}
 
-    `listening by #{friend}`
+    <u><i>listening by #{friend}</i></u>
     "
   end
 
@@ -300,7 +300,7 @@ defmodule MyScrobblesBot.LastFm do
     <a href=\"#{photo_link}\">💿</a> <b>#{album}</b>
     👥 #{artist}
 
-    `resquested by #{user}`
+    <u><i>resquested by #{user}</i></u>
     "
   end
 
@@ -314,7 +314,7 @@ defmodule MyScrobblesBot.LastFm do
     "<b>#{user}</b> #{playcount_text(stats["userplaycount"])} to:
 
     <a href=\"#{photo_link}\">👥</a> <b>#{artist}</b>
-    `listening by #{friend}`
+    <u><i>listening by #{friend}</i></u>
     "
   end
 
@@ -328,7 +328,7 @@ defmodule MyScrobblesBot.LastFm do
     "<b>#{friend}</b> #{playcount_text(stats["userplaycount"])} to:
 
     <a href=\"#{photo_link}\">👥</a> <b>#{artist}</b>
-    `resquested by #{user}`
+    <u><i>resquested by #{user}</i></u>
     "
   end
 

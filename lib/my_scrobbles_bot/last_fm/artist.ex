@@ -22,6 +22,7 @@ defmodule MyScrobblesBot.LastFm.Artist do
         case Enum.count(data) do
           0 ->
             "
+
 🎧 <i>It comes from</i> <b>#{track.trackname}</b>
 "
 
@@ -29,6 +30,7 @@ defmodule MyScrobblesBot.LastFm.Artist do
             data
             |> Enum.reduce(
               "
+
 🎧 <i>It comes from</i> <b>#{track.trackname}</b>
 
 <b>Your plays of the most famous tracks:</b>
