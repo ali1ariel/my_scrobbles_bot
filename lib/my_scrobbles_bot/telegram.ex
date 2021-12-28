@@ -61,11 +61,6 @@ defmodule MyScrobblesBot.Telegram do
     Events.publish!(Events.TelegramMessage, m)
   end
 
-  @doc """
-    Enqueues processing for a inline query
-
-    Publishes it as an event in the pubsub
-  """
   def enqueue_processing!(%InlineQuery{} = iq) do
     Events.publish!(Events.TelegramInlineQuery, iq)
   end

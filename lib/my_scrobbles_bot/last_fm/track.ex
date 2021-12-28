@@ -42,7 +42,6 @@ defmodule MyScrobblesBot.LastFm.Track do
     {:ok, track} =
       LastFm.get_recent_track(%{username: username})
       |> error_handler(message)
-      |> IO.inspect
 
     {:ok, attrs} =
       LastFm.get_track(track)

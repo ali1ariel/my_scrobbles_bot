@@ -85,12 +85,9 @@ defmodule MyScrobblesBotWeb.Services.LastFm do
 
   @spec get_answer(Map.t()) :: {:error, Map.t()} | {:ok, Map.t()}
   def get_answer(args) do
-    IO.inspect(System.get_env("LAST_FM_TOKEN"))
 
-    IO.inspect(
-      get!("?format=json&api_key=#{System.get_env("LAST_FM_TOKEN")}&", query: args)
-      |> response_handler()
-    )
+    get!("?format=json&api_key=#{System.get_env("LAST_FM_TOKEN")}&", query: args)
+    |> response_handler()
   end
 
   defp response_handler(response) do

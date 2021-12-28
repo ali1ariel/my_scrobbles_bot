@@ -6,6 +6,7 @@ defmodule MyScrobblesBotWeb.Services.Telegram do
   use Tesla
 
   alias MyScrobblesBot.Telegram.ClientInputs
+  alias MyScrobblesBot.Telegram.AnswerInlineQuery
 
   # defp token, do: Application.get_env(:my_scrobbles_bot, __MODULE__)[:token]
 
@@ -24,7 +25,7 @@ defmodule MyScrobblesBotWeb.Services.Telegram do
   end
 
   def send_inline(params) do
-    build_and_send(&post/2, "/getInlineBotResults", ClientInputs.SendMessage, params)
+    build_and_send(&post/2, "/answerInlineQuery", ClientInputs.AnswerInlineQuery, params)
   end
 
   def send_photo(params) do
@@ -32,8 +33,8 @@ defmodule MyScrobblesBotWeb.Services.Telegram do
   end
 
   defp build_and_send(fun, route, module, params) do
-    with {:ok, input} <- IO.inspect(module.build(params)) do
-      fun.(route, input)
+    with {:ok, input} <- IO.inspect module.build(params) do
+      IO.inspect fun.(route, input |> Jason.encode!() |> IO.inspect)
     end
   end
 end
