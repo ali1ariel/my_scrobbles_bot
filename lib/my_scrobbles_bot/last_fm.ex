@@ -12,7 +12,8 @@ defmodule MyScrobblesBot.LastFm do
           |> String.to_integer()
           |> DateTime.from_unix!(:second)
 
-        "[👥](#{Enum.at(user["image"], 2)["#text"]}) <>#{Map.get(user, "name")}</b><br/> got #{Map.get(user, "playcount")} scrobbles since #{MyScrobblesBot.Helpers.month(date.month)} #{date.day}, #{date.year}."
+        "<a href=\"#{Enum.at(user["image"], 2)["#text"]}\">👥</a> <>#{Map.get(user, "name")}</b>
+ got #{Map.get(user, "playcount")} scrobbles since #{MyScrobblesBot.Helpers.month(date.month)} #{date.day}, #{date.year}."
 
       {:error, error} ->
         "error: #{error}"
@@ -39,7 +40,13 @@ defmodule MyScrobblesBot.LastFm do
         |> String.to_integer()
         |> DateTime.from_unix!(:second)
 
-      "[👥](#{Enum.at(user["image"], 2)["#text"]}) <b>#{Map.get(user, "name")}</b> got <i>#{Map.get(user, "playcount")} scrobbles</i> since #{MyScrobblesBot.Helpers.month(date.month)} #{date.day}, #{date.year}.\n\n<b>Some loved tracks</b>\n#{Enum.map(tracks, fn track -> "💘 #{track["artist"]["name"]} - #{track["name"]}\n" end)}\n`---premium---`\n"
+      "<a href=\"#{Enum.at(user["image"], 2)["#text"]}\">👥</a> <b>#{Map.get(user, "name")}</b> got <i>#{Map.get(user, "playcount")} scrobbles</i> since #{MyScrobblesBot.Helpers.month(date.month)} #{date.day}, #{date.year}.
+
+<b>Some loved tracks</b>
+#{Enum.map(tracks, fn track -> "💘 #{track["artist"]["name"]} - #{track["name"]}
+" end)}
+🎧💎
+"
     else
       {:error, error} ->
         "error: #{error}"
@@ -161,7 +168,7 @@ defmodule MyScrobblesBot.LastFm do
       }) do
     "<b>#{user}</b> #{playcount_user_text(playcount, now)} to:
 
-    #{if with_photo, do: "[🎶](#{photo_link})", else: "🎶"} <b>#{track}</b>
+    #{if with_photo, do: "<a href=\"#{photo_link}\">🎶</a>", else: "🎶"} <b>#{track}</b>
     💿 #{album}
     👥 #{artist}
     #{if loved, do: "💘"}
@@ -182,7 +189,7 @@ defmodule MyScrobblesBot.LastFm do
       }) do
     "<b>#{user}</b> #{playcount_user_text(playcount, now)} time to:
 
-    #{if with_photo, do: "[🎶](#{photo_link})", else: "🎶"} <b>#{track}</b>
+    #{if with_photo, do: "<a href=\"#{photo_link}\">🎶</a>", else: "🎶"} <b>#{track}</b>
     💿 #{album}
     👥 #{artist}
     #{if loved, do: "💘"}
@@ -202,7 +209,7 @@ defmodule MyScrobblesBot.LastFm do
       }) do
     "<b>#{user}</b> #{playcount_user_text(playcount, now)} to:
 
-    [💿](#{photo_link}) <b>#{album}</b>
+    <a href=\"#{photo_link}\">💿</a> <b>#{album}</b>
     👥 #{artist}
     "
   end
@@ -217,7 +224,7 @@ defmodule MyScrobblesBot.LastFm do
       }) do
     "<b>#{user}</b> #{playcount_user_text(playcount, now)} to:
 
-    [👥](#{photo_link}) <b>#{artist}</b>    "
+    <a href=\"#{photo_link}\">👥</a> <b>#{artist}</b>    "
   end
 
   def get_your_music(%{
@@ -232,7 +239,7 @@ defmodule MyScrobblesBot.LastFm do
       }) do
     "<b>#{user}</b> #{playcount_text(playcount)} to:
 
-    [🎶](#{photo_link}) <b>#{track}</b>
+    <a href=\"#{photo_link}\">🎶</a> <b>#{track}</b>
     💿 #{album}
     👥 #{artist}
     #{if loved, do: "💘"}
@@ -254,7 +261,7 @@ defmodule MyScrobblesBot.LastFm do
       }) do
     "<b>#{friend}</b> #{playcount_text(playcount)} to:
 
-    #{if with_photo, do: "[🎶](#{photo_link})", else: "🎶"} <b>#{track}</b>
+    #{if with_photo, do: "<a href=\"#{photo_link}\">🎶</a>", else: "🎶"} <b>#{track}</b>
     💿 #{album}
     👥 #{artist}
     #{if loved, do: "💘"}
@@ -273,7 +280,7 @@ defmodule MyScrobblesBot.LastFm do
       }) do
     "<b>#{user}</b> #{playcount_text(playcount)} to:
 
-    [💿](#{photo_link}) <b>#{album}</b>
+    <a href=\"#{photo_link}\">💿</a> <b>#{album}</b>
     👥 #{artist}
 
     `listening by #{friend}`
@@ -290,7 +297,7 @@ defmodule MyScrobblesBot.LastFm do
       }) do
     "<b>#{friend}</b> #{playcount_text(playcount)} to:
 
-    [💿](#{photo_link}) <b>#{album}</b>
+    <a href=\"#{photo_link}\">💿</a> <b>#{album}</b>
     👥 #{artist}
 
     `resquested by #{user}`
@@ -306,7 +313,7 @@ defmodule MyScrobblesBot.LastFm do
       }) do
     "<b>#{user}</b> #{playcount_text(stats["userplaycount"])} to:
 
-    [👥](#{photo_link}) <b>#{artist}</b>
+    <a href=\"#{photo_link}\">👥</a> <b>#{artist}</b>
     `listening by #{friend}`
     "
   end
@@ -320,7 +327,7 @@ defmodule MyScrobblesBot.LastFm do
       }) do
     "<b>#{friend}</b> #{playcount_text(stats["userplaycount"])} to:
 
-    [👥](#{photo_link}) <b>#{artist}</b>
+    <a href=\"#{photo_link}\">👥</a> <b>#{artist}</b>
     `resquested by #{user}`
     "
   end

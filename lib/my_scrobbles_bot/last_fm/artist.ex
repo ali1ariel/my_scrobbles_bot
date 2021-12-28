@@ -21,22 +21,30 @@ defmodule MyScrobblesBot.LastFm.Artist do
 
         case Enum.count(data) do
           0 ->
-            "\n🎧 <i>It comes from</i> <b>#{track.trackname}</b>\n"
+            "
+🎧 <i>It comes from</i> <b>#{track.trackname}</b>
+"
 
           _ ->
             data
             |> Enum.reduce(
-              "\n🎧 <i>It comes from</i> <b>#{track.trackname}</b>\n<br/>\n<b>Your plays of the most famous tracks:</b>\n",
+              "
+🎧 <i>It comes from</i> <b>#{track.trackname}</b>
+
+<b>Your plays of the most famous tracks:</b>
+",
               fn %{
                    track: track,
                    userloved?: loved,
                    playcount: count
                  },
                  acc ->
-                "#{acc}#{if loved, do: "💘", else: "▪️"} <b>#{track}</b> - _#{count} plays_\n"
+                "#{acc}#{if loved, do: "💘", else: "▪️"} <b>#{track}</b> - <i>#{count} plays</i>
+"
               end
             )
-            |> then(&"#{&1}`---premium---`\n")
+            |> then(&"#{&1}🎧💎
+")
         end
       else
         ""

@@ -43,7 +43,6 @@ defmodule MyScrobblesBotWeb.Services.LastFm do
           {:error, Map.t()} | {:ok, Map.t()}
   def get_track(%{artist: artist, trackname: trackname, username: username}) do
     method = "track.getinfo"
-
     get_answer(%{
       "method" => method,
       "artist" => artist,

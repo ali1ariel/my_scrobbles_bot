@@ -19,22 +19,29 @@ defmodule MyScrobblesBot.LastFm.Album do
 
         case Enum.count(data) do
           0 ->
-            "\n🎧 <i>It comes from</i> <b>#{track.trackname}</b>\n"
+            "
+🎧 <i>It comes from</i> <b>#{track.trackname}</b>
+"
 
           _ ->
             data
             |> Enum.reduce(
-              "\n🎧 <i>It comes from</i> </b>#{track.trackname}</b>\n<br/>\n<b>Your power tracks of this album:</b>\n",
+              "
+🎧 <i>It comes from</i> <b>#{track.trackname}</b>
+
+<b>Your power tracks of this album:</b>
+",
               fn %{
                    track: track,
                    userloved?: loved,
                    playcount: count
                  },
                  acc ->
-                "#{acc}#{if loved, do: "💘", else: "▪️"} <b>#{track}</b> - _#{count} plays_\n"
+                "#{acc}#{if loved, do: "💘", else: "▪️"} <b>#{track}</b> - <i>#{count} plays</i>
+"
               end
             )
-            |> then(&"#{&1}`---premium---`")
+            |> then(&"#{&1}🎧💎")
         end
       else
         ""
@@ -45,7 +52,8 @@ defmodule MyScrobblesBot.LastFm.Album do
       |> Map.merge(%{with_photo?: false, user: message.from.first_name})
 
     msg = LastFm.get_now_album(query)
-    %{text: "#{msg}#{extra}\n", parse_mode: "HTML", chat_id: message.chat_id}
+    %{text: "#{msg}#{extra}
+", parse_mode: "HTML", chat_id: message.chat_id}
   end
 
   def youralbum(message) do

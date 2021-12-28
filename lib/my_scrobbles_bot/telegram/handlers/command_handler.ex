@@ -56,7 +56,8 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
       _ ->
         %{
           text:
-            " <i>User not found, do you did your register? please \"/msregister yourlastfmusername\" to register your last fm username.</i> \n <i>Usuário não encontrado, você já se registrou?  registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pelo seu user do last fm.<i> ",
+            " <i>User not found, do you did your register? please \"/msregister yourlastfmusername\" to register your last fm username.</i>
+ <i>Usuário não encontrado, você já se registrou?  registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pelo seu user do last fm.<i> ",
           parse_mode: "HTML",
           chat_id: message.chat_id,
           reply_to_message_id: message.message_id
@@ -74,7 +75,9 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
       "start" ->
         %{
           text:
-            "_welcome, please, register with /msregister yourlastfmusername, changing yourlastfmusername with your last fm username._\n------------------\n_Bem vindo, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pelo seu user do last fm._",
+            "_welcome, please, register with /msregister yourlastfmusername, changing yourlastfmusername with your last fm username._
+------------------
+_Bem vindo, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pelo seu user do last fm._",
           parse_mode: "HTML",
           chat_id: message.chat_id,
           reply_to_message_id: message.message_id
@@ -130,7 +133,9 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
 
         %{
           text:
-            "please, register with /msregister yourlastfmusername, changing yourlastfmusername with your last fm username._\n------------------\npor favor, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pelo seu user do last fm._",
+            "please, register with /msregister yourlastfmusername, changing yourlastfmusername with your last fm username._
+------------------
+por favor, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pelo seu user do last fm._",
           parse_mode: "HTML",
           chat_id: message.chat_id,
           reply_to_message_id: message.message_id
@@ -283,7 +288,9 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
       when command in ["lt", "artist", "album"] do
     %{
       text:
-        "Esse bot está em BETA e grupo não está autorizado no momento, por favor, me removam do grupo, para me usar, entrem em @mygroupfm ou me usem no privado, porém, no momento recomendamos usar o @MeuLastFMBot.\n This bot is in BETA and this group is not allowed at this moment, please remove me, to use, please come to @mygroupfm or talk to me on my private, but we recommend to use @MeuLastFMBot.\n",
+        "Esse bot está em BETA e grupo não está autorizado no momento, por favor, me removam do grupo, para me usar, entrem em @mygroupfm ou me usem no privado, porém, no momento recomendamos usar o @MeuLastFMBot.
+ This bot is in BETA and this group is not allowed at this moment, please remove me, to use, please come to @mygroupfm or talk to me on my private, but we recommend to use @MeuLastFMBot.
+",
       parse_mode: "HTML",
       chat_id: message.chat_id,
       reply_to_message_id: message.message_id
