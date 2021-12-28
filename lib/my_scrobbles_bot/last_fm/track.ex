@@ -4,7 +4,6 @@ defmodule MyScrobblesBot.LastFm.Track do
   alias MyScrobblesBot.Telegram.Message
   alias MyScrobblesBot.Accounts.User
 
-  alias MyScrobblesBot.Helpers
 
   def error_handler(request, %Message{} = message) do
     case request do
@@ -14,7 +13,7 @@ defmodule MyScrobblesBot.LastFm.Track do
       {:error, %{"message" => msg}} ->
         Telegram.send_message(%{
           text: msg,
-          parse_mode: "markdown",
+          parse_mode: "HTML",
           chat_id: message.chat_id,
           reply_to_message_id: message.message_id
         })
@@ -53,7 +52,7 @@ defmodule MyScrobblesBot.LastFm.Track do
       |> Map.merge(%{with_photo?: true, user: message.from.first_name})
 
     msg = LastFm.get_now_track(query)
-    %{text: msg, parse_mode: "markdown", chat_id: message.chat_id}
+    %{text: msg, parse_mode: "HTML", chat_id: message.chat_id}
   end
 
   def yourmusic(%Message{} = message) do
@@ -75,7 +74,7 @@ defmodule MyScrobblesBot.LastFm.Track do
       |> Map.merge(%{with_photo?: true, user: message.reply_to_message.from.first_name})
 
     msg = LastFm.get_now_track(query)
-    %{text: msg, parse_mode: "markdown", chat_id: message.chat_id}
+    %{text: msg, parse_mode: "HTML", chat_id: message.chat_id}
   end
 
   def mymusicmarked(%Message{} = message, %User{} = user) do
@@ -97,7 +96,7 @@ defmodule MyScrobblesBot.LastFm.Track do
 
     %{
       text: msg,
-      parse_mode: "markdown",
+      parse_mode: "HTML",
       chat_id: message.chat_id,
       reply_to_message_id: message.message_id
     }
@@ -119,7 +118,7 @@ defmodule MyScrobblesBot.LastFm.Track do
       |> Map.merge(%{with_photo?: false, user: message.from.first_name})
 
     msg = LastFm.get_now_track(query)
-    %{text: msg, parse_mode: "markdown", chat_id: message.chat_id}
+    %{text: msg, parse_mode: "HTML", chat_id: message.chat_id}
   end
 
   def mymusicphoto(%Message{} = message, %User{} = user) do
@@ -139,7 +138,7 @@ defmodule MyScrobblesBot.LastFm.Track do
 
     msg = LastFm.get_now_track(query)
 
-    {:ok, _} = Telegram.send_photo(%{photo: query.photo, caption: msg, parse_mode: "markdown"})
+    {:ok, _} = Telegram.send_photo(%{photo: query.photo, caption: msg, parse_mode: "HTML"})
   end
 
   def mytrack(%Message{} = message) do
@@ -174,7 +173,7 @@ defmodule MyScrobblesBot.LastFm.Track do
       |> Map.merge(%{with_photo?: true, user: user_first_name, friend: friend_first_name})
 
     msg = LastFm.get_my_music(query)
-    %{text: msg, parse_mode: "markdown", chat_id: message.chat_id}
+    %{text: msg, parse_mode: "HTML", chat_id: message.chat_id}
   end
 
   def yourtrack(%Message{} = message) do
@@ -209,6 +208,6 @@ defmodule MyScrobblesBot.LastFm.Track do
       |> Map.merge(%{with_photo?: true, user: user_first_name, friend: friend_first_name})
 
     msg = LastFm.get_your_music(query)
-    %{text: msg, parse_mode: "markdown", chat_id: message.chat_id}
+    %{text: msg, parse_mode: "HTML", chat_id: message.chat_id}
   end
 end

@@ -21,19 +21,19 @@ defmodule MyScrobblesBot.LastFm.Artist do
 
         case Enum.count(data) do
           0 ->
-            "\n🎧 _It comes from_ *#{track.trackname}*\n"
+            "\n🎧 <i>It comes from</i> <b>#{track.trackname}</b>\n"
 
           _ ->
             data
             |> Enum.reduce(
-              "\n🎧 _It comes from_ *#{track.trackname}*\n\n*Your plays of the most famous tracks:*\n",
+              "\n🎧 <i>It comes from</i> <b>#{track.trackname}</b>\n<br/>\n<b>Your plays of the most famous tracks:</b>\n",
               fn %{
                    track: track,
                    userloved?: loved,
                    playcount: count
                  },
                  acc ->
-                "#{acc}#{if loved, do: "💘", else: "▪️"} *#{track |> Helpers.escape_markdown()}* - _#{count} plays_\n"
+                "#{acc}#{if loved, do: "💘", else: "▪️"} <b>#{track}</b> - _#{count} plays_\n"
               end
             )
             |> then(&"#{&1}`---premium---`\n")
@@ -47,7 +47,7 @@ defmodule MyScrobblesBot.LastFm.Artist do
       |> Map.merge(%{with_photo?: false, user: message.from.first_name})
 
     msg = LastFm.get_now_artist(query)
-    %{text: "#{msg}#{extra}", parse_mode: "markdown", chat_id: message.chat_id}
+    %{text: "#{msg}#{extra}", parse_mode: "HTML", chat_id: message.chat_id}
   end
 
   def yourartist(message) do
@@ -77,7 +77,7 @@ defmodule MyScrobblesBot.LastFm.Artist do
       |> Map.merge(%{with_photo?: true, user: user_first_name, friend: friend_first_name})
 
     msg = LastFm.get_your_artist(query)
-    %{text: msg, parse_mode: "markdown", chat_id: message.chat_id}
+    %{text: msg, parse_mode: "HTML", chat_id: message.chat_id}
   end
 
   def myartist(message) do
@@ -108,7 +108,7 @@ defmodule MyScrobblesBot.LastFm.Artist do
       |> Map.merge(%{with_photo?: true, user: user_first_name, friend: friend_first_name})
 
     msg = LastFm.get_my_artist(query)
-    %{text: msg, parse_mode: "markdown", chat_id: message.chat_id}
+    %{text: msg, parse_mode: "HTML", chat_id: message.chat_id}
   end
 
   def artist_tracks(tracks, username) when is_list(tracks) do

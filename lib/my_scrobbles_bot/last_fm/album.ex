@@ -19,19 +19,19 @@ defmodule MyScrobblesBot.LastFm.Album do
 
         case Enum.count(data) do
           0 ->
-            "\n🎧 _It comes from_ *#{track.trackname}*\n"
+            "\n🎧 <i>It comes from</i> <b>#{track.trackname}</b>\n"
 
           _ ->
             data
             |> Enum.reduce(
-              "\n🎧 _It comes from_ *#{track.trackname}*\n\n*Your power tracks of this album:*\n",
+              "\n🎧 <i>It comes from</i> </b>#{track.trackname}</b>\n<br/>\n<b>Your power tracks of this album:</b>\n",
               fn %{
                    track: track,
                    userloved?: loved,
                    playcount: count
                  },
                  acc ->
-                "#{acc}#{if loved, do: "💘", else: "▪️"} *#{track |> Helpers.escape_markdown()}* - _#{count} plays_\n"
+                "#{acc}#{if loved, do: "💘", else: "▪️"} <b>#{track}</b> - _#{count} plays_\n"
               end
             )
             |> then(&"#{&1}`---premium---`")
@@ -45,7 +45,7 @@ defmodule MyScrobblesBot.LastFm.Album do
       |> Map.merge(%{with_photo?: false, user: message.from.first_name})
 
     msg = LastFm.get_now_album(query)
-    %{text: "#{msg}#{extra}\n", parse_mode: "markdown", chat_id: message.chat_id}
+    %{text: "#{msg}#{extra}\n", parse_mode: "HTML", chat_id: message.chat_id}
   end
 
   def youralbum(message) do
@@ -75,7 +75,7 @@ defmodule MyScrobblesBot.LastFm.Album do
       |> Map.merge(%{with_photo?: true, user: user_first_name, friend: friend_first_name})
 
     msg = LastFm.get_your_album(query)
-    %{text: msg, parse_mode: "markdown", chat_id: message.chat_id}
+    %{text: msg, parse_mode: "HTML", chat_id: message.chat_id}
   end
 
   def myalbum(message) do
@@ -105,7 +105,7 @@ defmodule MyScrobblesBot.LastFm.Album do
       |> Map.merge(%{with_photo?: true, user: user_first_name, friend: friend_first_name})
 
     msg = LastFm.get_my_album(query)
-    %{text: msg, parse_mode: "markdown", chat_id: message.chat_id}
+    %{text: msg, parse_mode: "HTML", chat_id: message.chat_id}
   end
 
   def album_tracks(tracks, username) when is_list(tracks) do

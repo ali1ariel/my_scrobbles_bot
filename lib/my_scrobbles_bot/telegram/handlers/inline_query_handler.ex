@@ -17,8 +17,8 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryHandler do
     # {:ok, nil}
     %{
       chat_id: inline_query.inline_query_id,
-      text: "this is *just* a _sample_ message",
-      parse_mode: "markdown"
+      text: "this is <b>just</b> a <i>sample</i> message",
+      parse_mode: "HTML"
     }
     |> Telegram.send_inline()
   end

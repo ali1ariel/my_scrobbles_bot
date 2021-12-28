@@ -14,7 +14,7 @@ defmodule MyScrobblesBot.LastFm.User do
         LastFm.get_user(%{username: username})
       end
 
-    %{text: msg, parse_mode: "markdown", chat_id: message.chat_id}
+    %{text: msg, parse_mode: "HTML", chat_id: message.chat_id}
   end
 
   def youruser(message) do
@@ -24,7 +24,7 @@ defmodule MyScrobblesBot.LastFm.User do
       )
 
     msg = LastFm.get_user(%{username: username})
-    %{text: msg, parse_mode: "markdown", chat_id: message.chat_id}
+    %{text: msg, parse_mode: "HTML", chat_id: message.chat_id}
   end
 
   def register(message) do
@@ -35,6 +35,6 @@ defmodule MyScrobblesBot.LastFm.User do
       )
 
     msg = LastFm.get_user(%{username: username})
-    %{text: msg, parse_mode: "markdown", chat_id: message.chat_id}
+    %{text: msg, parse_mode: "HTML", chat_id: message.chat_id}
   end
 end

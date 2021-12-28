@@ -29,8 +29,8 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
     # %{
     #   chat_id: c_id,
     #   reply_to_message_id: m_id,
-    #   text: "this is *just* a _sample_ message",
-    #   parse_mode: "markdown"
+    #   text: "this is <b>just</b> a <i>sample</i> message",
+    #   parse_mode: "HTML"
 
     # }
   end
@@ -56,8 +56,8 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
       _ ->
         %{
           text:
-            " _User not found, do you did your register? please \"/msregister yourlastfmusername\" to register your last fm username._ \n _Usuário não encontrado, você já se registrou?  registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pelo seu user do last fm._ ",
-          parse_mode: "markdown",
+            " <i>User not found, do you did your register? please \"/msregister yourlastfmusername\" to register your last fm username.</i> \n <i>Usuário não encontrado, você já se registrou?  registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pelo seu user do last fm.<i> ",
+          parse_mode: "HTML",
           chat_id: message.chat_id,
           reply_to_message_id: message.message_id
         }
@@ -75,7 +75,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
         %{
           text:
             "_welcome, please, register with /msregister yourlastfmusername, changing yourlastfmusername with your last fm username._\n------------------\n_Bem vindo, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pelo seu user do last fm._",
-          parse_mode: "markdown",
+          parse_mode: "HTML",
           chat_id: message.chat_id,
           reply_to_message_id: message.message_id
         }
@@ -131,7 +131,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
         %{
           text:
             "please, register with /msregister yourlastfmusername, changing yourlastfmusername with your last fm username._\n------------------\npor favor, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pelo seu user do last fm._",
-          parse_mode: "markdown",
+          parse_mode: "HTML",
           chat_id: message.chat_id,
           reply_to_message_id: message.message_id
         }
@@ -145,7 +145,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
                  MyScrobblesBot.Repo.get_by(MyScrobblesBot.Accounts.User, last_fm_username: info) do
             %{
               text: "_user: #{user.telegram_id}, ispremium: #{user.is_premium?} _",
-              parse_mode: "markdown",
+              parse_mode: "HTML",
               chat_id: message.chat_id,
               reply_to_message_id: message.message_id
             }
@@ -153,7 +153,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
         else
           %{
             text: "you're not an administrator.",
-            parse_mode: "markdown",
+            parse_mode: "HTML",
             chat_id: message.chat_id,
             reply_to_message_id: message.message_id
           }
@@ -167,7 +167,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
                  ) do
             %{
               text: "user: #{user.telegram_id}, ispremium: #{user.is_premium?}",
-              parse_mode: "markdown",
+              parse_mode: "HTML",
               chat_id: message.chat_id,
               reply_to_message_id: message.message_id
             }
@@ -175,7 +175,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
         else
           %{
             text: "you're not an administrator.",
-            parse_mode: "markdown",
+            parse_mode: "HTML",
             chat_id: message.chat_id,
             reply_to_message_id: message.message_id
           }
@@ -195,7 +195,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
                  MyScrobblesBot.Accounts.promote_user(user, List.last(infos)) do
             %{
               text: "_user added with successful to the premium life._",
-              parse_mode: "markdown",
+              parse_mode: "HTML",
               chat_id: message.chat_id,
               reply_to_message_id: message.message_id
             }
@@ -203,7 +203,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
         else
           %{
             text: "you're not an administrator.",
-            parse_mode: "markdown",
+            parse_mode: "HTML",
             chat_id: message.chat_id,
             reply_to_message_id: message.message_id
           }
@@ -214,7 +214,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
           with {:ok, %{expiration: _date}} <- MyScrobblesBot.Accounts.promote_user(message, info) do
             %{
               text: "welcome #{message.reply_to_message.from.first_name} to the premium life.",
-              parse_mode: "markdown",
+              parse_mode: "HTML",
               chat_id: message.chat_id,
               reply_to_message_id: message.message_id
             }
@@ -222,7 +222,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
         else
           %{
             text: "you're not an administrator.",
-            parse_mode: "markdown",
+            parse_mode: "HTML",
             chat_id: message.chat_id,
             reply_to_message_id: message.message_id
           }
@@ -233,7 +233,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
           with {:ok, :removed} <- MyScrobblesBot.Accounts.remove_premium_user(message) do
             %{
               text: "successfully removed.",
-              parse_mode: "markdown",
+              parse_mode: "HTML",
               chat_id: message.chat_id,
               reply_to_message_id: message.message_id
             }
@@ -241,7 +241,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
             {:ok, :not_premium} ->
               %{
                 text: "#{message.reply_to_message.from.first_name} is not a premium user.",
-                parse_mode: "markdown",
+                parse_mode: "HTML",
                 chat_id: message.chat_id,
                 reply_to_message_id: message.message_id
               }
@@ -249,7 +249,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
         else
           %{
             text: "you're not an administrator.",
-            parse_mode: "markdown",
+            parse_mode: "HTML",
             chat_id: message.chat_id,
             reply_to_message_id: message.message_id
           }
@@ -263,7 +263,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
           with {:ok, :removed} <- MyScrobblesBot.Accounts.remove_premium_user(user) do
             %{
               text: "_usuccessfully removed._",
-              parse_mode: "markdown",
+              parse_mode: "HTML",
               chat_id: message.chat_id,
               reply_to_message_id: message.message_id
             }
@@ -271,7 +271,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
         else
           %{
             text: "you're not an administrator.",
-            parse_mode: "markdown",
+            parse_mode: "HTML",
             chat_id: message.chat_id,
             reply_to_message_id: message.message_id
           }
@@ -284,7 +284,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
     %{
       text:
         "Esse bot está em BETA e grupo não está autorizado no momento, por favor, me removam do grupo, para me usar, entrem em @mygroupfm ou me usem no privado, porém, no momento recomendamos usar o @MeuLastFMBot.\n This bot is in BETA and this group is not allowed at this moment, please remove me, to use, please come to @mygroupfm or talk to me on my private, but we recommend to use @MeuLastFMBot.\n",
-      parse_mode: "markdown",
+      parse_mode: "HTML",
       chat_id: message.chat_id,
       reply_to_message_id: message.message_id
     }
@@ -298,7 +298,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
       {:created, _user} ->
         %{
           text: "_user created successfully._",
-          parse_mode: "markdown",
+          parse_mode: "HTML",
           chat_id: message.chat_id,
           reply_to_message_id: message.message_id
         }
@@ -306,7 +306,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
       {:updated, _user} ->
         %{
           text: "_user updated successfully._",
-          parse_mode: "markdown",
+          parse_mode: "HTML",
           chat_id: message.chat_id,
           reply_to_message_id: message.message_id
         }
@@ -314,7 +314,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
       {:error, error} ->
         %{
           text: "_oh sorry you got the error: #{inspect(error)}._",
-          parse_mode: "markdown",
+          parse_mode: "HTML",
           chat_id: message.chat_id,
           reply_to_message_id: message.message_id
         }

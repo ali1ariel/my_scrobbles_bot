@@ -1,6 +1,5 @@
 defmodule MyScrobblesBot.LastFm do
 
-  alias MyScrobblesBot.Helpers
   @doc """
   request user information in Last FM API
   """
@@ -13,7 +12,7 @@ defmodule MyScrobblesBot.LastFm do
           |> String.to_integer()
           |> DateTime.from_unix!(:second)
 
-        "[👥](#{Enum.at(user["image"], 2)["#text"]}) *#{Map.get(user, "name")}* \n got #{Map.get(user, "playcount")} scrobbles since #{MyScrobblesBot.Helpers.month(date.month)} #{date.day}, #{date.year}."
+        "[👥](#{Enum.at(user["image"], 2)["#text"]}) <>#{Map.get(user, "name")}</b><br/> got #{Map.get(user, "playcount")} scrobbles since #{MyScrobblesBot.Helpers.month(date.month)} #{date.day}, #{date.year}."
 
       {:error, error} ->
         "error: #{error}"
@@ -40,7 +39,7 @@ defmodule MyScrobblesBot.LastFm do
         |> String.to_integer()
         |> DateTime.from_unix!(:second)
 
-      "[👥](#{Enum.at(user["image"], 2)["#text"]}) *#{Map.get(user, "name")}* got _#{Map.get(user, "playcount")} scrobbles_ since #{MyScrobblesBot.Helpers.month(date.month)} #{date.day}, #{date.year}.\n\n*Some loved tracks*\n#{Enum.map(tracks, fn track -> "💘 #{track["artist"]["name"]} - #{track["name"]}\n" end)}\n`---premium---`\n"
+      "[👥](#{Enum.at(user["image"], 2)["#text"]}) <b>#{Map.get(user, "name")}</b> got <i>#{Map.get(user, "playcount")} scrobbles</i> since #{MyScrobblesBot.Helpers.month(date.month)} #{date.day}, #{date.year}.\n\n<b>Some loved tracks</b>\n#{Enum.map(tracks, fn track -> "💘 #{track["artist"]["name"]} - #{track["name"]}\n" end)}\n`---premium---`\n"
     else
       {:error, error} ->
         "error: #{error}"
@@ -160,11 +159,11 @@ defmodule MyScrobblesBot.LastFm do
         photo: photo_link,
         with_photo?: with_photo
       }) do
-    "*#{user}* #{playcount_user_text(playcount, now)} to:
+    "<b>#{user}</b> #{playcount_user_text(playcount, now)} to:
 
-    #{if with_photo, do: "[🎶](#{photo_link})", else: "🎶"} *#{track |> Helpers.escape_markdown()}*
-    💿 #{album |> Helpers.escape_markdown()}
-    👥 #{artist |> Helpers.escape_markdown()}
+    #{if with_photo, do: "[🎶](#{photo_link})", else: "🎶"} <b>#{track}</b>
+    💿 #{album}
+    👥 #{artist}
     #{if loved, do: "💘"}
     "
   end
@@ -181,11 +180,11 @@ defmodule MyScrobblesBot.LastFm do
         with_photo?: with_photo,
         verse: verse
       }) do
-    "*#{user}* #{playcount_user_text(playcount, now)} time to:
+    "<b>#{user}</b> #{playcount_user_text(playcount, now)} time to:
 
-    #{if with_photo, do: "[🎶](#{photo_link})", else: "🎶"} *#{track |> Helpers.escape_markdown()}*
-    💿 #{album |> Helpers.escape_markdown()}
-    👥 #{artist |> Helpers.escape_markdown()}
+    #{if with_photo, do: "[🎶](#{photo_link})", else: "🎶"} <b>#{track}</b>
+    💿 #{album}
+    👥 #{artist}
     #{if loved, do: "💘"}
 
     `#{verse}`
@@ -201,10 +200,10 @@ defmodule MyScrobblesBot.LastFm do
         album: album,
         photo: photo_link
       }) do
-    "*#{user}* #{playcount_user_text(playcount, now)} to:
+    "<b>#{user}</b> #{playcount_user_text(playcount, now)} to:
 
-    [💿](#{photo_link}) *#{album |> Helpers.escape_markdown()}*
-    👥 #{artist |> Helpers.escape_markdown()}
+    [💿](#{photo_link}) <b>#{album}</b>
+    👥 #{artist}
     "
   end
 
@@ -216,10 +215,9 @@ defmodule MyScrobblesBot.LastFm do
         artist: artist,
         photo: photo_link
       }) do
-    "*#{user}* #{playcount_user_text(playcount, now)} to:
+    "<b>#{user}</b> #{playcount_user_text(playcount, now)} to:
 
-    [👥](#{photo_link}) *#{artist |> Helpers.escape_markdown()}*
-    "
+    [👥](#{photo_link}) <b>#{artist}</b>    "
   end
 
   def get_your_music(%{
@@ -232,11 +230,11 @@ defmodule MyScrobblesBot.LastFm do
         userloved?: loved,
         photo: photo_link
       }) do
-    "*#{user}* #{playcount_text(playcount)} to:
+    "<b>#{user}</b> #{playcount_text(playcount)} to:
 
-    [🎶](#{photo_link}) *#{track |> Helpers.escape_markdown()}*
-    💿 #{album |> Helpers.escape_markdown()}
-    👥 #{artist |> Helpers.escape_markdown()}
+    [🎶](#{photo_link}) <b>#{track}</b>
+    💿 #{album}
+    👥 #{artist}
     #{if loved, do: "💘"}
 
     `listening by #{friend}`
@@ -254,11 +252,11 @@ defmodule MyScrobblesBot.LastFm do
         photo: photo_link,
         with_photo?: with_photo
       }) do
-    "*#{friend}* #{playcount_text(playcount)} to:
+    "<b>#{friend}</b> #{playcount_text(playcount)} to:
 
-    #{if with_photo, do: "[🎶](#{photo_link})", else: "🎶"} *#{track |> Helpers.escape_markdown()}*
-    💿 #{album |> Helpers.escape_markdown()}
-    👥 #{artist |> Helpers.escape_markdown()}
+    #{if with_photo, do: "[🎶](#{photo_link})", else: "🎶"} <b>#{track}</b>
+    💿 #{album}
+    👥 #{artist}
     #{if loved, do: "💘"}
 
     `resquested by #{user}`
@@ -273,10 +271,10 @@ defmodule MyScrobblesBot.LastFm do
         album: album,
         photo: photo_link
       }) do
-    "*#{user}* #{playcount_text(playcount)} to:
+    "<b>#{user}</b> #{playcount_text(playcount)} to:
 
-    [💿](#{photo_link}) *#{album |> Helpers.escape_markdown()}*
-    👥 #{artist |> Helpers.escape_markdown()}
+    [💿](#{photo_link}) <b>#{album}</b>
+    👥 #{artist}
 
     `listening by #{friend}`
     "
@@ -290,10 +288,10 @@ defmodule MyScrobblesBot.LastFm do
         album: album,
         photo: photo_link
       }) do
-    "*#{friend}* #{playcount_text(playcount)} to:
+    "<b>#{friend}</b> #{playcount_text(playcount)} to:
 
-    [💿](#{photo_link}) *#{album |> Helpers.escape_markdown()}*
-    👥 #{artist |> Helpers.escape_markdown()}
+    [💿](#{photo_link}) <b>#{album}</b>
+    👥 #{artist}
 
     `resquested by #{user}`
     "
@@ -306,10 +304,9 @@ defmodule MyScrobblesBot.LastFm do
         :artist => artist,
         :photo => photo_link
       }) do
-    "*#{user}* #{playcount_text(stats["userplaycount"])} to:
+    "<b>#{user}</b> #{playcount_text(stats["userplaycount"])} to:
 
-    [👥](#{photo_link}) *#{artist |> Helpers.escape_markdown()}*
-
+    [👥](#{photo_link}) <b>#{artist}</b>
     `listening by #{friend}`
     "
   end
@@ -321,19 +318,18 @@ defmodule MyScrobblesBot.LastFm do
         :artist => artist,
         :photo => photo_link
       }) do
-    "*#{friend}* #{playcount_text(stats["userplaycount"])} to:
+    "<b>#{friend}</b> #{playcount_text(stats["userplaycount"])} to:
 
-    [👥](#{photo_link}) *#{artist |> Helpers.escape_markdown()}*
-
+    [👥](#{photo_link}) <b>#{artist}</b>
     `resquested by #{user}`
     "
   end
 
   def playcount_text(playcount) when is_binary(playcount) do
     case playcount do
-      "0" -> "_never_ listened"
-      "1" -> "listened only _once_"
-      value -> "listened _#{value}_ times"
+      "0" -> "<i>never</i> listened"
+      "1" -> "listened only <i>once</i>"
+      value -> "listened <i>#{value}</i> times"
     end
   end
 
@@ -345,13 +341,13 @@ defmodule MyScrobblesBot.LastFm do
 
   def playcount_user_text(playcount, now) when is_binary(playcount) do
     case {String.last(playcount), now} do
-      {"0", true} -> "is listening for the *#{String.to_integer(playcount) + 1}st* time"
-      {"1", true} -> "is listening for the *#{String.to_integer(playcount) + 1}nd* time"
-      {"2", true} -> "is listening for the *#{String.to_integer(playcount) + 1}rd* time"
-      {_, true} -> "is listening for the *#{String.to_integer(playcount) + 1}th* time"
-      {"0", false} when playcount == "0" -> "_never_ listened"
-      {"1", false} when playcount == "1" -> "listened only _once_"
-      {_, false} -> "listened _#{playcount}_ times"
+      {"0", true} -> "is listening for the <b>#{String.to_integer(playcount) + 1}st</b> time"
+      {"1", true} -> "is listening for the <b>#{String.to_integer(playcount) + 1}nd</b> time"
+      {"2", true} -> "is listening for the <b>#{String.to_integer(playcount) + 1}rd</b> time"
+      {_, true} -> "is listening for the <b>#{String.to_integer(playcount) + 1}th</b> time"
+      {"0", false} when playcount == "0" -> "<i>never</i> listened"
+      {"1", false} when playcount == "1" -> "listened only <i>once</i>"
+      {_, false} -> "listened <i>#{playcount}</i> times"
     end
   end
 
