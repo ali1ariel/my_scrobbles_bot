@@ -68,6 +68,9 @@ defmodule MyScrobblesBot.LastFm do
              }}
   def get_recent_track(attrs) do
     case MyScrobblesBotWeb.Services.LastFm.get_recent_tracks(attrs) do
+      {:ok, %{"error" =>  error, "message" => message}} ->
+        {:error, "#{error} - #{message}"}
+
       {:ok, result} ->
         track =
           result["recenttracks"]["track"]
@@ -85,8 +88,6 @@ defmodule MyScrobblesBot.LastFm do
            username: attrs.username
          }}
 
-      {:ok, %{"error" =>  error, "message" => message}} ->
-        {:error, "#{error} - #{message}"}
     end
   end
 
