@@ -205,11 +205,12 @@ defmodule MyScrobblesBot.LastFm do
         playing?: now,
         artist: artist,
         album: album,
-        photo: photo_link
+        photo: photo_link,
+        with_photo?: with_photo
       }) do
     "<b>#{user}</b> #{playcount_user_text(playcount, now)} to:
 
-    <a href=\"#{photo_link}\">💿</a> <b>#{album}</b>
+    #{if with_photo, do: "<a href=\"#{photo_link}\">💿</a>", else: "💿"} <b>#{album}</b>
     👥 #{artist}
     "
   end
@@ -220,11 +221,12 @@ defmodule MyScrobblesBot.LastFm do
         playcount: playcount,
         playing?: now,
         artist: artist,
-        photo: photo_link
+        photo: photo_link,
+        with_photo?: with_photo
       }) do
     "<b>#{user}</b> #{playcount_user_text(playcount, now)} to:
 
-    <a href=\"#{photo_link}\">👥</a> <b>#{artist}</b>    "
+    #{if with_photo, do: "<a href=\"#{photo_link}\">👥</a>", else: "👥"} <b>#{artist}</b>    "
   end
 
   def get_your_music(%{

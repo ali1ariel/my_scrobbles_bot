@@ -1,5 +1,6 @@
 defmodule MyScrobblesBot.Helpers do
   import MyScrobblesBot.Gettext
+  alias MyScrobblesBot.Telegram.Message
 
   def month(month) do
     case month do
@@ -18,9 +19,36 @@ defmodule MyScrobblesBot.Helpers do
     end
   end
 
-  def escape_markdown(string) do
-    if String.contains?(string, "*"), do: String.replace(string, "*", "\*"), else: string
-    if String.contains?(string, "_"), do: String.replace(string, "_", "\_"), else: string
-    if String.contains?(string, "`"), do: String.replace(string, "`", "\`"), else: string
+
+  def error_handler(request, %Message{} = message) do
+    case request do
+      {:ok, info} ->
+        {:ok, info}
+
+      {:error, %{"message" => msg}} ->
+        Telegram.send_message(%{
+          text: msg,
+          parse_mode: "HTML",
+          chat_id: message.chat_id,
+          reply_to_message_id: message.message_id
+        })
+
+      {:error, %{reason: reason}} ->
+        Telegram.send_message(%{
+          text: reason,
+          parse_mode: "HTML",
+          chat_id: message.chat_id,
+          reply_to_message_id: message.message_id
+        })
+
+      {:error, error} ->
+        Telegram.send_message(%{
+          text: error,
+          parse_mode: "HTML",
+          chat_id: message.chat_id,
+          reply_to_message_id: message.message_id
+        })
+    end
   end
+
 end

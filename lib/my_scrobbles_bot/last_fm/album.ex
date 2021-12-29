@@ -51,7 +51,7 @@ defmodule MyScrobblesBot.LastFm.Album do
 
     query =
       Map.merge(track, %{playcount: attrs["userplaycount"]})
-      |> Map.merge(%{with_photo?: false, user: message.from.first_name})
+      |> Map.merge(%{with_photo?: true, user: message.from.first_name})
 
     msg = LastFm.get_now_album(query)
     %{text: "#{msg}#{extra}

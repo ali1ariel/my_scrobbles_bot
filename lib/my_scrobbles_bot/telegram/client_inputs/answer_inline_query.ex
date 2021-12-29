@@ -7,13 +7,34 @@ defmodule MyScrobblesBot.Telegram.ClientInputs.AnswerInlineQuery do
 
   # maybe move this soon?
 
+  defmodule InlineKeyboardButton do
+    use Ecto.Schema
+    @derive Jason.Encoder
+
+    embedded_schema do
+      field :text, :string
+      field :url, :string
+      field :callback_data, :string
+    end
+  end
+
+  defmodule InlineKeyboardMarkup do
+    use Ecto.Schema
+    @derive Jason.Encoder
+
+    embedded_schema do
+      field :inline_keyboard, {:array, {:array, :map}}
+      # embeds_many :inline_keyboard, InlineKeyboardButton
+    end
+  end
+
   defmodule InputMessageContent do
     use Ecto.Schema
     @derive Jason.Encoder
 
     embedded_schema do
-      field :message_text, :string
-      field :parse_mode, :string
+      field :message_text, :string, default: ""
+      field :parse_mode, :string, default: "HTML"
     end
   end
 
@@ -37,20 +58,21 @@ defmodule MyScrobblesBot.Telegram.ClientInputs.AnswerInlineQuery do
           sticker: 9
         ]
 
-      field :title, :string
-      field :url, :string
-      field :hide_url, :boolean
-      field :description, :string
-      field :thumb_url, :string
-      field :photo_url, :string
-      field :gif_url, :string
-      field :mpeg4_url, :string
-      field :video_url, :string
-      field :audio_url, :string
-      field :voice_url, :string
-      field :document_url, :string
-      field :caption, :string
-      field :parse_mode, :string
+      field :title, :string, default: ""
+      field :url, :string, default: ""
+      field :hide_url, :boolean, default: true
+      field :description, :string, default: ""
+      field :thumb_url, :string, default: ""
+      field :photo_url, :string, default: ""
+      field :gif_url, :string, default: ""
+      field :mpeg4_url, :string, default: ""
+      field :video_url, :string, default: ""
+      field :audio_url, :string, default: ""
+      field :voice_url, :string, default: ""
+      field :document_url, :string, default: ""
+      field :caption, :string, default: ""
+      field :parse_mode, :string, default: "HTML"
+      embeds_one :reply_markup, InlineKeyboardMarkup
       embeds_one :input_message_content, InputMessageContent
     end
   end
@@ -101,12 +123,28 @@ defmodule MyScrobblesBot.Telegram.ClientInputs.AnswerInlineQuery do
       :parse_mode
     ])
     |> Changeset.cast_embed(:input_message_content, with: &input_message_content_changeset/2)
+    |> Changeset.cast_embed(:reply_markup, with: &reply_markup_changeset/2)
   end
 
 
   defp input_message_content_changeset(schema, params) do
     schema
     |> Changeset.cast(params, [:message_text, :parse_mode])
+  end
+
+  defp reply_markup_changeset(schema, params) do
+    schema
+    |> Changeset.cast(params, [:inline_keyboard])
+    # |> Changeset.cast_embed(:inline_keyboard, with: &inline_keyboard_changeset/2)
+  end
+
+  defp inline_keyboard_changeset(schema, params) do
+    schema
+    |> Changeset.cast(params, [
+      :text,
+      :url,
+      :callback_data
+    ])
   end
 
   defp put_answer_inline_query_id(%Ecto.Changeset{params: params} = changeset) do

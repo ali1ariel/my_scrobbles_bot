@@ -54,7 +54,7 @@ defmodule MyScrobblesBot.LastFm.Artist do
 
     query =
       Map.merge(track, %{playcount: attrs["stats"]["userplaycount"]})
-      |> Map.merge(%{with_photo?: false, user: message.from.first_name})
+      |> Map.merge(%{with_photo?: true, user: message.from.first_name})
 
     msg = LastFm.get_now_artist(query)
     %{text: "#{msg}#{extra}", parse_mode: "HTML", chat_id: message.chat_id}

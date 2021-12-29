@@ -34,7 +34,7 @@ defmodule MyScrobblesBotWeb.Services.Telegram do
 
   defp build_and_send(fun, route, module, params) do
     with {:ok, input} <- IO.inspect module.build(params) do
-      IO.inspect fun.(route, input |> Jason.encode!() |> IO.inspect)
+      IO.inspect fun.(route, input)
     end
   end
 end
