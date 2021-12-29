@@ -85,8 +85,8 @@ defmodule MyScrobblesBot.LastFm do
            username: attrs.username
          }}
 
-      {:error, error} ->
-        {:error, error}
+      {:ok, %{"error" =>  error, "message" => message}} ->
+        {:error, "#{error} - #{message}"}
     end
   end
 
@@ -108,8 +108,8 @@ defmodule MyScrobblesBot.LastFm do
            playcount: track["userplaycount"] |> String.to_integer()
          }}
 
-      {:error, error} ->
-        {:error, error}
+      {:ok, %{"error" =>  error, "message" => message}} ->
+        {:error, "#{error} - #{message}"}
     end
   end
 
@@ -124,8 +124,8 @@ defmodule MyScrobblesBot.LastFm do
       {:ok, %{"album" => album}} ->
         {:ok, album}
 
-      {:error, error} ->
-        {:error, error}
+      {:ok, %{"error" =>  error, "message" => message}} ->
+        {:error, "#{error} - #{message}"}
     end
   end
 
@@ -140,8 +140,8 @@ defmodule MyScrobblesBot.LastFm do
       {:ok, %{"artist" => artist}} ->
         {:ok, artist}
 
-      {:error, error} ->
-        {:error, error}
+      {:ok, %{"error" =>  error, "message" => message}} ->
+        {:error, "#{error} - #{message}"}
     end
   end
 
@@ -150,8 +150,8 @@ defmodule MyScrobblesBot.LastFm do
       {:ok, %{"toptracks" => artist}} ->
         {:ok, artist}
 
-      {:error, error} ->
-        {:error, error}
+      {:ok, %{"error" =>  error, "message" => message}} ->
+        {:error, "#{error} - #{message}"}
     end
   end
 
