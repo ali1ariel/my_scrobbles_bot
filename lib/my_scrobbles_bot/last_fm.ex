@@ -269,7 +269,7 @@ defmodule MyScrobblesBot.LastFm do
     👥 #{artist}
     #{if loved, do: "💘"}
 
-    </i></u>resquested by #{user}</i></u>
+    <i></u>resquested by #{user}</i></u>
     "
   end
 
