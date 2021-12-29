@@ -1,6 +1,7 @@
 defmodule MyScrobblesBot.Helpers do
   import MyScrobblesBot.Gettext
   alias MyScrobblesBot.Telegram.Message
+  alias MyScrobblesBotWeb.Services.Telegram
 
   def month(month) do
     case month do

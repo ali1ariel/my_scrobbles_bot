@@ -37,7 +37,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
       "track" ->  inline_track(inline_query, track)
       "album" ->  inline_album(inline_query, track)
       "artist" -> inline_artist(inline_query, track)
-      _ ->  user_not_found(inline_query.inline_query_id)
+      _ ->   inline_track(inline_query, track)
     end
 
     # {:ok, nil}
