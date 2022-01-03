@@ -6,7 +6,6 @@ defmodule MyScrobblesBotWeb.Services.Telegram do
   use Tesla
 
   alias MyScrobblesBot.Telegram.ClientInputs
-  alias MyScrobblesBot.Telegram.AnswerInlineQuery
 
   # defp token, do: Application.get_env(:my_scrobbles_bot, __MODULE__)[:token]
 
@@ -33,8 +32,8 @@ defmodule MyScrobblesBotWeb.Services.Telegram do
   end
 
   defp build_and_send(fun, route, module, params) do
-    with {:ok, input} <- IO.inspect module.build(params) do
-      IO.inspect fun.(route, input)
+    with {:ok, input} <- module.build(params) do
+      fun.(route, input)
     end
   end
 end

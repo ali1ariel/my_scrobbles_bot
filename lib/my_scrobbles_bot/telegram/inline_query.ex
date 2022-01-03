@@ -14,12 +14,12 @@ defmodule MyScrobblesBot.Telegram.InlineQuery do
       field :username, :string
       field :first_name, :string
       field :language_code, :string
-      field :telegram_id, :integer
+      field :telegram_id, :string
     end
   end
 
   embedded_schema do
-    field :inline_query_id, :integer
+    field :inline_query_id, :string
     field :chat_type, :string
     field :query, :string
     field :offset, :string
@@ -53,7 +53,7 @@ defmodule MyScrobblesBot.Telegram.InlineQuery do
     Ecto.Changeset.put_change(
       changeset,
       :telegram_id,
-      Changeset.get_change(changeset, :telegram_id, params["id"])
+      Changeset.get_change(changeset, :telegram_id, params["id"] |> Integer.to_string())
     )
   end
 end

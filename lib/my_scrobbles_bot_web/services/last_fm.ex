@@ -43,6 +43,7 @@ defmodule MyScrobblesBotWeb.Services.LastFm do
           {:error, Map.t()} | {:ok, Map.t()}
   def get_track(%{artist: artist, trackname: trackname, username: username}) do
     method = "track.getinfo"
+
     get_answer(%{
       "method" => method,
       "artist" => artist,
@@ -85,7 +86,6 @@ defmodule MyScrobblesBotWeb.Services.LastFm do
 
   @spec get_answer(Map.t()) :: {:error, Map.t()} | {:ok, Map.t()}
   def get_answer(args) do
-
     get!("?format=json&api_key=#{System.get_env("LAST_FM_TOKEN")}&", query: args)
     |> response_handler()
   end

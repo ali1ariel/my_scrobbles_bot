@@ -1,4 +1,5 @@
 defmodule MyScrobblesBot.LastFm do
+  require MyScrobblesBot.Gettext
 
   @doc """
   request user information in Last FM API
@@ -44,7 +45,7 @@ defmodule MyScrobblesBot.LastFm do
 
 <b>Some loved tracks</b>
 #{Enum.map(tracks, fn track -> "💘 #{track["artist"]["name"]} - #{track["name"]}
-" end)}
+            " end)}
 🎧💎
 "
     else
@@ -68,7 +69,7 @@ defmodule MyScrobblesBot.LastFm do
              }}
   def get_recent_track(attrs) do
     case MyScrobblesBotWeb.Services.LastFm.get_recent_tracks(attrs) do
-      {:ok, %{"error" =>  error, "message" => message}} ->
+      {:ok, %{"error" => error, "message" => message}} ->
         {:error, "#{error} - #{message}"}
 
       {:ok, result} ->
@@ -87,7 +88,6 @@ defmodule MyScrobblesBot.LastFm do
            playing?: Map.has_key?(track, "@attr"),
            username: attrs.username
          }}
-
     end
   end
 
@@ -109,7 +109,7 @@ defmodule MyScrobblesBot.LastFm do
            playcount: track["userplaycount"] |> String.to_integer()
          }}
 
-      {:ok, %{"error" =>  error, "message" => message}} ->
+      {:ok, %{"error" => error, "message" => message}} ->
         {:error, "#{error} - #{message}"}
     end
   end
@@ -125,7 +125,7 @@ defmodule MyScrobblesBot.LastFm do
       {:ok, %{"album" => album}} ->
         {:ok, album}
 
-      {:ok, %{"error" =>  error, "message" => message}} ->
+      {:ok, %{"error" => error, "message" => message}} ->
         {:error, "#{error} - #{message}"}
     end
   end
@@ -141,7 +141,7 @@ defmodule MyScrobblesBot.LastFm do
       {:ok, %{"artist" => artist}} ->
         {:ok, artist}
 
-      {:ok, %{"error" =>  error, "message" => message}} ->
+      {:ok, %{"error" => error, "message" => message}} ->
         {:error, "#{error} - #{message}"}
     end
   end
@@ -151,7 +151,7 @@ defmodule MyScrobblesBot.LastFm do
       {:ok, %{"toptracks" => artist}} ->
         {:ok, artist}
 
-      {:ok, %{"error" =>  error, "message" => message}} ->
+      {:ok, %{"error" => error, "message" => message}} ->
         {:error, "#{error} - #{message}"}
     end
   end
@@ -167,7 +167,7 @@ defmodule MyScrobblesBot.LastFm do
         photo: photo_link,
         with_photo?: with_photo
       }) do
-    "<b>#{user}</b> #{playcount_user_text(playcount, now)} to:
+    "<b>#{user}</b> #{playcount_user_text(playcount, now)}#{Gettext.gettext(MyScrobblesBot.Gettext, "to")}:
 
     #{if with_photo, do: "<a href=\"#{photo_link}\">🎶</a>", else: "🎶"} <b>#{track}</b>
     💿 #{album}
@@ -351,13 +351,26 @@ defmodule MyScrobblesBot.LastFm do
 
   def playcount_user_text(playcount, now) when is_binary(playcount) do
     case {String.last(playcount), now} do
-      {"0", true} -> "is listening for the <b>#{String.to_integer(playcount) + 1}st</b> time"
-      {"1", true} -> "is listening for the <b>#{String.to_integer(playcount) + 1}nd</b> time"
-      {"2", true} -> "is listening for the <b>#{String.to_integer(playcount) + 1}rd</b> time"
-      {_, true} -> "is listening for the <b>#{String.to_integer(playcount) + 1}th</b> time"
-      {"0", false} when playcount == "0" -> "<i>never</i> listened"
-      {"1", false} when playcount == "1" -> "listened only <i>once</i>"
-      {_, false} -> "listened <i>#{playcount}</i> times"
+      {"0", true} ->
+        "#{Gettext.gettext(MyScrobblesBot.Gettext, "is")} #{Gettext.gettext(MyScrobblesBot.Gettext, "listening for the")} <b>#{String.to_integer(playcount) + 1}st</b> #{Gettext.gettext(MyScrobblesBot.Gettext, "time")}"
+
+      {"1", true} ->
+        "#{Gettext.gettext(MyScrobblesBot.Gettext, "is")} #{Gettext.gettext(MyScrobblesBot.Gettext, "listening for the")} <b>#{String.to_integer(playcount) + 1}nd</b> #{Gettext.gettext(MyScrobblesBot.Gettext, "time")}"
+
+      {"2", true} ->
+        "#{Gettext.gettext(MyScrobblesBot.Gettext, "is")} #{Gettext.gettext(MyScrobblesBot.Gettext, "listening for the")} <b>#{String.to_integer(playcount) + 1}rd</b> #{Gettext.gettext(MyScrobblesBot.Gettext, "time")}"
+
+      {_, true} ->
+        "#{Gettext.gettext(MyScrobblesBot.Gettext, "is")} #{Gettext.gettext(MyScrobblesBot.Gettext, "listening for the")} <b>#{String.to_integer(playcount) + 1}th</b> #{Gettext.gettext(MyScrobblesBot.Gettext, "time")}"
+
+      {"0", false} when playcount == "0" ->
+        "<i>#{Gettext.gettext(MyScrobblesBot.Gettext, "never")}</i> #{Gettext.gettext(MyScrobblesBot.Gettext, "listened")}"
+
+      {"1", false} when playcount == "1" ->
+        "#{Gettext.gettext(MyScrobblesBot.Gettext, "listened")} #{Gettext.gettext(MyScrobblesBot.Gettext, "only")} <i>#{Gettext.gettext(MyScrobblesBot.Gettext, "once")}</i>"
+
+      {_, false} ->
+        "#{Gettext.gettext(MyScrobblesBot.Gettext, "listened")} <i>#{playcount}</i> #{Gettext.gettext(MyScrobblesBot.Gettext, "times")}"
     end
   end
 

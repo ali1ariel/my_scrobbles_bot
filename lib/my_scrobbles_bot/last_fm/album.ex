@@ -4,16 +4,18 @@ defmodule MyScrobblesBot.LastFm.Album do
   alias MyScrobblesBot.Accounts.User
   alias MyScrobblesBot.Telegram.Message
 
-
   alias MyScrobblesBot.Helpers
 
   def album(%Message{} = message, %User{} = user) do
     %{last_fm_username: username} = user
 
-    {:ok, track} = LastFm.get_recent_track(%{username: username})
-    |> Helpers.error_handler(message)
-    {:ok, attrs} = LastFm.get_album(track)
-    |> Helpers.error_handler(message)
+    {:ok, track} =
+      LastFm.get_recent_track(%{username: username})
+      |> Helpers.error_handler(message)
+
+    {:ok, attrs} =
+      LastFm.get_album(track)
+      |> Helpers.error_handler(message)
 
     extra =
       if(user.is_premium?) do
@@ -60,7 +62,7 @@ defmodule MyScrobblesBot.LastFm.Album do
 ", parse_mode: "HTML", chat_id: message.chat_id}
   end
 
-  def youralbum(message) do
+  def youralbum(%Message{} = message) do
     %{
       from: %{
         telegram_id: user_id,
@@ -79,10 +81,13 @@ defmodule MyScrobblesBot.LastFm.Album do
     %{last_fm_username: friend_username} =
       MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(friend_user_id)
 
-    {:ok, track} = LastFm.get_recent_track(%{username: friend_username})
-    |> Helpers.error_handler(message)
-    {:ok, attrs} = LastFm.get_album(%{track | username: username})
-    |> Helpers.error_handler(message)
+    {:ok, track} =
+      LastFm.get_recent_track(%{username: friend_username})
+      |> Helpers.error_handler(message)
+
+    {:ok, attrs} =
+      LastFm.get_album(%{track | username: username})
+      |> Helpers.error_handler(message)
 
     query =
       Map.merge(track, %{playcount: attrs["userplaycount"]})
@@ -92,7 +97,7 @@ defmodule MyScrobblesBot.LastFm.Album do
     %{text: msg, parse_mode: "HTML", chat_id: message.chat_id}
   end
 
-  def myalbum(message) do
+  def myalbum(%Message{} = message) do
     %{
       from: %{
         telegram_id: user_id,
@@ -111,10 +116,13 @@ defmodule MyScrobblesBot.LastFm.Album do
     %{last_fm_username: friend_username} =
       MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(friend_user_id)
 
-    {:ok, track} = LastFm.get_recent_track(%{username: username})
-    |> Helpers.error_handler(message)
-    {:ok, attrs} = LastFm.get_album(%{track | username: friend_username})
-    |> Helpers.error_handler(message)
+    {:ok, track} =
+      LastFm.get_recent_track(%{username: username})
+      |> Helpers.error_handler(message)
+
+    {:ok, attrs} =
+      LastFm.get_album(%{track | username: friend_username})
+      |> Helpers.error_handler(message)
 
     query =
       Map.merge(track, %{playcount: attrs["userplaycount"]})

@@ -1,16 +1,27 @@
-defmodule MyScrobblesBot.Telegram.ClientInputs.SendMessage do
+defmodule MyScrobblesBot.Telegram.ClientInputs.SendMessageWithMarkup do
   @moduledoc false
 
   use MyScrobblesBot.Telegram.ClientInputs
 
   alias Ecto.Changeset
 
+  defmodule InlineKeyboardButton do
+    use Ecto.Schema
+    @derive Jason.Encoder
+
+    embedded_schema do
+      field :text, :string
+      field :url, :string
+      field :callback_data, :string
+    end
+  end
+
   defmodule InlineKeyboardMarkup do
     use Ecto.Schema
     @derive Jason.Encoder
 
     embedded_schema do
-      field :inline_keyboard, {:array, {:array, :map}}, default: [[]]
+      field :inline_keyboard, {:array, {:array, :map}}
       # embeds_many :inline_keyboard, InlineKeyboardButton
     end
   end
@@ -24,26 +35,15 @@ defmodule MyScrobblesBot.Telegram.ClientInputs.SendMessage do
     field :disable_notification, :boolean
     field :reply_to_message_id, :string
     field :allow_sending_without_reply, :boolean
-
-    embeds_one :reply_markup, InlineKeyboardMarkup
+    field :reply_markup, :map
   end
 
   @impl true
   def cast(params) do
     %__MODULE__{}
-    |> Changeset.cast(params, [
-      :chat_id,
-      :text,
-      :parse_mode,
-      :caption_entities,
-      :disable_web_page_preview,
-      :disable_notification,
-      :reply_to_message_id,
-      :allow_sending_without_reply
-    ])
+    |> Changeset.cast(params, __schema__(:fields))
     |> Changeset.validate_required([:chat_id, :text])
     |> put_chat_id()
-    |> Changeset.cast_embed(:reply_markup, with: &reply_markup_changeset/2)
   end
 
   defp put_chat_id(%Ecto.Changeset{params: params} = changeset) do
@@ -52,12 +52,5 @@ defmodule MyScrobblesBot.Telegram.ClientInputs.SendMessage do
       :chat_id,
       Changeset.get_change(changeset, :chat_id, params["chat_id"] |> String.to_integer())
     )
-  end
-
-  defp reply_markup_changeset(schema, params) do
-    schema
-    |> Changeset.cast(params, [:inline_keyboard])
-
-    # |> Changeset.cast_embed(:inline_keyboard, with: &inline_keyboard_changeset/2)
   end
 end

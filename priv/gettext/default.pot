@@ -1,0 +1,76 @@
+msgid "listening for the"
+msgstr ""
+
+msgid "time to"
+msgstr ""
+
+msgid "is"
+msgstr ""
+
+msgid "was"
+msgstr ""
+
+msgid "once"
+msgstr ""
+
+msgid "only"
+msgstr ""
+
+msgid "never"
+msgstr ""
+
+msgid "listened"
+msgstr ""
+
+msgid "times"
+msgstr ""
+
+msgid "It comes from"
+msgstr ""
+
+msgid "Your plays of the most famous tracks"
+msgstr ""
+
+msgid "Your power tracks of this album"
+msgstr ""
+
+msgid "requested by"
+msgstr ""
+
+msgid "listening by"
+msgstr ""
+
+msgid "user_not_found"
+msgstr "User not found, do you did your register? please \"/msregister yourlastfmusername\" to register your last fm username."
+
+msgid "got"
+msgstr ""
+
+msgid "since"
+msgstr ""
+
+msgid "Some loved tracks"
+msgstr ""
+
+msgid "Welcome"
+msgstr ""
+
+msgid "to premium life"
+msgstr ""
+
+msgid "to"
+msgstr ""
+
+msgid "user"
+msgstr ""
+
+msgid "created"
+msgstr ""
+
+msgid "updated"
+msgstr ""
+
+msgid "successfully"
+msgstr ""
+
+ 

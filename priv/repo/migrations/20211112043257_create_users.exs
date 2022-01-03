@@ -10,5 +10,7 @@ defmodule MyScrobblesBot.Repo.Migrations.CreateUsers do
 
       timestamps()
     end
+
+    create unique_index(:users, [:telegram_id])
   end
 end

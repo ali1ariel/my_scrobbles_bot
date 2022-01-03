@@ -23,7 +23,7 @@ defmodule MyScrobblesBot.Telegram.ClientInputs.AnswerInlineQuery do
     @derive Jason.Encoder
 
     embedded_schema do
-      field :inline_keyboard, {:array, {:array, :map}}
+      field :inline_keyboard, {:array, {:array, :map}}, default: [[]]
       # embeds_many :inline_keyboard, InlineKeyboardButton
     end
   end
@@ -37,7 +37,6 @@ defmodule MyScrobblesBot.Telegram.ClientInputs.AnswerInlineQuery do
       field :parse_mode, :string, default: "HTML"
     end
   end
-
 
   defmodule InlineQueryResult do
     use Ecto.Schema
@@ -78,7 +77,7 @@ defmodule MyScrobblesBot.Telegram.ClientInputs.AnswerInlineQuery do
   end
 
   embedded_schema do
-    field :inline_query_id, :integer
+    field :inline_query_id, :string
     field :is_personal, :boolean, default: true
     field :cache_time, :integer
     field :next_offest, :string
@@ -126,7 +125,6 @@ defmodule MyScrobblesBot.Telegram.ClientInputs.AnswerInlineQuery do
     |> Changeset.cast_embed(:reply_markup, with: &reply_markup_changeset/2)
   end
 
-
   defp input_message_content_changeset(schema, params) do
     schema
     |> Changeset.cast(params, [:message_text, :parse_mode])
@@ -135,6 +133,7 @@ defmodule MyScrobblesBot.Telegram.ClientInputs.AnswerInlineQuery do
   defp reply_markup_changeset(schema, params) do
     schema
     |> Changeset.cast(params, [:inline_keyboard])
+
     # |> Changeset.cast_embed(:inline_keyboard, with: &inline_keyboard_changeset/2)
   end
 

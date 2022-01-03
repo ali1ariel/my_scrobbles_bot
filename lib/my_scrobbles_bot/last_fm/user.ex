@@ -17,7 +17,7 @@ defmodule MyScrobblesBot.LastFm.User do
     %{text: msg, parse_mode: "HTML", chat_id: message.chat_id}
   end
 
-  def youruser(message) do
+  def youruser(%Message{} = message) do
     %{last_fm_username: username} =
       MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(
         message.reply_to_message.from.telegram_id
@@ -27,7 +27,7 @@ defmodule MyScrobblesBot.LastFm.User do
     %{text: msg, parse_mode: "HTML", chat_id: message.chat_id}
   end
 
-  def register(message) do
+  def register(%Message{} = message) do
     ## CREATE OR UPDATE
     %{last_fm_username: username} =
       MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(

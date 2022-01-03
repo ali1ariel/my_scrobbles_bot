@@ -1,0 +1,75 @@
+## "msgid"s in this file come from POT (.pot) files.
+##
+## Do not add, change, or remove "msgid"s manually here as
+## they're tied to the ones in the corresponding POT file
+## (with the same domain).
+##
+## Use "mix gettext.extract --merge" or "mix gettext.merge"
+## to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: pt_BR"
+"Plural-Forms: nplurals=2"
+
+msgid "listening for the"
+msgstr "escutando pela"
+
+msgid "time to"
+msgstr "vez"
+
+msgid "is"
+msgstr "está"
+
+msgid "was"
+msgstr "estava"
+
+msgid "once"
+msgstr "uma vez"
+
+msgid "only"
+msgstr "somente"
+
+msgid "never"
+msgstr "nunca"
+
+msgid "listened"
+msgstr "escutou"
+
+msgid "times"
+msgstr "vezes"
+
+msgid "It comes from"
+msgstr "Dados a partir de"
+
+msgid "Your plays of the most famous tracks"
+msgstr "Seus scrobbles das músicas mais famosas"
+
+msgid "Your power tracks of this album"
+msgstr "As músicas mais ouvidas deste album"
+
+msgid "requested by"
+msgstr "requisitado por"
+
+msgid "listening by"
+msgstr "sendo escutado por"
+
+msgid "user_not_found"
+msgstr "Usuário não encontrado, você já se registrou?  registre com \"/msregister seuuserdolastfm\", trocando seuuserdolastfm pelo seu user do last fm."
+
+msgid "got"
+msgstr "tem"
+
+msgid "since"
+msgstr "desde"
+
+msgid "Some loved tracks"
+msgstr "Algumas canções amadas"
+
+msgid "Welcome"
+msgstr "Bem vindo"
+
+msgid "to premium life"
+msgstr "para a vida premium"
+
+msgid "to"
+msgstr " "

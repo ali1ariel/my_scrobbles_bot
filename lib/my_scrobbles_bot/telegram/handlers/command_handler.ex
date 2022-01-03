@@ -6,18 +6,30 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
   alias MyScrobblesBot.Telegram.Message
   alias MyScrobblesBotWeb.Services.Telegram
   alias MyScrobblesBot.Accounts.User
+
+  alias MyScrobblesBot.Helpers
+
+  require MyScrobblesBot.Gettext
+
   @behaviour MyScrobblesBot.Telegram.Handlers
 
   @allowed_groups [
     -1_001_294_571_722,
-    -1_001_156_236_779, #meu last fm bot sac
-    -1_001_786_739_075 #MSB - grupo BETA
+    # meu last fm bot sac
+    -1_001_156_236_779,
+    # MSB - grupo BETA
+    -1_001_786_739_075
   ]
 
   @admins [
-    600_614_550, # ALisson
-    1_360_830_999, #Josue
-    1_224_040_266 #Felipe
+    # ALisson
+    600_614_550,
+    # Josue
+    1_360_830_999,
+    # Felipe
+    1_224_040_266,
+    # Frankie
+    5_073_257_888
   ]
 
   def handle(%Message{} = message) do
@@ -38,6 +50,13 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
   def match_user(%Message{} = message) do
     case MyScrobblesBot.Accounts.get_user_by_telegram_user_id(message.from.telegram_id) do
       {:ok, %User{} = user} ->
+        %{user_confs: user_confs} = user |> MyScrobblesBot.Repo.preload(:user_confs)
+
+        Gettext.put_locale(
+          MyScrobblesBot.Gettext,
+          Helpers.internal_language_handler(user_confs.language)
+        )
+
         {message, user}
 
       _ ->
@@ -54,10 +73,13 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
         register(message, username)
 
       _ ->
+        Gettext.put_locale(
+          MyScrobblesBot.Gettext,
+          Helpers.message_language_handler(message.from.language_code)
+        )
+
         %{
-          text:
-            " <i>User not found, do you did your register? please \"/msregister yourlastfmusername\" to register your last fm username.</i>
- <i>Usuário não encontrado, você já se registrou?  registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pelo seu user do last fm.<i> ",
+          text: "<i>#{Gettext.gettext(MyScrobblesBot.Gettext, "user_not_found")}</i>",
           parse_mode: "HTML",
           chat_id: message.chat_id,
           reply_to_message_id: message.message_id
@@ -145,7 +167,7 @@ por favor, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pe
         register(message, username)
 
       "msgetuser " <> info ->
-        if(message.from.telegram_id == 600_614_550) do
+        if((message.from.telegram_id |> String.to_integer()) in @admins) do
           with user = %MyScrobblesBot.Accounts.User{} <-
                  MyScrobblesBot.Repo.get_by(MyScrobblesBot.Accounts.User, last_fm_username: info) do
             %{
@@ -165,7 +187,7 @@ por favor, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pe
         end
 
       "msgetuser" ->
-        if(message.from.telegram_id in @admins) do
+        if((message.from.telegram_id |> String.to_integer()) in @admins) do
           with {:ok, user} <-
                  MyScrobblesBot.Accounts.get_user_by_telegram_user_id(
                    message.reply_to_message.from.telegram_id
@@ -187,7 +209,7 @@ por favor, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pe
         end
 
       "mspromoteid " <> info ->
-        if(message.from.telegram_id == 600_614_550) do
+        if((message.from.telegram_id |> String.to_integer()) in @admins) do
           infos = String.split(info)
 
           %MyScrobblesBot.Accounts.User{} =
@@ -215,10 +237,10 @@ por favor, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pe
         end
 
       "mspromote " <> info ->
-        if(message.from.telegram_id == 600_614_550) do
+        if((message.from.telegram_id |> String.to_integer()) in @admins) do
           with {:ok, %{expiration: _date}} <- MyScrobblesBot.Accounts.promote_user(message, info) do
             %{
-              text: "welcome #{message.reply_to_message.from.first_name} to the premium life.",
+              text: "Welcome #{message.reply_to_message.from.first_name} to premium life.",
               parse_mode: "HTML",
               chat_id: message.chat_id,
               reply_to_message_id: message.message_id
@@ -234,7 +256,7 @@ por favor, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pe
         end
 
       "msremove" ->
-        if(message.from.telegram_id == 600_614_550) do
+        if((message.from.telegram_id |> String.to_integer()) in @admins) do
           with {:ok, :removed} <- MyScrobblesBot.Accounts.remove_premium_user(message) do
             %{
               text: "successfully removed.",
@@ -261,7 +283,7 @@ por favor, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pe
         end
 
       "msremoveid " <> info ->
-        if(message.from.telegram_id == 600_614_550) do
+        if((message.from.telegram_id |> String.to_integer()) in @admins) do
           %MyScrobblesBot.Accounts.User{} =
             user = MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(info)
 
@@ -281,6 +303,12 @@ por favor, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pe
             reply_to_message_id: message.message_id
           }
         end
+
+      "selectlanguage" ->
+        select_language(message)
+
+      "selectsystemlanguage" ->
+        select_system_language(message)
     end
   end
 
@@ -300,7 +328,12 @@ por favor, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pe
   def register(%Message{} = message, username) do
     case MyScrobblesBot.Accounts.insert_or_update_user(%{
            last_fm_username: username,
-           telegram_id: message.from.telegram_id
+           telegram_id: message.from.telegram_id,
+           user_confs: %{
+             telegram_id: message.from.telegram_id,
+             language: Helpers.language_handler(message.from.language_code),
+             conf_language: Helpers.language_handler(message.from.language_code)
+           }
          }) do
       {:created, _user} ->
         %{
@@ -326,5 +359,42 @@ por favor, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pe
           reply_to_message_id: message.message_id
         }
     end
+  end
+
+  def select_language(message) do
+    %{
+      text: "#{Gettext.gettext(MyScrobblesBot.Gettext, "select the language of the posts")}",
+      parse_mode: "HTML",
+      chat_id: message.chat_id,
+      reply_to_message_id: message.message_id,
+      reply_markup: %{
+        inline_keyboard: [
+          [
+            %{text: "pt-BR 🇧🇷", callback_data: "#{message.from.id}-aespa-ptBR"},
+            %{text: "Español 🇪🇸", callback_data: "#{message.from.id}-aespa-ptBR"}
+          ],
+          [%{text: "English 🇺🇸", callback_data: "#{message.from.id}-aespa-enUS"}]
+        ]
+      }
+    }
+  end
+
+  def select_system_language(message) do
+    %{
+      text:
+        "#{Gettext.gettext(MyScrobblesBot.Gettext, "select the language of the options, helps and other system items.")}",
+      parse_mode: "HTML",
+      chat_id: message.chat_id,
+      reply_to_message_id: message.message_id,
+      reply_markup: %{
+        inline_keyboard: [
+          [
+            %{text: "pt-BR 🇧🇷", callback_data: "#{message.from.id}-aespa-ptBR"},
+            %{text: "Español 🇪🇸", callback_data: "#{message.from.id}-aespa-ptBR"}
+          ],
+          [%{text: "English 🇺🇸", callback_data: "#{message.from.id}-aespa-enUS"}]
+        ]
+      }
+    }
   end
 end

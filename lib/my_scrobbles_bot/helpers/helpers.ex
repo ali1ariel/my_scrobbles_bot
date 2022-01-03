@@ -20,7 +20,6 @@ defmodule MyScrobblesBot.Helpers do
     end
   end
 
-
   def error_handler(request, %Message{} = message) do
     case request do
       {:ok, info} ->
@@ -52,4 +51,27 @@ defmodule MyScrobblesBot.Helpers do
     end
   end
 
+  def language_handler(lang) do
+    case lang do
+      "en" -> :english
+      "pt-br" -> :portuguese
+      "es" -> :spanish
+    end
+  end
+
+  def internal_language_handler(lang) do
+    case lang do
+      :english -> "en"
+      :portuguese -> "pt_BR"
+      :spanish -> "es"
+    end
+  end
+
+  def message_language_handler(lang) do
+    case lang do
+      "en" -> "en"
+      "pt-br" -> "pt_BR"
+      "es" -> "es"
+    end
+  end
 end
