@@ -10,7 +10,8 @@ defmodule MyScrobblesBot.Events do
 
   @events [
     MyScrobblesBot.Events.TelegramMessage,
-    MyScrobblesBot.Events.TelegramInlineQuery
+    MyScrobblesBot.Events.TelegramInlineQuery,
+    MyScrobblesBot.Events.TelegramCallbackQuery
   ]
 
   @doc """

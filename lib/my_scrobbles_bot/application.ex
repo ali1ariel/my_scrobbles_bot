@@ -17,6 +17,8 @@ defmodule MyScrobblesBot.Application do
       MyScrobblesBot.Telegram.Consumers.MessageHandler,
       # Start the consumer for telegram inline queries
       MyScrobblesBot.Telegram.Consumers.InlineHandler,
+      # Start the consumer for telegram inline queries
+      MyScrobblesBot.Telegram.Consumers.CallbackHandler,
       # Start the Endpoint (http/https)
       MyScrobblesBotWeb.Endpoint
       # Start a worker by calling: MyScrobblesBot.Worker.start_link(arg)

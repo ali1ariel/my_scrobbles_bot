@@ -5,8 +5,8 @@ defmodule MyScrobblesBot.Telegram.Handlers do
   Also matches messages with handlers through get_handler/1
   """
 
-  alias MyScrobblesBot.Telegram.Message
-  alias MyScrobblesBot.Telegram.InlineQuery
+  alias MyScrobblesBot.Telegram.{ Message, InlineQuery, CallbackQuery }
+
 
   alias MyScrobblesBot.Telegram.Handlers.{
     DefaultHandler,
@@ -14,6 +14,7 @@ defmodule MyScrobblesBot.Telegram.Handlers do
     CommandHandler,
     InlineQueryCommandHandler,
     InlineQueryUserHandler,
+    CallbackQueryHandler,
     InlineQueryHandler
   }
 
@@ -27,5 +28,6 @@ defmodule MyScrobblesBot.Telegram.Handlers do
   def get_handler(%InlineQuery{query: "/" <> _command}), do: {:ok, InlineQueryCommandHandler}
   def get_handler(%InlineQuery{query: user}) when user != nil, do: {:ok, InlineQueryUserHandler}
   def get_handler(%InlineQuery{}), do: {:ok, InlineQueryHandler}
+  def get_handler(%CallbackQuery{}), do: {:ok, CallbackQueryHandler}
   def get_handler(_), do: {:ok, DefaultHandler}
 end

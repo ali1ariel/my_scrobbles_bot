@@ -370,10 +370,10 @@ por favor, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pe
       reply_markup: %{
         inline_keyboard: [
           [
-            %{text: "pt-BR 🇧🇷", callback_data: "#{message.from.id}-aespa-ptBR"},
-            %{text: "Español 🇪🇸", callback_data: "#{message.from.id}-aespa-ptBR"}
+            %{text: "pt-BR 🇧🇷", callback_data: "post_languages-ptBR"},
+            %{text: "Español 🇪🇸", callback_data: "post_languages-es"}
           ],
-          [%{text: "English 🇺🇸", callback_data: "#{message.from.id}-aespa-enUS"}]
+          [%{text: "English 🇺🇸", callback_data: "post_languages-enUS"}]
         ]
       }
     }
@@ -389,10 +389,10 @@ por favor, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pe
       reply_markup: %{
         inline_keyboard: [
           [
-            %{text: "pt-BR 🇧🇷", callback_data: "#{message.from.id}-aespa-ptBR"},
-            %{text: "Español 🇪🇸", callback_data: "#{message.from.id}-aespa-ptBR"}
+            %{text: "pt-BR 🇧🇷", callback_data: "system_languages-ptBR"},
+            %{text: "Español 🇪🇸", callback_data: "system_languages-ptBR"}
           ],
-          [%{text: "English 🇺🇸", callback_data: "#{message.from.id}-aespa-enUS"}]
+          [%{text: "English 🇺🇸", callback_data: "#system_languages-enUS"}]
         ]
       }
     }

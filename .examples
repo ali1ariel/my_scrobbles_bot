@@ -285,3 +285,58 @@ novo membro adicionado
   }, 
   "update_id" => 291602163
 }
+
+
+%{
+  "callback_query" => %{
+    "chat_instance" => "-6641413253709143844", 
+    "data" => "-aespa-ptBR", 
+    "from" => %{
+      "first_name" => "Frankie Watterson", 
+      "id" => 5073257888, 
+      "is_bot" => false,
+      "language_code" => "en", 
+      "username" => "frankiewatterson"
+    }, 
+    "id" => "3342732642862806852", 
+    "message" => %{
+      "chat" => %{
+        "first_name" => "Frankie Watterson", 
+        "id" => 5073257888, 
+        "type" => "private", 
+        "username" => "frankiewatterson"
+      }, 
+      "date" => 1641359201, 
+      "from" => %{
+        "first_name" => "MoominhosFM", 
+        "id" => 1545099202, 
+        "is_bot" => true, 
+        "username" => "moominhosfmbot"
+      }, 
+      "message_id" => 271, 
+      "reply_markup" => %{
+        "inline_keyboard" => 
+        [
+          [
+            %{
+              "callback_data" => "-aespa-ptBR", 
+              "text" => "pt-BR 🇧🇷"
+            }, 
+            %{
+              "callback_data" => "-aespa-ptBR",
+               "text" => "Español 🇪🇸"
+            }
+            ], 
+            [
+              %{
+                "callback_data" => "-aespa-enUS",
+                 "text" => "English 🇺🇸"
+              }
+            ]
+          ]
+      }, 
+      "text" => "select the language of the posts"
+    }
+  }, 
+  "update_id" => 941800749
+}

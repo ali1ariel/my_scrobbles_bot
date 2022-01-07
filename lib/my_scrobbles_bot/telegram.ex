@@ -1,8 +1,7 @@
 defmodule MyScrobblesBot.Telegram do
   require Logger
 
-  alias MyScrobblesBot.Telegram.Message
-  alias MyScrobblesBot.Telegram.InlineQuery
+  alias MyScrobblesBot.Telegram.{Message, InlineQuery, CallbackQuery}
   alias MyScrobblesBot.Events
 
   def build_message(params) do
@@ -20,6 +19,20 @@ defmodule MyScrobblesBot.Telegram do
   def build_inline_query(params) do
     params
     |> InlineQuery.cast()
+    |> case do
+      %Ecto.Changeset{valid?: true} = changeset ->
+        {:ok, Ecto.Changeset.apply_changes(changeset)}
+
+      changeset ->
+        {:error, changeset}
+    end
+  end
+
+
+
+  def build_callback_query(params) do
+    params
+    |> CallbackQuery.cast()
     |> case do
       %Ecto.Changeset{valid?: true} = changeset ->
         {:ok, Ecto.Changeset.apply_changes(changeset)}
@@ -52,6 +65,20 @@ defmodule MyScrobblesBot.Telegram do
     end
   end
 
+
+  @doc """
+  Processes a inline query with its handler
+  """
+  def process_callback_query(%CallbackQuery{} = iq) do
+    with {:ok, handler} <- MyScrobblesBot.Telegram.Handlers.get_handler(iq) do
+      Logger.info(
+        "Processing inline query #{inspect(iq.callback_query_id)} with handler #{inspect(handler)}"
+      )
+
+      handler.handle(iq)
+    end
+  end
+
   @doc """
     Enqueues processing for a message
 
@@ -63,5 +90,9 @@ defmodule MyScrobblesBot.Telegram do
 
   def enqueue_processing!(%InlineQuery{} = iq) do
     Events.publish!(Events.TelegramInlineQuery, iq)
+  end
+
+  def enqueue_processing!(%CallbackQuery{} = cq) do
+    Events.publish!(Events.TelegramCallbackQuery, cq)
   end
 end
