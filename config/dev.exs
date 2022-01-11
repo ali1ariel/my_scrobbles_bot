@@ -2,9 +2,12 @@ import Config
 
 # Configure your database
 config :my_scrobbles_bot, MyScrobblesBot.Repo,
-  url:"pstgresql://#{System.get_env("PG_USERNAME")}:#{System.get_env("PG_PASSWORD")}@#{System.get_env("LOCAL_IP")}:5432/#{System.get_env("PG_DATABASE")}",
+  url:"postgresql://#{System.get_env("PG_USERNAME")}:#{System.get_env("PG_PASSWORD")}@#{System.get_env("LOCAL_IP")}:5432/#{System.get_env("PG_DATABASE")}",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
+
+  # psql postgresql://${PG_USERNAME}:${PG_PASSWORD}@${LOCAL_IP}:5432/${PG_DATABASE}
+
 
 # For development, we disable any cache and enable
 # debugging and code reloading.

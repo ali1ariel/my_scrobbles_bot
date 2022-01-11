@@ -18,6 +18,8 @@ services:
       - localhost:${LOCAL_IP}
     volumes:
             - ./uploads:/app/uploads
+    networks:
+      - newnetwork
 
   files:
     image: "busybox"
@@ -29,3 +31,5 @@ services:
 volumes:
   uploads:
 
+networks:
+  newnetwork: null
