@@ -14,6 +14,7 @@ services:
       TELEGRAM_BOT_KEY: 1993314727:AAHkFDgqq-NWCOW04DlnD1sZ78iRGgoig9w
     ports:
       - "4000:4000"
+      - "5432:5432"
     extra_hosts:
       - localhost:${LOCAL_IP}
     volumes:
@@ -28,3 +29,4 @@ services:
 
 volumes:
   uploads:
+
