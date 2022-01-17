@@ -4,32 +4,35 @@ services:
     build:
       context: . 
     environment:
-      PG_USERNAME: postgres
+      PGUSER: postgres
       PGPASSWORD: postgres
-      PG_DATABASE: my_scrobbles_bot_prod
-      PG_PORT: 5432
-      PG_HOST: localhost
-      LAST_FM_TOKEN: 92948e038ad0708dbbed57e977db5fce
-      MUSIC_X_MATCH_TOKEN: f1b5674f072c7c7b775118528762ec0d
-      TELEGRAM_BOT_KEY: 1993314727:AAHkFDgqq-NWCOW04DlnD1sZ78iRGgoig9w
+      PGDATABASE: my_scrobbles_bot_prod
+      PGPORT: 5432
+      PGHOST: db
     ports:
       - "4000:4000"
-    extra_hosts:
-      - localhost:${LOCAL_IP}
+    depends_on: 
+      - db
     volumes:
             - ./uploads:/app/uploads
-    networks:
-      - newnetwork
+
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /var/lib/postgresql/data/pgdata
+    restart: always
+    volumes:
+      - pgdata:/var/lib/postgresql/data
 
   files:
     image: "busybox"
     volumes:
-      - /home/ubuntu/somali_live_project/uploads
+      - /home/ubuntu/my_scrobbles_bot/uploads
     command: "true"
 
 
 volumes:
+  pgdata:
   uploads:
-
-networks:
-  newnetwork: null
