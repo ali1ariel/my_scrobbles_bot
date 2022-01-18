@@ -15,11 +15,9 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
   def handle(%InlineQuery{from: %{telegram_id: user_id}} = inline_query) do
     case MyScrobblesBot.Accounts.get_user_by_telegram_user_id(user_id) do
       {:ok, %{is_premium?: false} = user} ->
-        IO.inspect(user)
         not_premium(inline_query.inline_query_id)
 
       {:ok, user} ->
-        IO.inspect(user)
         match_command(inline_query, user)
 
       {:not_found, _} ->
@@ -64,6 +62,9 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
               Map.merge(query, %{with_photo?: true, user: inline_query.from.first_name})
               |> LastFm.get_now_track()
           },
+          reply_markup: %{
+            inline_keyboard: [[]]
+          },
           id: "1"
         },
         %{
@@ -89,6 +90,9 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
           input_message_content: %{
             parse_mode: "HTML",
             message_text: ""
+          },
+          reply_markup: %{
+            inline_keyboard: [[]]
           },
           photo_url: track.photo,
           thumb_url: track.photo,
@@ -121,6 +125,9 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
               Map.merge(query, %{with_photo?: true, user: inline_query.from.first_name})
               |> LastFm.get_now_artist()
           },
+          reply_markup: %{
+            inline_keyboard: [[]]
+          },
           id: "1"
         },
         %{
@@ -146,6 +153,9 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
           input_message_content: %{
             parse_mode: "HTML",
             message_text: ""
+          },
+          reply_markup: %{
+            inline_keyboard: [[]]
           },
           photo_url: track.photo,
           thumb_url: track.photo,
@@ -178,6 +188,9 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
               Map.merge(query, %{with_photo?: true, user: inline_query.from.first_name})
               |> LastFm.get_now_album()
           },
+          reply_markup: %{
+            inline_keyboard: [[]]
+          },
           id: "1"
         },
         %{
@@ -200,6 +213,9 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
           title: "Photo and text",
           description: track.album,
           parse_mode: "HTML",
+          reply_markup: %{
+            inline_keyboard: [[]]
+          },
           input_message_content: %{
             parse_mode: "HTML",
             message_text: ""

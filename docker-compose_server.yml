@@ -1,0 +1,39 @@
+version: "3"
+services:
+
+  web:
+    image: ali1ariel/my_scrobbles_bot:beta-v1.04
+    environment:
+      PG_USERNAME: postgres
+      PG_PASSWORD: N3MmsJzzYNPS2RJU
+      PG_DATABASE: my_scrobbles_bot_prod
+      PG_PORT: 5432
+      PG_HOST: db
+    depends_on:
+      - db
+    volumes:
+      - ./uploads:/app/uploads
+
+  db:
+    image: postgres
+    environment:
+       POSTGRES_USER: postgres
+       POSTGRES_PASSWORD: N3MmsJzzYNPS2RJU
+       PGDATA: /var/lib/postgresql/data/pgdata
+       POSTGRES_DB: my_scrobbles_bot_prod
+    restart: always
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  files:
+    image: "busybox"
+    volumes:
+      - /home/ubuntu/my_scrobbles_bot_prod/uploads
+    command: "true"
+
+
+volumes:
+  pgdata:
+  uploads:

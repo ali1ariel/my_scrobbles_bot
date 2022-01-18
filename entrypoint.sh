@@ -1,5 +1,5 @@
 #!/bin/bash
-while ! pg_isready -q -h $PG_HOST -p $PG_PORT -U $PG_USERNAME
+while ! pg_isready -q -h $PG_HOSTNAME -p $PG_PORT -U $PG_USERNAME
 do
 	echo "$(date) - waiting database start"
 	sleep 1

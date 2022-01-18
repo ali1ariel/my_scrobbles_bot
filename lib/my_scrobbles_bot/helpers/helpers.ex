@@ -3,6 +3,10 @@ defmodule MyScrobblesBot.Helpers do
   alias MyScrobblesBot.Telegram.Message
   alias MyScrobblesBotWeb.Services.Telegram
 
+  @supported_languages ["en", "es", "pt-br"]
+
+  def supported_languages, do: @supported_languages
+
   def month(month) do
     case month do
       1 -> gettext("January")

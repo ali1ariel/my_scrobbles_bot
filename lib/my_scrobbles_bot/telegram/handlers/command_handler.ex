@@ -14,11 +14,11 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
   @behaviour MyScrobblesBot.Telegram.Handlers
 
   @allowed_groups [
-    -1_001_294_571_722,
+    "-1001294571722",
     # meu last fm bot sac
-    -1_001_156_236_779,
+    "-1001156236779",
     # MSB - grupo BETA
-    -1_001_786_739_075
+    "-1001786739075"
   ]
 
   @admins [
@@ -54,7 +54,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
 
         Gettext.put_locale(
           MyScrobblesBot.Gettext,
-          Helpers.internal_language_handler(user_confs.language)
+          (if !is_nil(user_confs), do: Helpers.internal_language_handler(user_confs.language), else: "en")
         )
 
         {message, user}
@@ -75,7 +75,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
       _ ->
         Gettext.put_locale(
           MyScrobblesBot.Gettext,
-          Helpers.message_language_handler(message.from.language_code)
+          (if (message.from.language_code in Helpers.supported_languages), do: Helpers.internal_language_handler(message.from.language_code), else: "en")
         )
 
         %{
@@ -370,10 +370,10 @@ por favor, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pe
       reply_markup: %{
         inline_keyboard: [
           [
-            %{text: "pt-BR 🇧🇷", callback_data: "post_languages-ptBR"},
+            %{text: "pt-BR 🇧🇷", callback_data: "post_languages-pt-br"},
             %{text: "Español 🇪🇸", callback_data: "post_languages-es"}
           ],
-          [%{text: "English 🇺🇸", callback_data: "post_languages-enUS"}]
+          [%{text: "English 🇺🇸", callback_data: "post_languages-en"}]
         ]
       }
     }
@@ -389,10 +389,10 @@ por favor, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pe
       reply_markup: %{
         inline_keyboard: [
           [
-            %{text: "pt-BR 🇧🇷", callback_data: "system_languages-ptBR"},
-            %{text: "Español 🇪🇸", callback_data: "system_languages-ptBR"}
+            %{text: "pt-BR 🇧🇷", callback_data: "system_languages-pt-br"},
+            %{text: "Español 🇪🇸", callback_data: "system_languages-es"}
           ],
-          [%{text: "English 🇺🇸", callback_data: "#system_languages-enUS"}]
+          [%{text: "English 🇺🇸", callback_data: "system_languages-en"}]
         ]
       }
     }

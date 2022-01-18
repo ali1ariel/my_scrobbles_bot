@@ -86,8 +86,6 @@ defmodule MyScrobblesBot.Telegram.Message do
   end
 
   defp put_message_id(%Ecto.Changeset{params: params} = changeset) do
-    IO.inspect(params)
-
     Ecto.Changeset.put_change(
       changeset,
       :message_id,

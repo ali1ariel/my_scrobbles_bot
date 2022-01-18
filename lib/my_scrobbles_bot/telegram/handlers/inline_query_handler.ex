@@ -1,26 +1,25 @@
-defmodule MyScrobblesBot.Telegram.Handlers.CallbackQueryHandler do
+defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryHandler do
   @moduledoc """
   Just logs the message
   """
 
   require Logger
 
-  alias MyScrobblesBot.Telegram.CallbackQuery
+  alias MyScrobblesBot.Telegram.InlineQuery
   alias MyScrobblesBotWeb.Services.Telegram
 
   @behaviour MyScrobblesBot.Telegram.Handlers
 
   @impl true
-  def handle(%CallbackQuery{data: data} = callback_query) do
-    IO.inspect callback_query
-    Logger.info("Received and ignored message #{callback_query.callback_query_id} - #{data}")
+  def handle(%InlineQuery{query: query} = inline_query) do
+    Logger.info("Received and ignored message #{inline_query.inline_query_id} - #{query}")
 
     # {:ok, nil}
     %{
-      chat_id: callback_query.from.telegram_id,
-      text: "this is <b>just</b> a <i>sample</i> message - #{data}",
+      chat_id: inline_query.inline_query_id,
+      text: "this is <b>just</b> a <i>sample</i> message",
       parse_mode: "HTML"
     }
-    |> Telegram.send_message()
+    |> Telegram.send_inline()
   end
 end

@@ -11,6 +11,7 @@ services:
       PGHOST: db
     ports:
       - "4000:4000"
+    command: iex -S mix phx.server # "./entrypoint-dev.sh"
     depends_on: 
       - db
     volumes:
@@ -23,6 +24,8 @@ services:
       POSTGRES_PASSWORD: postgres
       PGDATA: /var/lib/postgresql/data/pgdata
     restart: always
+    ports:
+      - "5000:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
 

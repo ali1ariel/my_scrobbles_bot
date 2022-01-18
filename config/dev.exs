@@ -2,7 +2,15 @@ import Config
 
 # Configure your database
 config :my_scrobbles_bot, MyScrobblesBot.Repo,
-  url: "postgresql://#{System.get_env("PG_USERNAME")}:#{System.get_env("PG_PASSWORD")}@#{System.get_env("LOCAL_IP")}:5432/#{System.get_env("PG_DATABASE")}",
+  # username: "postgres",
+  # password: "N3MmsJzzYNPS2RJU",
+  # hostname: "db",
+  # database: "my_scrobbles_bot_prod",
+  username: System.get_env("PG_USERNAME"),
+  password: System.get_env("PG_PASSWORD"),
+  database: System.get_env("PG_DATABASE"),
+  hostname: System.get_env("PG_HOSTNAME"),
+  port: System.get_env("PG_PORT"),
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
