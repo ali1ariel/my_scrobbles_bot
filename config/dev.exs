@@ -14,8 +14,7 @@ config :my_scrobbles_bot, MyScrobblesBot.Repo,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
-  # psql postgresql://${PG_USERNAME}:${PG_PASSWORD}@${LOCAL_IP}:5432/${PG_DATABASE}
-
+# psql postgresql://${PG_USERNAME}:${PG_PASSWORD}@${LOCAL_IP}:5432/${PG_DATABASE}
 
 # For development, we disable any cache and enable
 # debugging and code reloading.

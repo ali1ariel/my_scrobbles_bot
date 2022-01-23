@@ -5,8 +5,7 @@ defmodule MyScrobblesBot.Telegram.Handlers do
   Also matches messages with handlers through get_handler/1
   """
 
-  alias MyScrobblesBot.Telegram.{ Message, InlineQuery, CallbackQuery }
-
+  alias MyScrobblesBot.Telegram.{Message, InlineQuery, CallbackQuery}
 
   alias MyScrobblesBot.Telegram.Handlers.{
     DefaultHandler,

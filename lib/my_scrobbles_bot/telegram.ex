@@ -28,8 +28,6 @@ defmodule MyScrobblesBot.Telegram do
     end
   end
 
-
-
   def build_callback_query(params) do
     params
     |> CallbackQuery.cast()
@@ -64,7 +62,6 @@ defmodule MyScrobblesBot.Telegram do
       handler.handle(iq)
     end
   end
-
 
   @doc """
   Processes a inline query with its handler

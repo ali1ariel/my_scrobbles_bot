@@ -54,7 +54,10 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
 
         Gettext.put_locale(
           MyScrobblesBot.Gettext,
-          (if !is_nil(user_confs), do: Helpers.internal_language_handler(user_confs.language), else: "en")
+          if(!is_nil(user_confs),
+            do: Helpers.internal_language_handler(user_confs.language),
+            else: "en"
+          )
         )
 
         {message, user}
@@ -75,7 +78,10 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
       _ ->
         Gettext.put_locale(
           MyScrobblesBot.Gettext,
-          (if (message.from.language_code in Helpers.supported_languages), do: Helpers.internal_language_handler(message.from.language_code), else: "en")
+          if(message.from.language_code in Helpers.supported_languages(),
+            do: Helpers.internal_language_handler(message.from.language_code),
+            else: "en"
+          )
         )
 
         %{
@@ -167,7 +173,7 @@ por favor, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pe
         register(message, username)
 
       "msgetuser " <> info ->
-        if((message.from.telegram_id) in @admins) do
+        if(message.from.telegram_id in @admins) do
           with user = %MyScrobblesBot.Accounts.User{} <-
                  MyScrobblesBot.Repo.get_by(MyScrobblesBot.Accounts.User, last_fm_username: info) do
             %{
@@ -187,7 +193,7 @@ por favor, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pe
         end
 
       "msgetuser" ->
-        if((message.from.telegram_id) in @admins) do
+        if(message.from.telegram_id in @admins) do
           with {:ok, user} <-
                  MyScrobblesBot.Accounts.get_user_by_telegram_user_id(
                    message.reply_to_message.from.telegram_id
@@ -209,7 +215,7 @@ por favor, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pe
         end
 
       "mspromoteid " <> info ->
-        if((message.from.telegram_id) in @admins) do
+        if(message.from.telegram_id in @admins) do
           infos = String.split(info)
 
           %MyScrobblesBot.Accounts.User{} =
@@ -237,7 +243,7 @@ por favor, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pe
         end
 
       "mspromote " <> info ->
-        if((message.from.telegram_id) in @admins) do
+        if(message.from.telegram_id in @admins) do
           with {:ok, %{expiration: _date}} <- MyScrobblesBot.Accounts.promote_user(message, info) do
             %{
               text: "Welcome #{message.reply_to_message.from.first_name} to premium life.",
@@ -256,7 +262,7 @@ por favor, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pe
         end
 
       "msremove" ->
-        if((message.from.telegram_id) in @admins) do
+        if(message.from.telegram_id in @admins) do
           with {:ok, :removed} <- MyScrobblesBot.Accounts.remove_premium_user(message) do
             %{
               text: "successfully removed.",
@@ -283,7 +289,7 @@ por favor, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pe
         end
 
       "msremoveid " <> info ->
-        if((message.from.telegram_id) in @admins) do
+        if(message.from.telegram_id in @admins) do
           %MyScrobblesBot.Accounts.User{} =
             user = MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(info)
 

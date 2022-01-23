@@ -45,7 +45,7 @@ defmodule MyScrobblesBot.LastFm do
 
 <b>Some loved tracks</b>
 #{Enum.map(tracks, fn track -> "💘 #{track["artist"]["name"]} - #{track["name"]}
-            " end)}
+                  " end)}
 🎧💎
 "
     else
@@ -377,17 +377,13 @@ defmodule MyScrobblesBot.LastFm do
   def playcount_user_text(playcount, now) when is_integer(playcount),
     do: playcount_user_text(Integer.to_string(playcount), now)
 
+  def playcount_user_text(playcount, now) when is_nil(playcount) do
+    case now do
+      true ->
+        "#{Gettext.gettext(MyScrobblesBot.Gettext, "is")} #{Gettext.gettext(MyScrobblesBot.Gettext, "listening")}"
 
-
-  def playcount_user_text(playcount, now) when is_nil(playcount)
-    do
-      case now do
-        true ->
-          "#{Gettext.gettext(MyScrobblesBot.Gettext, "is")} #{Gettext.gettext(MyScrobblesBot.Gettext, "listening")}"
-
-        false ->
-          "#{Gettext.gettext(MyScrobblesBot.Gettext, "listened")}"
-
-      end
+      false ->
+        "#{Gettext.gettext(MyScrobblesBot.Gettext, "listened")}"
     end
+  end
 end

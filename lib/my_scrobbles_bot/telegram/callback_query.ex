@@ -23,7 +23,6 @@ defmodule MyScrobblesBot.Telegram.CallbackQuery do
     field :data, :string
     field :callback_query_id, :string
 
-
     embeds_one :from, From
   end
 
