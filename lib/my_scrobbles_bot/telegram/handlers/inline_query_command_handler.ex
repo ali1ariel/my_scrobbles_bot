@@ -43,68 +43,30 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
   end
 
   def inline_track(inline_query, track) do
-    {:ok, full_track} = LastFm.get_track(track)
+    full_track = case LastFm.get_track(track) do
+      {:ok, full_track} ->
+        full_track
+      {:error, _} ->
+          %{playcount: nil, userloved?: nil}
+    end
 
-    query =
-      Map.merge(track, full_track)
-      |> Map.merge(%{with_photo?: true, user: inline_query.from.first_name})
+        query =
+          Map.merge(track, full_track)
+          |> Map.merge(%{with_photo?: true, user: inline_query.from.first_name})
 
-    %{
-      inline_query_id: inline_query.inline_query_id,
-      results: [
+
+
         %{
-          type: "article",
-          title: "With Photo url",
-          description: track.trackname,
-          input_message_content: %{
-            parse_mode: "HTML",
-            message_text:
-              Map.merge(query, %{with_photo?: true, user: inline_query.from.first_name})
-              |> LastFm.get_now_track()
-          },
-          reply_markup: %{
-            inline_keyboard: [[]]
-          },
-          id: "1"
-        },
-        %{
-          type: "article",
-          title: "Just Text",
-          description: track.trackname,
-          input_message_content: %{
-            parse_mode: "HTML",
-            message_text:
-              Map.merge(query, %{with_photo?: false, user: inline_query.from.first_name})
-              |> LastFm.get_now_track()
-          },
-          reply_markup: %{
-            inline_keyboard: [[]]
-          },
-          id: "2"
-        },
-        %{
-          type: "photo",
-          title: "Photo and text",
-          description: track.trackname,
-          parse_mode: "HTML",
-          input_message_content: %{
-            parse_mode: "HTML",
-            message_text: ""
-          },
-          reply_markup: %{
-            inline_keyboard: [[]]
-          },
-          photo_url: track.photo,
-          thumb_url: track.photo,
-          caption:
-            Map.merge(query, %{with_photo?: false, user: inline_query.from.first_name})
-            |> LastFm.get_now_track(),
-          id: "3"
+          inline_query_id: inline_query.inline_query_id,
+          results: [
+            inline_text_option(track, :trackname, query, inline_query.from.first_name, "With Photo url", true, "1", fn op -> LastFm.get_now_track(op) end),
+            inline_text_option(track, :trackname, query, inline_query.from.first_name, "Just Text", false, "2", fn op -> LastFm.get_now_track(op) end),
+            inline_photo_option(track, :trackname, query, inline_query.from.first_name, "with photo", false, "3", fn op -> LastFm.get_now_track(op) end),
+          ],
+          is_personal: true,
+          cache_time: 10
         }
-      ],
-      is_personal: true,
-      cache_time: 10
-    }
+
   end
 
   def inline_artist(inline_query, track) do
@@ -115,55 +77,9 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
     %{
       inline_query_id: inline_query.inline_query_id,
       results: [
-        %{
-          type: "article",
-          title: "With Photo url",
-          description: track.artist,
-          input_message_content: %{
-            parse_mode: "HTML",
-            message_text:
-              Map.merge(query, %{with_photo?: true, user: inline_query.from.first_name})
-              |> LastFm.get_now_artist()
-          },
-          reply_markup: %{
-            inline_keyboard: [[]]
-          },
-          id: "1"
-        },
-        %{
-          type: "article",
-          title: "Just Text",
-          description: track.artist,
-          input_message_content: %{
-            parse_mode: "HTML",
-            message_text:
-              Map.merge(query, %{with_photo?: false, user: inline_query.from.first_name})
-              |> LastFm.get_now_artist()
-          },
-          reply_markup: %{
-            inline_keyboard: [[]]
-          },
-          id: "2"
-        },
-        %{
-          type: "photo",
-          title: "Photo and text",
-          description: track.artist,
-          parse_mode: "HTML",
-          input_message_content: %{
-            parse_mode: "HTML",
-            message_text: ""
-          },
-          reply_markup: %{
-            inline_keyboard: [[]]
-          },
-          photo_url: track.photo,
-          thumb_url: track.photo,
-          caption:
-            Map.merge(query, %{with_photo?: false, user: inline_query.from.first_name})
-            |> LastFm.get_now_artist(),
-          id: "3"
-        }
+        inline_text_option(track, :artist, query, inline_query.from.first_name, "With Photo url", true, "1", fn op -> LastFm.get_now_artist(op) end),
+        inline_text_option(track, :artist, query, inline_query.from.first_name, "Just Text", false, "2", fn op -> LastFm.get_now_artist(op) end),
+        inline_photo_option(track, :artist, query, inline_query.from.first_name, "with photo", false, "3", fn op -> LastFm.get_now_artist(op) end),
       ],
       is_personal: true,
       cache_time: 10
@@ -178,55 +94,9 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
     %{
       inline_query_id: inline_query.inline_query_id,
       results: [
-        %{
-          type: "article",
-          title: "With Photo url",
-          description: track.album,
-          input_message_content: %{
-            parse_mode: "HTML",
-            message_text:
-              Map.merge(query, %{with_photo?: true, user: inline_query.from.first_name})
-              |> LastFm.get_now_album()
-          },
-          reply_markup: %{
-            inline_keyboard: [[]]
-          },
-          id: "1"
-        },
-        %{
-          type: "article",
-          title: "Just Text",
-          description: track.album,
-          input_message_content: %{
-            parse_mode: "HTML",
-            message_text:
-              Map.merge(query, %{with_photo?: false, user: inline_query.from.first_name})
-              |> LastFm.get_now_album()
-          },
-          reply_markup: %{
-            inline_keyboard: [[]]
-          },
-          id: "2"
-        },
-        %{
-          type: "photo",
-          title: "Photo and text",
-          description: track.album,
-          parse_mode: "HTML",
-          reply_markup: %{
-            inline_keyboard: [[]]
-          },
-          input_message_content: %{
-            parse_mode: "HTML",
-            message_text: ""
-          },
-          photo_url: track.photo,
-          thumb_url: track.photo,
-          caption:
-            Map.merge(query, %{with_photo?: false, user: inline_query.from.first_name})
-            |> LastFm.get_now_album(),
-          id: "3"
-        }
+        inline_text_option(track, :album, query, inline_query.from.first_name, "With Photo url", true, "1", fn op -> LastFm.get_now_album(op) end),
+        inline_text_option(track, :album, query, inline_query.from.first_name, "Just Text", false, "2", fn op -> LastFm.get_now_album(op) end),
+        inline_photo_option(track, :album, query, inline_query.from.first_name, "with photo", false, "3", fn op -> LastFm.get_now_album(op) end),
       ],
       is_personal: true,
       cache_time: 10
@@ -279,5 +149,58 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
       is_personal: true,
       cache_time: 10
     }
+  end
+
+  def only_text() do
+
+  end
+
+  def inline_text_option(content, content_type, query, first_name, type, photo?, id, function) do
+    %{
+      type: "article",
+      title: content[content_type],
+      description: type,
+      input_message_content: %{
+        parse_mode: "HTML",
+        message_text:
+          Map.merge(query, %{with_photo?: photo?, user: first_name})
+          |> function.()
+      },
+      thumb_url: case photo? do
+          true ->
+            content.photo
+          _ -> ""
+      end,
+      reply_markup: %{
+        inline_keyboard: [[]]
+      },
+      id: id
+    }
+  end
+
+  def inline_photo_option(content, content_type, query, first_name, type, photo?, id, function) do
+    %{
+      type: "photo",
+      title: "Photo and text",
+      description: content[content_type],
+      parse_mode: "HTML",
+      input_message_content: %{
+        parse_mode: "HTML",
+        message_text: ""
+      },
+      reply_markup: %{
+        inline_keyboard: [[]]
+      },
+      photo_url: content.photo,
+      thumb_url: content.photo,
+      caption:
+        Map.merge(query, %{with_photo?: photo?, user: first_name})
+        |> function.(),
+      id: id
+    }
+  end
+
+  def with_photo() do
+
   end
 end
