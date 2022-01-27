@@ -38,13 +38,6 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
     |> match_command()
     |> Telegram.send_message()
 
-    # %{
-    #   chat_id: c_id,
-    #   reply_to_message_id: m_id,
-    #   text: "this is <b>just</b> a <i>sample</i> message",
-    #   parse_mode: "HTML"
-
-    # }
   end
 
   def match_user(%Message{} = message) do
@@ -84,12 +77,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
           )
         )
 
-        %{
-          text: "<i>#{Gettext.gettext(MyScrobblesBot.Gettext, "user_not_found")}</i>",
-          parse_mode: "HTML",
-          chat_id: message.chat_id,
-          reply_to_message_id: message.message_id
-        }
+        response("<i>#{Gettext.gettext(MyScrobblesBot.Gettext, "user_not_found")}</i>", message)
     end
   end
 
@@ -101,15 +89,8 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
 
     case command do
       "start" ->
-        %{
-          text:
-            "_welcome, please, register with /msregister yourlastfmusername, changing yourlastfmusername with your last fm username._
-------------------
-_Bem vindo, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pelo seu user do last fm._",
-          parse_mode: "HTML",
-          chat_id: message.chat_id,
-          reply_to_message_id: message.message_id
-        }
+        command_start()
+        |> response(message)
 
       x when x in ["lt", "listen", "mymusic", "mm"] ->
         MyScrobblesBot.LastFm.Track.mymusic(message, user)
@@ -157,17 +138,8 @@ _Bem vindo, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm p
         MyScrobblesBot.LastFm.User.myuser(message, user)
 
       x when x in ["register", "msregister"] ->
-        MyScrobblesBot.LastFm.User.register(message)
-
-        %{
-          text:
-            "please, register with /msregister yourlastfmusername, changing yourlastfmusername with your last fm username._
-------------------
-por favor, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pelo seu user do last fm._",
-          parse_mode: "HTML",
-          chat_id: message.chat_id,
-          reply_to_message_id: message.message_id
-        }
+        command_register()
+        |> response(message)
 
       "msregister " <> username ->
         register(message, username)
@@ -176,20 +148,12 @@ por favor, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pe
         if(message.from.telegram_id in @admins) do
           with user = %MyScrobblesBot.Accounts.User{} <-
                  MyScrobblesBot.Repo.get_by(MyScrobblesBot.Accounts.User, last_fm_username: info) do
-            %{
-              text: "_user: #{user.telegram_id}, ispremium: #{user.is_premium?} _",
-              parse_mode: "HTML",
-              chat_id: message.chat_id,
-              reply_to_message_id: message.message_id
-            }
+            command_get_user(user)
+            |> response(message)
           end
         else
-          %{
-            text: "you're not an administrator.",
-            parse_mode: "HTML",
-            chat_id: message.chat_id,
-            reply_to_message_id: message.message_id
-          }
+          not_administrator()
+          |> response(message)
         end
 
       "msgetuser" ->
@@ -198,20 +162,12 @@ por favor, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pe
                  MyScrobblesBot.Accounts.get_user_by_telegram_user_id(
                    message.reply_to_message.from.telegram_id
                  ) do
-            %{
-              text: "user: #{user.telegram_id}, ispremium: #{user.is_premium?}",
-              parse_mode: "HTML",
-              chat_id: message.chat_id,
-              reply_to_message_id: message.message_id
-            }
+            command_get_user(user)
+            |> response(message)
           end
         else
-          %{
-            text: "you're not an administrator.",
-            parse_mode: "HTML",
-            chat_id: message.chat_id,
-            reply_to_message_id: message.message_id
-          }
+          not_administrator()
+          |> response(message)
         end
 
       "mspromoteid " <> info ->
@@ -226,66 +182,38 @@ por favor, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pe
 
           with {:ok, %{expiration: _date}} <-
                  MyScrobblesBot.Accounts.promote_user(user, List.last(infos)) do
-            %{
-              text: "_user added with successful to the premium life._",
-              parse_mode: "HTML",
-              chat_id: message.chat_id,
-              reply_to_message_id: message.message_id
-            }
+            "_user added with successful to the premium life._"
+            |> response(message)
           end
         else
-          %{
-            text: "you're not an administrator.",
-            parse_mode: "HTML",
-            chat_id: message.chat_id,
-            reply_to_message_id: message.message_id
-          }
+          not_administrator()
+          |> response(message)
         end
 
       "mspromote " <> info ->
         if(message.from.telegram_id in @admins) do
           with {:ok, %{expiration: _date}} <- MyScrobblesBot.Accounts.promote_user(message, info) do
-            %{
-              text: "Welcome #{message.reply_to_message.from.first_name} to premium life.",
-              parse_mode: "HTML",
-              chat_id: message.chat_id,
-              reply_to_message_id: message.message_id
-            }
+            "Welcome #{message.reply_to_message.from.first_name} to premium life."
+            |> response(message)
           end
         else
-          %{
-            text: "you're not an administrator.",
-            parse_mode: "HTML",
-            chat_id: message.chat_id,
-            reply_to_message_id: message.message_id
-          }
+          not_administrator()
+          |> response(message)
         end
 
       "msremove" ->
         if(message.from.telegram_id in @admins) do
           with {:ok, :removed} <- MyScrobblesBot.Accounts.remove_premium_user(message) do
-            %{
-              text: "successfully removed.",
-              parse_mode: "HTML",
-              chat_id: message.chat_id,
-              reply_to_message_id: message.message_id
-            }
+            "successfully removed."
+            |> response(message)
           else
             {:ok, :not_premium} ->
-              %{
-                text: "#{message.reply_to_message.from.first_name} is not a premium user.",
-                parse_mode: "HTML",
-                chat_id: message.chat_id,
-                reply_to_message_id: message.message_id
-              }
+              "#{message.reply_to_message.from.first_name} is not a premium user."
+              |> response(message)
           end
         else
-          %{
-            text: "you're not an administrator.",
-            parse_mode: "HTML",
-            chat_id: message.chat_id,
-            reply_to_message_id: message.message_id
-          }
+          not_administrator()
+          |> response(message)
         end
 
       "msremoveid " <> info ->
@@ -294,20 +222,12 @@ por favor, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pe
             user = MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(info)
 
           with {:ok, :removed} <- MyScrobblesBot.Accounts.remove_premium_user(user) do
-            %{
-              text: "_usuccessfully removed._",
-              parse_mode: "HTML",
-              chat_id: message.chat_id,
-              reply_to_message_id: message.message_id
-            }
+            "_usuccessfully removed._"
+            |> response(message)
           end
         else
-          %{
-            text: "you're not an administrator.",
-            parse_mode: "HTML",
-            chat_id: message.chat_id,
-            reply_to_message_id: message.message_id
-          }
+          not_administrator()
+          |> response(message)
         end
 
       "selectlanguage" ->
@@ -320,15 +240,8 @@ por favor, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pe
 
   def match_command({%Message{text: "/" <> command} = message, _})
       when command in ["lt", "artist", "album"] do
-    %{
-      text:
-        "Esse bot está em BETA e grupo não está autorizado no momento, por favor, me removam do grupo, para me usar, entrem em @mygroupfm ou me usem no privado, porém, no momento recomendamos usar o @MeuLastFMBot.
- This bot is in BETA and this group is not allowed at this moment, please remove me, to use, please come to @mygroupfm or talk to me on my private, but we recommend to use @MeuLastFMBot.
-",
-      parse_mode: "HTML",
-      chat_id: message.chat_id,
-      reply_to_message_id: message.message_id
-    }
+    beta_message()
+    |> response(message)
   end
 
   def register(%Message{} = message, username) do
@@ -342,28 +255,16 @@ por favor, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pe
            }
          }) do
       {:created, _user} ->
-        %{
-          text: "_user created successfully._",
-          parse_mode: "HTML",
-          chat_id: message.chat_id,
-          reply_to_message_id: message.message_id
-        }
+        "_user created successfully._"
+        |> response(message)
 
       {:updated, _user} ->
-        %{
-          text: "_user updated successfully._",
-          parse_mode: "HTML",
-          chat_id: message.chat_id,
-          reply_to_message_id: message.message_id
-        }
+        "_user updated successfully._"
+        |> response(message)
 
       {:error, error} ->
-        %{
-          text: "_oh sorry you got the error: #{inspect(error)}._",
-          parse_mode: "HTML",
-          chat_id: message.chat_id,
-          reply_to_message_id: message.message_id
-        }
+        "_oh sorry you got the error: #{inspect(error)}._"
+        |> response(message)
     end
   end
 
@@ -401,6 +302,66 @@ por favor, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pe
           [%{text: "English 🇺🇸", callback_data: "system_languages-en"}]
         ]
       }
+    }
+  end
+
+  def preview(string) do
+    case String.length(string) do
+      0 ->
+        IO.puts("okay, zero")
+
+      1 ->
+        case string do
+          "+" ->
+            IO.puts("plus")
+
+          _ ->
+            case Integer.parse(string) do
+              {number, ""} when is_integer(number) -> IO.puts("number #{number}")
+              _ -> IO.puts("n eh inteiro")
+            end
+        end
+
+      2 ->
+        IO.puts("two_arguments")
+
+      _ ->
+        IO.puts("invalido")
+    end
+  end
+
+  def command_get_user(user) do
+    "_user: #{user.telegram_id}, ispremium: #{user.is_premium?} _"
+  end
+
+  def not_administrator() do
+    "you're not an administrator."
+  end
+
+  def beta_message() do
+    "Esse bot está em BETA e grupo não está autorizado no momento, por favor, me removam do grupo, para me usar, entrem em @mygroupfm ou me usem no privado, porém, no momento recomendamos usar o @MeuLastFMBot.
+    This bot is in BETA and this group is not allowed at this moment, please remove me, to use, please come to @mygroupfm or talk to me on my private, but we recommend to use @MeuLastFMBot.
+   "
+  end
+
+  def command_register() do
+    "please, register with /msregister yourlastfmusername, changing yourlastfmusername with your last fm username._
+    ------------------
+    por favor, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pelo seu user do last fm._"
+  end
+
+  def command_start() do
+    "_welcome, please, register with /msregister yourlastfmusername, changing yourlastfmusername with your last fm username._
+    ------------------
+    _Bem vindo, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pelo seu user do last fm._"
+  end
+
+  def response(text, message) do
+    %{
+      text: text,
+      parse_mode: "HTML",
+      chat_id: message.chat_id,
+      reply_to_message_id: message.message_id
     }
   end
 end
