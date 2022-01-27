@@ -77,7 +77,8 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
           )
         )
 
-        response("<i>#{Gettext.gettext(MyScrobblesBot.Gettext, "user_not_found")}</i>", message)
+        "<i>#{Gettext.gettext(MyScrobblesBot.Gettext, "user_not_found")}</i>"
+        |> response(message)
     end
   end
 
