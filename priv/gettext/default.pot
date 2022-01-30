@@ -73,4 +73,27 @@ msgstr ""
 msgid "successfully"
 msgstr ""
 
- 
+msgid "select the language of the posts"
+msgstr ""
+
+msgid "select the language of the options, helps and other system items"
+msgstr ""
+
+msgid "you're not an administrator"
+msgstr ""
+
+msgid "Beta message bot"
+msgstr ""
+
+msgid "register command message"
+msgstr ""
+
+msgid "start command message"
+msgstr ""
+
+
+
+#, elixir-format
+#: lib/my_scrobbles_bot_web/live/page_live.html.leex:2
+msgid "Welcome to %{name}!"
+msgstr ""

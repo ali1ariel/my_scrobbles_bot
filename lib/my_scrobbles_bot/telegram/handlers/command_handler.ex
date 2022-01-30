@@ -6,7 +6,6 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
   alias MyScrobblesBot.Telegram.Message
   alias MyScrobblesBotWeb.Services.Telegram
   alias MyScrobblesBot.Accounts.User
-
   alias MyScrobblesBot.Helpers
 
   require MyScrobblesBot.Gettext
@@ -79,8 +78,12 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
 
     case command do
       "start" ->
-        command_start()
-        |> response(message)
+          message.from.language_code
+          |> Helpers.language_handler()
+          |> Helpers.set_language()
+
+          command_start()
+          |> response(message)
 
       x when x in ["lt", "listen", "mymusic", "mm"] ->
         Helpers.set_language(user.user_confs.language)
@@ -225,7 +228,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
 
         if(message.from.telegram_id in @admins) do
           with {:ok, %{expiration: _date}} <- MyScrobblesBot.Accounts.promote_user(message, info) do
-            "Welcome #{message.reply_to_message.from.first_name} to premium life."
+            "#{Gettext.gettext(MyScrobblesBot.Gettext, "Welcome")} #{message.reply_to_message.from.first_name} #{Gettext.gettext(MyScrobblesBot.Gettext, "to premium life")}."
             |> response(message)
           end
         else
@@ -242,7 +245,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
             |> response(message)
           else
             {:ok, :not_premium} ->
-              "#{message.reply_to_message.from.first_name} is not a premium user."
+              "#{message.reply_to_message.from.first_name} #{Gettext.gettext(MyScrobblesBot.Gettext, "is not a premium user")}."
               |> response(message)
           end
         else
@@ -295,11 +298,11 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
            }
          }) do
       {:created, _user} ->
-        "_user created successfully._"
+        "#{Gettext.gettext(MyScrobblesBot.Gettext, "user")} #{Gettext.gettext(MyScrobblesBot.Gettext, "created")} #{Gettext.gettext(MyScrobblesBot.Gettext, "successfully")}!"
         |> response(message)
 
       {:updated, _user} ->
-        "_user updated successfully._"
+        "#{Gettext.gettext(MyScrobblesBot.Gettext, "user")} #{Gettext.gettext(MyScrobblesBot.Gettext, "updated")} #{Gettext.gettext(MyScrobblesBot.Gettext, "successfully")}!"
         |> response(message)
 
       {:error, error} ->
@@ -310,7 +313,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
 
   def select_language(message) do
     %{
-      text: "#{Gettext.gettext(MyScrobblesBot.Gettext, "select the language of the posts")}",
+      text: "<i>#{Gettext.gettext(MyScrobblesBot.Gettext, "select the language of the posts")}</i>",
       parse_mode: "HTML",
       chat_id: message.chat_id,
       reply_to_message_id: message.message_id,
@@ -329,7 +332,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
   def select_system_language(message) do
     %{
       text:
-        "#{Gettext.gettext(MyScrobblesBot.Gettext, "select the language of the options, helps and other system items.")}",
+        "<i>#{Gettext.gettext(MyScrobblesBot.Gettext, "select the language of the options, helps and other system items")}</i>.",
       parse_mode: "HTML",
       chat_id: message.chat_id,
       reply_to_message_id: message.message_id,
@@ -375,25 +378,19 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
   end
 
   def not_administrator() do
-    "you're not an administrator."
+    "<i>#{Gettext.gettext(MyScrobblesBot.Gettext, "you're not an administrator")}.</i>"
   end
 
   def beta_message() do
-    "Esse bot está em BETA e grupo não está autorizado no momento, por favor, me removam do grupo, para me usar, entrem em @mygroupfm ou me usem no privado, porém, no momento recomendamos usar o @MeuLastFMBot.
-    This bot is in BETA and this group is not allowed at this moment, please remove me, to use, please come to @mygroupfm or talk to me on my private, but we recommend to use @MeuLastFMBot.
-   "
+    "<i>#{Gettext.gettext(MyScrobblesBot.Gettext, "Beta message bot")}.</i>"
   end
 
   def command_register() do
-    "please, register with /msregister yourlastfmusername, changing yourlastfmusername with your last fm username._
-    ------------------
-    por favor, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pelo seu user do last fm._"
+    "<i>#{Gettext.gettext(MyScrobblesBot.Gettext, "register command message")}.</i>"
   end
 
   def command_start() do
-    "_welcome, please, register with /msregister yourlastfmusername, changing yourlastfmusername with your last fm username._
-    ------------------
-    _Bem vindo, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pelo seu user do last fm._"
+    "<i>#{Gettext.gettext(MyScrobblesBot.Gettext, "start command message")}.</i>"
   end
 
   def response(text, message) do

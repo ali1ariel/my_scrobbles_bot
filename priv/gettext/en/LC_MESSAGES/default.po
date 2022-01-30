@@ -73,3 +73,38 @@ msgstr ""
 
 msgid "to"
 msgstr " to"
+
+msgid "user"
+msgstr ""
+
+msgid "created"
+msgstr ""
+
+msgid "updated"
+msgstr ""
+
+msgid "successfully"
+msgstr ""
+
+msgid "select the language of the posts"
+msgstr ""
+
+msgid "select the language of the options, helps and other system items"
+msgstr ""
+
+msgid "you're not an administrator"
+msgstr ""
+
+msgid "Beta message bot"
+msgstr "This bot is in BETA and this group is not allowed at this moment, please remove me, to use, please come to @mygroupfm or talk to me on my private, but we recommend to use @MeuLastFMBot"
+
+msgid "register command message"
+msgstr "please, register with /msregister yourlastfmusername, changing yourlastfmusername with your last fm username"
+
+msgid "start command message"
+msgstr "welcome, please, register with /msregister yourlastfmusername, changing yourlastfmusername with your last fm username"
+
+#, elixir-format
+#: lib/my_scrobbles_bot_web/live/page_live.html.leex:2
+msgid "Welcome to %{name}!"
+msgstr ""
