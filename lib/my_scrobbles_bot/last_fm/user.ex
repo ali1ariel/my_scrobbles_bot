@@ -27,8 +27,9 @@ defmodule MyScrobblesBot.LastFm.User do
       )
 
     msg =
-        LastFm.get_user_plus(%{username: username})
+      LastFm.get_user_plus(%{username: username})
       |> BotOutput.get_user()
+
     %{text: msg, parse_mode: "HTML", chat_id: message.chat_id}
   end
 

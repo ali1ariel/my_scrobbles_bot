@@ -9,6 +9,7 @@ defmodule MyScrobblesBot.LastFm do
     case MyScrobblesBotWeb.Services.LastFm.get_user(attrs) do
       {:ok, %{"user" => user}} ->
         {:ok, user}
+
       {:error, error} ->
         "error: #{error}"
     end

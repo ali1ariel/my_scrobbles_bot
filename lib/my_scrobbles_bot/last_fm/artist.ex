@@ -9,11 +9,9 @@ defmodule MyScrobblesBot.LastFm.Artist do
   def artist(%Message{} = message, %User{} = user) do
     %{last_fm_username: username} = user
 
-    {:ok, track} =
-      LastFm.get_recent_track(%{username: username})
+    {:ok, track} = LastFm.get_recent_track(%{username: username})
 
-    {:ok, attrs} =
-      LastFm.get_artist(track)
+    {:ok, attrs} = LastFm.get_artist(track)
 
     extra =
       if(user.is_premium?) do
@@ -58,7 +56,7 @@ defmodule MyScrobblesBot.LastFm.Artist do
       Map.merge(track, %{playcount: attrs["stats"]["userplaycount"]})
       |> Map.merge(%{with_photo?: true, user: message.from.first_name})
 
-    msg = LastFm.get_now_artist(query)
+    msg = BotOutput.get_now_artist(query)
     %{text: "#{msg}#{extra}", parse_mode: "HTML", chat_id: message.chat_id}
   end
 
@@ -81,17 +79,15 @@ defmodule MyScrobblesBot.LastFm.Artist do
     %{last_fm_username: friend_username} =
       MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(friend_user_id)
 
-    {:ok, track} =
-      LastFm.get_recent_track(%{username: friend_username})
+    {:ok, track} = LastFm.get_recent_track(%{username: friend_username})
 
-    {:ok, attrs} =
-      LastFm.get_artist(%{track | username: username})
+    {:ok, attrs} = LastFm.get_artist(%{track | username: username})
 
     query =
       Map.merge(track, attrs)
       |> Map.merge(%{with_photo?: true, user: user_first_name, friend: friend_first_name})
 
-    msg = LastFm.get_your_artist(query)
+    msg = BotOutput.get_your_artist(query)
     %{text: msg, parse_mode: "HTML", chat_id: message.chat_id}
   end
 
@@ -114,17 +110,15 @@ defmodule MyScrobblesBot.LastFm.Artist do
     %{last_fm_username: friend_username} =
       MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(friend_user_id)
 
-    {:ok, track} =
-      LastFm.get_recent_track(%{username: username})
+    {:ok, track} = LastFm.get_recent_track(%{username: username})
 
-    {:ok, attrs} =
-      LastFm.get_artist(%{track | username: friend_username})
+    {:ok, attrs} = LastFm.get_artist(%{track | username: friend_username})
 
     query =
       Map.merge(track, attrs)
       |> Map.merge(%{with_photo?: true, user: user_first_name, friend: friend_first_name})
 
-    msg = LastFm.get_my_artist(query)
+    msg = BotOutput.get_my_artist(query)
     %{text: msg, parse_mode: "HTML", chat_id: message.chat_id}
   end
 

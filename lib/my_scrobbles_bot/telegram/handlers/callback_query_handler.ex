@@ -17,18 +17,17 @@ defmodule MyScrobblesBot.Telegram.Handlers.CallbackQueryHandler do
     Logger.info("Received and ignored message #{callback_query.callback_query_id} - #{data}")
 
     {:ok, user} = match_user(callback_query)
+
     match_command(callback_query, user)
     |> Telegram.send_message()
   end
 
   defp match_command(callback_query, user) do
-
     Helpers.set_language(user.user_confs.language)
 
     case callback_query.data do
       "post_languages-" <> language ->
         lang = Helpers.language_handler(language)
-
 
         update_language(
           user |> MyScrobblesBot.Repo.preload(:user_confs) |> then(& &1.user_confs),
@@ -62,7 +61,6 @@ defmodule MyScrobblesBot.Telegram.Handlers.CallbackQueryHandler do
   def match_user(%CallbackQuery{} = callback_query) do
     case MyScrobblesBot.Accounts.get_user_by_telegram_user_id(callback_query.from.telegram_id) do
       {:ok, %User{} = user} ->
-
         {:ok, user |> MyScrobblesBot.Repo.preload(:user_confs)}
 
       _ ->

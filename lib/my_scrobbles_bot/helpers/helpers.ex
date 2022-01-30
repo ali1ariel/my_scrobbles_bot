@@ -23,6 +23,7 @@ defmodule MyScrobblesBot.Helpers do
       12 -> gettext("December")
     end
   end
+
   def language_handler(lang) do
     case lang do
       "en" -> :english
