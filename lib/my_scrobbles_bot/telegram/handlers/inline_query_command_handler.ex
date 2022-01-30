@@ -29,7 +29,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
   end
 
   defp match_command(%InlineQuery{query: "/" <> command = _query} = inline_query, user) do
-    Helpers.set_language(user.user_confs.language)
+    Helpers.set_language(user.user_confs.language |> Helpers.internal_language_handler)
 
     command_to_match = String.downcase(command)
 

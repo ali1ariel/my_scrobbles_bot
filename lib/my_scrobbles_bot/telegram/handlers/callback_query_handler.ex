@@ -23,7 +23,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CallbackQueryHandler do
   end
 
   defp match_command(callback_query, user) do
-    Helpers.set_language(user.user_confs.language)
+    Helpers.set_language(user.user_confs.language |> Helpers.internal_language_handler)
 
     case callback_query.data do
       "post_languages-" <> language ->
@@ -79,7 +79,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CallbackQueryHandler do
   end
 
   def update_system_language(user_confs, language) do
-    Ecto.Changeset.change(user_confs, system_language: language)
+    Ecto.Changeset.change(user_confs, conf_language: language)
     |> MyScrobblesBot.Repo.update()
 
     Gettext.put_locale(

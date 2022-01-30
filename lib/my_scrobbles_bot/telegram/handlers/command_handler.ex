@@ -17,7 +17,8 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
     # meu last fm bot sac
     "-1001156236779",
     # MSB - grupo BETA
-    "-1001786739075"
+    "-1001786739075",
+    "-1001165893434" #Adm
   ]
 
   @admins [
@@ -71,108 +72,121 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
   end
 
   def match_command(
+        {%Message{text: "/set" <> command, chat_type: type} = message, %User{} = user}
+      )
+      when type == "private" do
+    command = String.downcase(command)
+
+    case command do
+      "language" ->
+        Helpers.set_language(user.user_confs.conf_language |> Helpers.internal_language_handler)
+
+        select_language(message)
+
+      "systemlanguage" ->
+        Helpers.set_language(user.user_confs.conf_language |> Helpers.internal_language_handler)
+
+        select_system_language(message)
+    end
+  end
+
+
+  def match_command(
         {%Message{text: "/" <> command, chat_type: type, chat_id: id} = message, %User{} = user}
       )
       when type == "private" or (type == "supergroup" and id in @allowed_groups) do
     command = String.downcase(command)
 
     case command do
-      "start" ->
-          message.from.language_code
-          |> Helpers.language_handler()
-          |> Helpers.set_language()
-
-          command_start()
-          |> response(message)
 
       x when x in ["lt", "listen", "mymusic", "mm"] ->
-        Helpers.set_language(user.user_confs.language)
+        Helpers.set_language(user.user_confs.language |> Helpers.internal_language_handler)
 
         MyScrobblesBot.LastFm.Track.mymusic(message, user)
 
       x when x in ["wyl", "ym", "yourmusic"] ->
-        Helpers.set_language(user.user_confs.language)
+        Helpers.set_language(user.user_confs.language |> Helpers.internal_language_handler)
 
         MyScrobblesBot.LastFm.Track.yourmusic(message)
 
       x when x in ["ltmarked", "ltm", "mymusicmarked", "msm"] ->
-        Helpers.set_language(user.user_confs.language)
+        Helpers.set_language(user.user_confs.language |> Helpers.internal_language_handler)
 
         MyScrobblesBot.LastFm.Track.mymusicmarked(message, user)
 
       x when x in ["textlisten", "tlisten", "txtl", "mymusictext", "mst"] ->
-        Helpers.set_language(user.user_confs.language)
+        Helpers.set_language(user.user_confs.language |> Helpers.internal_language_handler)
 
         MyScrobblesBot.LastFm.Track.mymusictext(message, user)
 
       x when x in ["ltphoto", "ltp", "mymusicphoto", "msp"] ->
-        Helpers.set_language(user.user_confs.language)
+        Helpers.set_language(user.user_confs.language |> Helpers.internal_language_handler)
 
         MyScrobblesBot.LastFm.Track.mymusicphoto(message, user)
 
       x when x in ["andyou", "mytrack", "mt"] ->
-        Helpers.set_language(user.user_confs.language)
+        Helpers.set_language(user.user_confs.language |> Helpers.internal_language_handler)
 
         MyScrobblesBot.LastFm.Track.mytrack(message)
 
       x when x in ["andme", "yourtrack", "yt"] ->
-        Helpers.set_language(user.user_confs.language)
+        Helpers.set_language(user.user_confs.language |> Helpers.internal_language_handler)
 
         MyScrobblesBot.LastFm.Track.yourtrack(message)
 
       x when x in ["artist"] ->
-        Helpers.set_language(user.user_confs.language)
+        Helpers.set_language(user.user_confs.language |> Helpers.internal_language_handler)
 
         MyScrobblesBot.LastFm.Artist.artist(message, user)
 
       x when x in ["yourartist", "yar"] ->
-        Helpers.set_language(user.user_confs.language)
+        Helpers.set_language(user.user_confs.language |> Helpers.internal_language_handler)
 
         MyScrobblesBot.LastFm.Artist.yourartist(message)
 
       x when x in ["myartist", "mar"] ->
-        Helpers.set_language(user.user_confs.language)
+        Helpers.set_language(user.user_confs.language |> Helpers.internal_language_handler)
 
         MyScrobblesBot.LastFm.Artist.myartist(message)
 
       x when x in ["album"] ->
-        Helpers.set_language(user.user_confs.language)
+        Helpers.set_language(user.user_confs.language |> Helpers.internal_language_handler)
 
         MyScrobblesBot.LastFm.Album.album(message, user)
 
       x when x in ["youralbum", "yal"] ->
-        Helpers.set_language(user.user_confs.language)
+        Helpers.set_language(user.user_confs.language |> Helpers.internal_language_handler)
 
         MyScrobblesBot.LastFm.Album.youralbum(message)
 
       x when x in ["myalbum", "mal"] ->
-        Helpers.set_language(user.user_confs.language)
+        Helpers.set_language(user.user_confs.language |> Helpers.internal_language_handler)
 
         MyScrobblesBot.LastFm.Album.myalbum(message)
 
       x when x in ["youruser", "yu"] ->
-        Helpers.set_language(user.user_confs.language)
+        Helpers.set_language(user.user_confs.language |> Helpers.internal_language_handler)
 
         MyScrobblesBot.LastFm.User.youruser(message)
 
       x when x in ["myuser", "mu"] ->
-        Helpers.set_language(user.user_confs.language)
+        Helpers.set_language(user.user_confs.language |> Helpers.internal_language_handler)
 
         MyScrobblesBot.LastFm.User.myuser(message, user)
 
       x when x in ["register", "msregister"] ->
-        Helpers.set_language(user.user_confs.language)
+        Helpers.set_language(user.user_confs.conf_language |> Helpers.internal_language_handler)
 
         command_register()
         |> response(message)
 
       "msregister " <> username ->
-        Helpers.set_language(user.user_confs.language)
+        Helpers.set_language(user.user_confs.conf_language |> Helpers.internal_language_handler)
 
         register(message, username)
 
       "msgetuser " <> info ->
-        Helpers.set_language(user.user_confs.language)
+        Helpers.set_language(user.user_confs.conf_language |> Helpers.internal_language_handler)
 
         if(message.from.telegram_id in @admins) do
           with user = %MyScrobblesBot.Accounts.User{} <-
@@ -186,7 +200,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
         end
 
       "msgetuser" ->
-        Helpers.set_language(user.user_confs.language)
+        Helpers.set_language(user.user_confs.conf_language |> Helpers.internal_language_handler)
 
         if(message.from.telegram_id in @admins) do
           with {:ok, user} <-
@@ -202,7 +216,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
         end
 
       "mspromoteid " <> info ->
-        Helpers.set_language(user.user_confs.language)
+        Helpers.set_language(user.user_confs.conf_language |> Helpers.internal_language_handler)
 
         if(message.from.telegram_id in @admins) do
           infos = String.split(info)
@@ -224,7 +238,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
         end
 
       "mspromote " <> info ->
-        Helpers.set_language(user.user_confs.language)
+        Helpers.set_language(user.user_confs.conf_language |> Helpers.internal_language_handler)
 
         if(message.from.telegram_id in @admins) do
           with {:ok, %{expiration: _date}} <- MyScrobblesBot.Accounts.promote_user(message, info) do
@@ -237,7 +251,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
         end
 
       "msremove" ->
-        Helpers.set_language(user.user_confs.language)
+        Helpers.set_language(user.user_confs.conf_language |> Helpers.internal_language_handler)
 
         if(message.from.telegram_id in @admins) do
           with {:ok, :removed} <- MyScrobblesBot.Accounts.remove_premium_user(message) do
@@ -254,7 +268,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
         end
 
       "msremoveid " <> info ->
-        Helpers.set_language(user.user_confs.language)
+        Helpers.set_language(user.user_confs.conf_language |> Helpers.internal_language_handler)
 
         if(message.from.telegram_id in @admins) do
           %MyScrobblesBot.Accounts.User{} =
@@ -269,15 +283,15 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
           |> response(message)
         end
 
-      "selectlanguage" ->
-        Helpers.set_language(user.user_confs.language)
+      "setlanguage" ->
+        Helpers.set_language(user.user_confs.conf_language |> Helpers.internal_language_handler)
 
-        select_language(message)
+        select_language_group(message)
 
-      "selectsystemlanguage" ->
-        Helpers.set_language(user.user_confs.language)
+      "setsystemlanguage" ->
+        Helpers.set_language(user.user_confs.conf_language |> Helpers.internal_language_handler)
 
-        select_system_language(message)
+        select_system_language_group(message)
     end
   end
 
@@ -345,6 +359,27 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
           [%{text: "English 🇺🇸", callback_data: "system_languages-en"}]
         ]
       }
+    }
+  end
+
+
+
+  def select_language_group(message) do
+    %{
+      text: "<i>#{Gettext.gettext(MyScrobblesBot.Gettext, "This command is not allowed in groups")}.</i>",
+      parse_mode: "HTML",
+      chat_id: message.chat_id,
+      reply_to_message_id: message.message_id,
+    }
+  end
+
+  def select_system_language_group(message) do
+    %{
+      text:
+        "<i>#{Gettext.gettext(MyScrobblesBot.Gettext, "This command is not allowed in groups")}.</i>.",
+      parse_mode: "HTML",
+      chat_id: message.chat_id,
+      reply_to_message_id: message.message_id,
     }
   end
 

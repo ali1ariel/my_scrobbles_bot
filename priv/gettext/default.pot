@@ -91,9 +91,82 @@ msgstr ""
 msgid "start command message"
 msgstr ""
 
+msgid "This command is not allowed in groups"
+msgstr ""
 
+msgid "st"
+msgstr ""
+
+msgid "nd"
+msgstr ""
+
+msgid "rd"
+msgstr ""
+
+msgid "th"
+msgstr ""
 
 #, elixir-format
 #: lib/my_scrobbles_bot_web/live/page_live.html.leex:2
 msgid "Welcome to %{name}!"
+msgstr ""
+
+#, elixir-format
+#: lib/my_scrobbles_bot/helpers/helpers.ex:13
+msgid "April"
+msgstr ""
+
+#, elixir-format
+#: lib/my_scrobbles_bot/helpers/helpers.ex:17
+msgid "August"
+msgstr ""
+
+#, elixir-format
+#: lib/my_scrobbles_bot/helpers/helpers.ex:21
+msgid "December"
+msgstr ""
+
+#, elixir-format
+#: lib/my_scrobbles_bot/helpers/helpers.ex:11
+msgid "February"
+msgstr ""
+
+#, elixir-format
+#: lib/my_scrobbles_bot/helpers/helpers.ex:10
+msgid "January"
+msgstr ""
+
+#, elixir-format
+#: lib/my_scrobbles_bot/helpers/helpers.ex:16
+msgid "July"
+msgstr ""
+
+#, elixir-format
+#: lib/my_scrobbles_bot/helpers/helpers.ex:15
+msgid "June"
+msgstr ""
+
+#, elixir-format
+#: lib/my_scrobbles_bot/helpers/helpers.ex:12
+msgid "March"
+msgstr ""
+
+#, elixir-format
+#: lib/my_scrobbles_bot/helpers/helpers.ex:14
+msgid "May"
+msgstr ""
+
+#, elixir-format
+#: lib/my_scrobbles_bot/helpers/helpers.ex:20
+msgid "November"
+msgstr ""
+
+#, elixir-format
+#: lib/my_scrobbles_bot/helpers/helpers.ex:19
+msgid "October"
+msgstr ""
+
+#, elixir-format
+#: lib/my_scrobbles_bot/helpers/helpers.ex:18
+msgid "September"
 msgstr ""

@@ -52,4 +52,7 @@ defmodule MyScrobblesBot.Helpers do
       language
     )
   end
+
+  def put_space(number) when is_integer(number), do: String.duplicate(" ", number)
+
 end
