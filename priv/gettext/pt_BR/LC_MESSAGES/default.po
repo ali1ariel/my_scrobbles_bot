@@ -72,7 +72,7 @@ msgid "to premium life"
 msgstr "para a vida premium"
 
 msgid "to"
-msgstr " "
+msgstr ""
 
 msgid "user"
 msgstr "usuário"
