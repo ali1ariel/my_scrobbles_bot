@@ -61,7 +61,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CallbackQueryHandler do
   def match_user(%CallbackQuery{} = callback_query) do
     case MyScrobblesBot.Accounts.get_user_by_telegram_user_id(callback_query.from.telegram_id) do
       {:ok, %User{} = user} ->
-        {:ok, user |> MyScrobblesBot.Repo.preload(:user_confs)}
+        {:ok, user}
 
       _ ->
         {:error, nil}

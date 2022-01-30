@@ -42,7 +42,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
   def match_user(%Message{} = message) do
     case MyScrobblesBot.Accounts.get_user_by_telegram_user_id(message.from.telegram_id) do
       {:ok, %User{} = user} ->
-        {message, user |> MyScrobblesBot.Repo.preload(:user_confs)}
+        {message, user}
 
       _ ->
         {message, nil}
