@@ -45,7 +45,7 @@ defmodule MyScrobblesBot.BotOutput do
 
 <b>Some loved tracks</b>
 #{Enum.map(tracks, fn track -> "💘 #{track["artist"]["name"]} - #{track["name"]}
-                        " end)}
+                              " end)}
 🎧💎
 "
     else
