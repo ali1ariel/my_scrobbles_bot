@@ -21,17 +21,13 @@ defmodule MyScrobblesBot.LastFm.Artist do
 
         case Enum.count(data) do
           0 ->
-            "
-
-🎧 <i>#{Gettext.gettext(MyScrobblesBot.Gettext, "It comes from")}</i> <b>#{track.trackname}</b>
+            "\n\n🎧 <i>#{Gettext.gettext(MyScrobblesBot.Gettext, "It comes from")}</i> <b>#{track.trackname}</b>
 "
 
           _ ->
             data
             |> Enum.reduce(
-              "
-
-🎧 <i>#{Gettext.gettext(MyScrobblesBot.Gettext, "It comes from")}</i> <b>#{track.trackname}</b>\n\n<b>#{Gettext.gettext(MyScrobblesBot.Gettext, "Your plays of the most famous tracks")}:</b>
+              "\n\n🎧 <i>#{Gettext.gettext(MyScrobblesBot.Gettext, "It comes from")}</i> <b>#{track.trackname}</b>\n\n<b>#{Gettext.gettext(MyScrobblesBot.Gettext, "Your plays of the most famous tracks")}:</b>
 ",
               fn %{
                    track: track,

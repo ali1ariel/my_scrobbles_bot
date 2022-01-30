@@ -24,7 +24,7 @@ defmodule MyScrobblesBot.LastFm.Album do
           _ ->
             data
             |> Enum.reduce(
-              "🎧 <i>#{Gettext.gettext(MyScrobblesBot.Gettext, "It comes from")}</i> <b>#{track.trackname}</b>\n\n<b>#{Gettext.gettext(MyScrobblesBot.Gettext, "Your power tracks of this album")}:</b>
+              "\n🎧 <i>#{Gettext.gettext(MyScrobblesBot.Gettext, "It comes from")}</i> <b>#{track.trackname}</b>\n\n<b>#{Gettext.gettext(MyScrobblesBot.Gettext, "Your power tracks of this album")}:</b>
 ",
               fn %{
                    track: track,
