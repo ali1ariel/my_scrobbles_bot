@@ -16,7 +16,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
   @impl true
   def handle(%InlineQuery{from: %{telegram_id: user_id}} = inline_query) do
     case MyScrobblesBot.Accounts.get_user_by_telegram_user_id(user_id) do
-      {:ok, %{is_premium?: false} = user} ->
+      {:ok, %{is_premium?: false} = _user} ->
         not_premium(inline_query.inline_query_id)
 
       {:ok, user} ->
@@ -264,7 +264,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
     }
   end
 
-  def inline_photo_option(content, content_type, query, first_name, type, photo?, id, function) do
+  def inline_photo_option(content, content_type, query, first_name, _type, photo?, id, function) do
     %{
       type: "photo",
       title: "Photo and text",

@@ -4,7 +4,6 @@ defmodule MyScrobblesBot.LastFm.Track do
   alias MyScrobblesBotWeb.Services.Telegram
   alias MyScrobblesBot.Telegram.Message
   alias MyScrobblesBot.Accounts.User
-  alias MyScrobblesBot.Helpers
 
   def mymusic(%Message{} = message, %User{} = user) do
     %{last_fm_username: username} = user

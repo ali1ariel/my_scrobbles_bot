@@ -1,7 +1,5 @@
 defmodule MyScrobblesBot.Helpers do
   import MyScrobblesBot.Gettext
-  alias MyScrobblesBot.Telegram.Message
-  alias MyScrobblesBotWeb.Services.Telegram
 
   @supported_languages ["en", "es", "pt-br"]
 

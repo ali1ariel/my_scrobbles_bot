@@ -1,11 +1,9 @@
 defmodule MyScrobblesBot.LastFm.Album do
   alias MyScrobblesBot.LastFm
   alias MyScrobblesBot.BotOutput
-
   alias MyScrobblesBot.Accounts.User
   alias MyScrobblesBot.Telegram.Message
 
-  alias MyScrobblesBot.Helpers
 
   def album(%Message{} = message, %User{} = user) do
     %{last_fm_username: username} = user
