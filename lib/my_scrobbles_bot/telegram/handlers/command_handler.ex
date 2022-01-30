@@ -6,7 +6,6 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
   alias MyScrobblesBot.Telegram.Message
   alias MyScrobblesBotWeb.Services.Telegram
   alias MyScrobblesBot.Accounts.User
-
   alias MyScrobblesBot.Helpers
 
   require MyScrobblesBot.Gettext
@@ -18,7 +17,8 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
     # meu last fm bot sac
     "-1001156236779",
     # MSB - grupo BETA
-    "-1001786739075"
+    "-1001786739075",
+    "-1001165893434" #Adm
   ]
 
   @admins [
@@ -37,26 +37,11 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
     |> match_user()
     |> match_command()
     |> Telegram.send_message()
-
-    # %{
-    #   chat_id: c_id,
-    #   reply_to_message_id: m_id,
-    #   text: "this is <b>just</b> a <i>sample</i> message",
-    #   parse_mode: "HTML"
-
-    # }
   end
 
   def match_user(%Message{} = message) do
     case MyScrobblesBot.Accounts.get_user_by_telegram_user_id(message.from.telegram_id) do
       {:ok, %User{} = user} ->
-        %{user_confs: user_confs} = user |> MyScrobblesBot.Repo.preload(:user_confs)
-
-        Gettext.put_locale(
-          MyScrobblesBot.Gettext,
-          (if !is_nil(user_confs), do: Helpers.internal_language_handler(user_confs.language), else: "en")
-        )
-
         {message, user}
 
       _ ->
@@ -75,17 +60,36 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
       _ ->
         Gettext.put_locale(
           MyScrobblesBot.Gettext,
-          (if (message.from.language_code in Helpers.supported_languages), do: Helpers.internal_language_handler(message.from.language_code), else: "en")
+          if(message.from.language_code in Helpers.supported_languages(),
+            do: Helpers.internal_language_handler(message.from.language_code),
+            else: "en"
+          )
         )
 
-        %{
-          text: "<i>#{Gettext.gettext(MyScrobblesBot.Gettext, "user_not_found")}</i>",
-          parse_mode: "HTML",
-          chat_id: message.chat_id,
-          reply_to_message_id: message.message_id
-        }
+        "<i>#{Gettext.gettext(MyScrobblesBot.Gettext, "user_not_found")}</i>"
+        |> response(message)
     end
   end
+
+  def match_command(
+        {%Message{text: "/set" <> command, chat_type: type} = message, %User{} = user}
+      )
+      when type == "private" do
+    command = String.downcase(command)
+
+    case command do
+      "language" ->
+        Helpers.set_language(user.user_confs.conf_language |> Helpers.internal_language_handler)
+
+        select_language(message)
+
+      "systemlanguage" ->
+        Helpers.set_language(user.user_confs.conf_language |> Helpers.internal_language_handler)
+
+        select_system_language(message)
+    end
+  end
+
 
   def match_command(
         {%Message{text: "/" <> command, chat_type: type, chat_id: id} = message, %User{} = user}
@@ -94,122 +98,127 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
     command = String.downcase(command)
 
     case command do
-      "start" ->
-        %{
-          text:
-            "_welcome, please, register with /msregister yourlastfmusername, changing yourlastfmusername with your last fm username._
-------------------
-_Bem vindo, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pelo seu user do last fm._",
-          parse_mode: "HTML",
-          chat_id: message.chat_id,
-          reply_to_message_id: message.message_id
-        }
 
       x when x in ["lt", "listen", "mymusic", "mm"] ->
+        Helpers.set_language(user.user_confs.language |> Helpers.internal_language_handler)
+
         MyScrobblesBot.LastFm.Track.mymusic(message, user)
 
       x when x in ["wyl", "ym", "yourmusic"] ->
+        Helpers.set_language(user.user_confs.language |> Helpers.internal_language_handler)
+
         MyScrobblesBot.LastFm.Track.yourmusic(message)
 
       x when x in ["ltmarked", "ltm", "mymusicmarked", "msm"] ->
+        Helpers.set_language(user.user_confs.language |> Helpers.internal_language_handler)
+
         MyScrobblesBot.LastFm.Track.mymusicmarked(message, user)
 
       x when x in ["textlisten", "tlisten", "txtl", "mymusictext", "mst"] ->
+        Helpers.set_language(user.user_confs.language |> Helpers.internal_language_handler)
+
         MyScrobblesBot.LastFm.Track.mymusictext(message, user)
 
       x when x in ["ltphoto", "ltp", "mymusicphoto", "msp"] ->
+        Helpers.set_language(user.user_confs.language |> Helpers.internal_language_handler)
+
         MyScrobblesBot.LastFm.Track.mymusicphoto(message, user)
 
       x when x in ["andyou", "mytrack", "mt"] ->
+        Helpers.set_language(user.user_confs.language |> Helpers.internal_language_handler)
+
         MyScrobblesBot.LastFm.Track.mytrack(message)
 
       x when x in ["andme", "yourtrack", "yt"] ->
+        Helpers.set_language(user.user_confs.language |> Helpers.internal_language_handler)
+
         MyScrobblesBot.LastFm.Track.yourtrack(message)
 
       x when x in ["artist"] ->
+        Helpers.set_language(user.user_confs.language |> Helpers.internal_language_handler)
+
         MyScrobblesBot.LastFm.Artist.artist(message, user)
 
       x when x in ["yourartist", "yar"] ->
+        Helpers.set_language(user.user_confs.language |> Helpers.internal_language_handler)
+
         MyScrobblesBot.LastFm.Artist.yourartist(message)
 
       x when x in ["myartist", "mar"] ->
+        Helpers.set_language(user.user_confs.language |> Helpers.internal_language_handler)
+
         MyScrobblesBot.LastFm.Artist.myartist(message)
 
       x when x in ["album"] ->
+        Helpers.set_language(user.user_confs.language |> Helpers.internal_language_handler)
+
         MyScrobblesBot.LastFm.Album.album(message, user)
 
       x when x in ["youralbum", "yal"] ->
+        Helpers.set_language(user.user_confs.language |> Helpers.internal_language_handler)
+
         MyScrobblesBot.LastFm.Album.youralbum(message)
 
       x when x in ["myalbum", "mal"] ->
+        Helpers.set_language(user.user_confs.language |> Helpers.internal_language_handler)
+
         MyScrobblesBot.LastFm.Album.myalbum(message)
 
       x when x in ["youruser", "yu"] ->
+        Helpers.set_language(user.user_confs.language |> Helpers.internal_language_handler)
+
         MyScrobblesBot.LastFm.User.youruser(message)
 
       x when x in ["myuser", "mu"] ->
+        Helpers.set_language(user.user_confs.language |> Helpers.internal_language_handler)
+
         MyScrobblesBot.LastFm.User.myuser(message, user)
 
       x when x in ["register", "msregister"] ->
-        MyScrobblesBot.LastFm.User.register(message)
+        Helpers.set_language(user.user_confs.conf_language |> Helpers.internal_language_handler)
 
-        %{
-          text:
-            "please, register with /msregister yourlastfmusername, changing yourlastfmusername with your last fm username._
-------------------
-por favor, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pelo seu user do last fm._",
-          parse_mode: "HTML",
-          chat_id: message.chat_id,
-          reply_to_message_id: message.message_id
-        }
+        command_register()
+        |> response(message)
 
       "msregister " <> username ->
+        Helpers.set_language(user.user_confs.conf_language |> Helpers.internal_language_handler)
+
         register(message, username)
 
       "msgetuser " <> info ->
-        if((message.from.telegram_id) in @admins) do
+        Helpers.set_language(user.user_confs.conf_language |> Helpers.internal_language_handler)
+
+        if(message.from.telegram_id in @admins) do
           with user = %MyScrobblesBot.Accounts.User{} <-
                  MyScrobblesBot.Repo.get_by(MyScrobblesBot.Accounts.User, last_fm_username: info) do
-            %{
-              text: "_user: #{user.telegram_id}, ispremium: #{user.is_premium?} _",
-              parse_mode: "HTML",
-              chat_id: message.chat_id,
-              reply_to_message_id: message.message_id
-            }
+            command_get_user(user)
+            |> response(message)
           end
         else
-          %{
-            text: "you're not an administrator.",
-            parse_mode: "HTML",
-            chat_id: message.chat_id,
-            reply_to_message_id: message.message_id
-          }
+          not_administrator()
+          |> response(message)
         end
 
       "msgetuser" ->
-        if((message.from.telegram_id) in @admins) do
+        Helpers.set_language(user.user_confs.conf_language |> Helpers.internal_language_handler)
+
+        if(message.from.telegram_id in @admins) do
           with {:ok, user} <-
                  MyScrobblesBot.Accounts.get_user_by_telegram_user_id(
                    message.reply_to_message.from.telegram_id
                  ) do
-            %{
-              text: "user: #{user.telegram_id}, ispremium: #{user.is_premium?}",
-              parse_mode: "HTML",
-              chat_id: message.chat_id,
-              reply_to_message_id: message.message_id
-            }
+            command_get_user(user)
+            |> response(message)
           end
         else
-          %{
-            text: "you're not an administrator.",
-            parse_mode: "HTML",
-            chat_id: message.chat_id,
-            reply_to_message_id: message.message_id
-          }
+          not_administrator()
+          |> response(message)
         end
 
       "mspromoteid " <> info ->
-        if((message.from.telegram_id) in @admins) do
+        Helpers.set_language(user.user_confs.conf_language |> Helpers.internal_language_handler)
+
+        if(message.from.telegram_id in @admins) do
           infos = String.split(info)
 
           %MyScrobblesBot.Accounts.User{} =
@@ -220,109 +229,76 @@ por favor, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pe
 
           with {:ok, %{expiration: _date}} <-
                  MyScrobblesBot.Accounts.promote_user(user, List.last(infos)) do
-            %{
-              text: "_user added with successful to the premium life._",
-              parse_mode: "HTML",
-              chat_id: message.chat_id,
-              reply_to_message_id: message.message_id
-            }
+            "_user added with successful to the premium life._"
+            |> response(message)
           end
         else
-          %{
-            text: "you're not an administrator.",
-            parse_mode: "HTML",
-            chat_id: message.chat_id,
-            reply_to_message_id: message.message_id
-          }
+          not_administrator()
+          |> response(message)
         end
 
       "mspromote " <> info ->
-        if((message.from.telegram_id) in @admins) do
+        Helpers.set_language(user.user_confs.conf_language |> Helpers.internal_language_handler)
+
+        if(message.from.telegram_id in @admins) do
           with {:ok, %{expiration: _date}} <- MyScrobblesBot.Accounts.promote_user(message, info) do
-            %{
-              text: "Welcome #{message.reply_to_message.from.first_name} to premium life.",
-              parse_mode: "HTML",
-              chat_id: message.chat_id,
-              reply_to_message_id: message.message_id
-            }
+            "#{Gettext.gettext(MyScrobblesBot.Gettext, "Welcome")} #{message.reply_to_message.from.first_name} #{Gettext.gettext(MyScrobblesBot.Gettext, "to premium life")}."
+            |> response(message)
           end
         else
-          %{
-            text: "you're not an administrator.",
-            parse_mode: "HTML",
-            chat_id: message.chat_id,
-            reply_to_message_id: message.message_id
-          }
+          not_administrator()
+          |> response(message)
         end
 
       "msremove" ->
-        if((message.from.telegram_id) in @admins) do
+        Helpers.set_language(user.user_confs.conf_language |> Helpers.internal_language_handler)
+
+        if(message.from.telegram_id in @admins) do
           with {:ok, :removed} <- MyScrobblesBot.Accounts.remove_premium_user(message) do
-            %{
-              text: "successfully removed.",
-              parse_mode: "HTML",
-              chat_id: message.chat_id,
-              reply_to_message_id: message.message_id
-            }
+            "successfully removed."
+            |> response(message)
           else
             {:ok, :not_premium} ->
-              %{
-                text: "#{message.reply_to_message.from.first_name} is not a premium user.",
-                parse_mode: "HTML",
-                chat_id: message.chat_id,
-                reply_to_message_id: message.message_id
-              }
+              "#{message.reply_to_message.from.first_name} #{Gettext.gettext(MyScrobblesBot.Gettext, "is not a premium user")}."
+              |> response(message)
           end
         else
-          %{
-            text: "you're not an administrator.",
-            parse_mode: "HTML",
-            chat_id: message.chat_id,
-            reply_to_message_id: message.message_id
-          }
+          not_administrator()
+          |> response(message)
         end
 
       "msremoveid " <> info ->
-        if((message.from.telegram_id) in @admins) do
+        Helpers.set_language(user.user_confs.conf_language |> Helpers.internal_language_handler)
+
+        if(message.from.telegram_id in @admins) do
           %MyScrobblesBot.Accounts.User{} =
             user = MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(info)
 
           with {:ok, :removed} <- MyScrobblesBot.Accounts.remove_premium_user(user) do
-            %{
-              text: "_usuccessfully removed._",
-              parse_mode: "HTML",
-              chat_id: message.chat_id,
-              reply_to_message_id: message.message_id
-            }
+            "_usuccessfully removed._"
+            |> response(message)
           end
         else
-          %{
-            text: "you're not an administrator.",
-            parse_mode: "HTML",
-            chat_id: message.chat_id,
-            reply_to_message_id: message.message_id
-          }
+          not_administrator()
+          |> response(message)
         end
 
-      "selectlanguage" ->
-        select_language(message)
+      "setlanguage" ->
+        Helpers.set_language(user.user_confs.conf_language |> Helpers.internal_language_handler)
 
-      "selectsystemlanguage" ->
-        select_system_language(message)
+        select_language_group(message)
+
+      "setsystemlanguage" ->
+        Helpers.set_language(user.user_confs.conf_language |> Helpers.internal_language_handler)
+
+        select_system_language_group(message)
     end
   end
 
   def match_command({%Message{text: "/" <> command} = message, _})
       when command in ["lt", "artist", "album"] do
-    %{
-      text:
-        "Esse bot está em BETA e grupo não está autorizado no momento, por favor, me removam do grupo, para me usar, entrem em @mygroupfm ou me usem no privado, porém, no momento recomendamos usar o @MeuLastFMBot.
- This bot is in BETA and this group is not allowed at this moment, please remove me, to use, please come to @mygroupfm or talk to me on my private, but we recommend to use @MeuLastFMBot.
-",
-      parse_mode: "HTML",
-      chat_id: message.chat_id,
-      reply_to_message_id: message.message_id
-    }
+    beta_message()
+    |> response(message)
   end
 
   def register(%Message{} = message, username) do
@@ -336,34 +312,22 @@ por favor, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pe
            }
          }) do
       {:created, _user} ->
-        %{
-          text: "_user created successfully._",
-          parse_mode: "HTML",
-          chat_id: message.chat_id,
-          reply_to_message_id: message.message_id
-        }
+        "#{Gettext.gettext(MyScrobblesBot.Gettext, "user")} #{Gettext.gettext(MyScrobblesBot.Gettext, "created")} #{Gettext.gettext(MyScrobblesBot.Gettext, "successfully")}!"
+        |> response(message)
 
       {:updated, _user} ->
-        %{
-          text: "_user updated successfully._",
-          parse_mode: "HTML",
-          chat_id: message.chat_id,
-          reply_to_message_id: message.message_id
-        }
+        "#{Gettext.gettext(MyScrobblesBot.Gettext, "user")} #{Gettext.gettext(MyScrobblesBot.Gettext, "updated")} #{Gettext.gettext(MyScrobblesBot.Gettext, "successfully")}!"
+        |> response(message)
 
       {:error, error} ->
-        %{
-          text: "_oh sorry you got the error: #{inspect(error)}._",
-          parse_mode: "HTML",
-          chat_id: message.chat_id,
-          reply_to_message_id: message.message_id
-        }
+        "_oh sorry you got the error: #{inspect(error)}._"
+        |> response(message)
     end
   end
 
   def select_language(message) do
     %{
-      text: "#{Gettext.gettext(MyScrobblesBot.Gettext, "select the language of the posts")}",
+      text: "<i>#{Gettext.gettext(MyScrobblesBot.Gettext, "select the language of the posts")}</i>",
       parse_mode: "HTML",
       chat_id: message.chat_id,
       reply_to_message_id: message.message_id,
@@ -382,7 +346,7 @@ por favor, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pe
   def select_system_language(message) do
     %{
       text:
-        "#{Gettext.gettext(MyScrobblesBot.Gettext, "select the language of the options, helps and other system items.")}",
+        "<i>#{Gettext.gettext(MyScrobblesBot.Gettext, "select the language of the options, helps and other system items")}</i>.",
       parse_mode: "HTML",
       chat_id: message.chat_id,
       reply_to_message_id: message.message_id,
@@ -395,6 +359,81 @@ por favor, registre com /msregister seuuserdolastfm, trocando seuuserdolastfm pe
           [%{text: "English 🇺🇸", callback_data: "system_languages-en"}]
         ]
       }
+    }
+  end
+
+
+
+  def select_language_group(message) do
+    %{
+      text: "<i>#{Gettext.gettext(MyScrobblesBot.Gettext, "This command is not allowed in groups")}.</i>",
+      parse_mode: "HTML",
+      chat_id: message.chat_id,
+      reply_to_message_id: message.message_id,
+    }
+  end
+
+  def select_system_language_group(message) do
+    %{
+      text:
+        "<i>#{Gettext.gettext(MyScrobblesBot.Gettext, "This command is not allowed in groups")}.</i>.",
+      parse_mode: "HTML",
+      chat_id: message.chat_id,
+      reply_to_message_id: message.message_id,
+    }
+  end
+
+  def preview(string) do
+    case String.length(string) do
+      0 ->
+        IO.puts("okay, zero")
+
+      1 ->
+        case string do
+          "+" ->
+            IO.puts("plus")
+
+          _ ->
+            case Integer.parse(string) do
+              {number, ""} when is_integer(number) -> IO.puts("number #{number}")
+              _ -> IO.puts("n eh inteiro")
+            end
+        end
+
+      2 ->
+        IO.puts("two_arguments")
+
+      _ ->
+        IO.puts("invalido")
+    end
+  end
+
+  def command_get_user(user) do
+    "_user: #{user.telegram_id}, ispremium: #{user.is_premium?} _"
+  end
+
+  def not_administrator() do
+    "<i>#{Gettext.gettext(MyScrobblesBot.Gettext, "you're not an administrator")}.</i>"
+  end
+
+  def beta_message() do
+    "<i>#{Gettext.gettext(MyScrobblesBot.Gettext, "Beta message bot")}.</i>"
+  end
+
+  def command_register() do
+    "<i>#{Gettext.gettext(MyScrobblesBot.Gettext, "register command message")}.</i>"
+  end
+
+  def command_start() do
+    "<i>#{Gettext.gettext(MyScrobblesBot.Gettext, "start command message")}.</i>"
+  end
+
+  def response(text, message) do
+    %{
+      text: text,
+      parse_mode: "HTML",
+      chat_id: message.chat_id,
+      reply_to_message_id: message.message_id
     }
   end
 end

@@ -8,13 +8,15 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
   alias MyScrobblesBot.Telegram.InlineQuery
   alias MyScrobblesBotWeb.Services.Telegram
   alias MyScrobblesBot.LastFm
+  alias MyScrobblesBot.BotOutput
+  alias MyScrobblesBot.Helpers
 
   @behaviour MyScrobblesBot.Telegram.Handlers
 
   @impl true
   def handle(%InlineQuery{from: %{telegram_id: user_id}} = inline_query) do
     case MyScrobblesBot.Accounts.get_user_by_telegram_user_id(user_id) do
-      {:ok, %{is_premium?: false} = user} ->
+      {:ok, %{is_premium?: false} = _user} ->
         not_premium(inline_query.inline_query_id)
 
       {:ok, user} ->
@@ -27,6 +29,8 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
   end
 
   defp match_command(%InlineQuery{query: "/" <> command = _query} = inline_query, user) do
+    Helpers.set_language(user.user_confs.language |> Helpers.internal_language_handler)
+
     command_to_match = String.downcase(command)
 
     {:ok, track} = LastFm.get_recent_track(%{username: user.last_fm_username})
@@ -43,30 +47,56 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
   end
 
   def inline_track(inline_query, track) do
-    full_track = case LastFm.get_track(track) do
-      {:ok, full_track} ->
-        full_track
-      {:error, _} ->
+    full_track =
+      case LastFm.get_track(track) do
+        {:ok, full_track} ->
+          full_track
+
+        {:error, _} ->
           %{playcount: nil, userloved?: nil}
-    end
+      end
 
-        query =
-          Map.merge(track, full_track)
-          |> Map.merge(%{with_photo?: true, user: inline_query.from.first_name})
+    query =
+      Map.merge(track, full_track)
+      |> Map.merge(%{with_photo?: true, user: inline_query.from.first_name})
 
-
-
-        %{
-          inline_query_id: inline_query.inline_query_id,
-          results: [
-            inline_text_option(track, :trackname, query, inline_query.from.first_name, "With Photo url", true, "1", fn op -> LastFm.get_now_track(op) end),
-            inline_text_option(track, :trackname, query, inline_query.from.first_name, "Just Text", false, "2", fn op -> LastFm.get_now_track(op) end),
-            inline_photo_option(track, :trackname, query, inline_query.from.first_name, "with photo", false, "3", fn op -> LastFm.get_now_track(op) end),
-          ],
-          is_personal: true,
-          cache_time: 10
-        }
-
+    %{
+      inline_query_id: inline_query.inline_query_id,
+      results: [
+        inline_text_option(
+          track,
+          :trackname,
+          query,
+          inline_query.from.first_name,
+          "With Photo url",
+          true,
+          "1",
+          fn op -> BotOutput.get_now_track(op) end
+        ),
+        inline_text_option(
+          track,
+          :trackname,
+          query,
+          inline_query.from.first_name,
+          "Just Text",
+          false,
+          "2",
+          fn op -> BotOutput.get_now_track(op) end
+        ),
+        inline_photo_option(
+          track,
+          :trackname,
+          query,
+          inline_query.from.first_name,
+          "with photo",
+          false,
+          "3",
+          fn op -> BotOutput.get_now_track(op) end
+        )
+      ],
+      is_personal: true,
+      cache_time: 10
+    }
   end
 
   def inline_artist(inline_query, track) do
@@ -77,9 +107,36 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
     %{
       inline_query_id: inline_query.inline_query_id,
       results: [
-        inline_text_option(track, :artist, query, inline_query.from.first_name, "With Photo url", true, "1", fn op -> LastFm.get_now_artist(op) end),
-        inline_text_option(track, :artist, query, inline_query.from.first_name, "Just Text", false, "2", fn op -> LastFm.get_now_artist(op) end),
-        inline_photo_option(track, :artist, query, inline_query.from.first_name, "with photo", false, "3", fn op -> LastFm.get_now_artist(op) end),
+        inline_text_option(
+          track,
+          :artist,
+          query,
+          inline_query.from.first_name,
+          "With Photo url",
+          true,
+          "1",
+          fn op -> BotOutput.get_now_artist(op) end
+        ),
+        inline_text_option(
+          track,
+          :artist,
+          query,
+          inline_query.from.first_name,
+          "Just Text",
+          false,
+          "2",
+          fn op -> BotOutput.get_now_artist(op) end
+        ),
+        inline_photo_option(
+          track,
+          :artist,
+          query,
+          inline_query.from.first_name,
+          "with photo",
+          false,
+          "3",
+          fn op -> BotOutput.get_now_artist(op) end
+        )
       ],
       is_personal: true,
       cache_time: 10
@@ -94,9 +151,36 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
     %{
       inline_query_id: inline_query.inline_query_id,
       results: [
-        inline_text_option(track, :album, query, inline_query.from.first_name, "With Photo url", true, "1", fn op -> LastFm.get_now_album(op) end),
-        inline_text_option(track, :album, query, inline_query.from.first_name, "Just Text", false, "2", fn op -> LastFm.get_now_album(op) end),
-        inline_photo_option(track, :album, query, inline_query.from.first_name, "with photo", false, "3", fn op -> LastFm.get_now_album(op) end),
+        inline_text_option(
+          track,
+          :album,
+          query,
+          inline_query.from.first_name,
+          "With Photo url",
+          true,
+          "1",
+          fn op -> BotOutput.get_now_album(op) end
+        ),
+        inline_text_option(
+          track,
+          :album,
+          query,
+          inline_query.from.first_name,
+          "Just Text",
+          false,
+          "2",
+          fn op -> BotOutput.get_now_album(op) end
+        ),
+        inline_photo_option(
+          track,
+          :album,
+          query,
+          inline_query.from.first_name,
+          "with photo",
+          false,
+          "3",
+          fn op -> BotOutput.get_now_album(op) end
+        )
       ],
       is_personal: true,
       cache_time: 10
@@ -152,7 +236,6 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
   end
 
   def only_text() do
-
   end
 
   def inline_text_option(content, content_type, query, first_name, type, photo?, id, function) do
@@ -166,11 +249,14 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
           Map.merge(query, %{with_photo?: photo?, user: first_name})
           |> function.()
       },
-      thumb_url: case photo? do
+      thumb_url:
+        case photo? do
           true ->
             content.photo
-          _ -> ""
-      end,
+
+          _ ->
+            ""
+        end,
       reply_markup: %{
         inline_keyboard: [[]]
       },
@@ -178,7 +264,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
     }
   end
 
-  def inline_photo_option(content, content_type, query, first_name, type, photo?, id, function) do
+  def inline_photo_option(content, content_type, query, first_name, _type, photo?, id, function) do
     %{
       type: "photo",
       title: "Photo and text",
@@ -198,9 +284,5 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
         |> function.(),
       id: id
     }
-  end
-
-  def with_photo() do
-
   end
 end

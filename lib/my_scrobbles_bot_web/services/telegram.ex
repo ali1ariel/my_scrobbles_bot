@@ -24,7 +24,7 @@ defmodule MyScrobblesBotWeb.Services.Telegram do
   end
 
   def send_inline(params) do
-    IO.inspect params
+    IO.inspect(params)
     build_and_send(&post/2, "/answerInlineQuery", ClientInputs.AnswerInlineQuery, params)
   end
 

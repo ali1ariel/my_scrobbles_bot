@@ -39,7 +39,7 @@ defmodule MyScrobblesBot.Accounts do
   def get_user!(id), do: Repo.get!(User, id)
 
   def get_user_by_telegram_user_id(telegram_id) do
-    case Repo.get_by(User, telegram_id: telegram_id) do
+    case Repo.get_by(User, telegram_id: telegram_id) |> MyScrobblesBot.Repo.preload(:user_confs) do
       %User{} = user ->
         {:ok, user}
 

@@ -39,9 +39,9 @@ defmodule MyScrobblesBotWeb.ErrorHelpers do
     # should be written to the errors.po file. The :count option is
     # set by Ecto and indicates we should also apply plural rules.
     if count = opts[:count] do
-      Gettext.dngettext(MyScrobblesBotWeb.Gettext, "errors", msg, msg, count, opts)
+      Gettext.dngettext(MyScrobblesBot.Gettext, "errors", msg, msg, count, opts)
     else
-      Gettext.dgettext(MyScrobblesBotWeb.Gettext, "errors", msg, opts)
+      Gettext.dgettext(MyScrobblesBot.Gettext, "errors", msg, opts)
     end
   end
 end

@@ -1,26 +1,22 @@
 defmodule MyScrobblesBot.LastFm.Track do
   alias MyScrobblesBot.LastFm
+  alias MyScrobblesBot.BotOutput
   alias MyScrobblesBotWeb.Services.Telegram
   alias MyScrobblesBot.Telegram.Message
   alias MyScrobblesBot.Accounts.User
-  alias MyScrobblesBot.Helpers
 
   def mymusic(%Message{} = message, %User{} = user) do
     %{last_fm_username: username} = user
 
-    {:ok, track} =
-      LastFm.get_recent_track(%{username: username})
-      |> Helpers.error_handler(message)
+    {:ok, track} = LastFm.get_recent_track(%{username: username})
 
-    {:ok, attrs} =
-      LastFm.get_track(track)
-      |> Helpers.error_handler(message)
+    {:ok, attrs} = LastFm.get_track(track)
 
     query =
       Map.merge(track, attrs)
       |> Map.merge(%{with_photo?: true, user: message.from.first_name})
 
-    msg = LastFm.get_now_track(query)
+    msg = BotOutput.get_now_track(query)
     %{text: msg, parse_mode: "HTML", chat_id: message.chat_id}
   end
 
@@ -30,38 +26,30 @@ defmodule MyScrobblesBot.LastFm.Track do
         message.reply_to_message.from.telegram_id
       )
 
-    {:ok, track} =
-      LastFm.get_recent_track(%{username: username})
-      |> Helpers.error_handler(message)
+    {:ok, track} = LastFm.get_recent_track(%{username: username})
 
-    {:ok, attrs} =
-      LastFm.get_track(track)
-      |> Helpers.error_handler(message)
+    {:ok, attrs} = LastFm.get_track(track)
 
     query =
       Map.merge(track, attrs)
       |> Map.merge(%{with_photo?: true, user: message.reply_to_message.from.first_name})
 
-    msg = LastFm.get_now_track(query)
+    msg = BotOutput.get_now_track(query)
     %{text: msg, parse_mode: "HTML", chat_id: message.chat_id}
   end
 
   def mymusicmarked(%Message{} = message, %User{} = user) do
     %{last_fm_username: username} = user
 
-    {:ok, track} =
-      LastFm.get_recent_track(%{username: username})
-      |> Helpers.error_handler(message)
+    {:ok, track} = LastFm.get_recent_track(%{username: username})
 
-    {:ok, attrs} =
-      LastFm.get_track(track)
-      |> Helpers.error_handler(message)
+    {:ok, attrs} = LastFm.get_track(track)
 
     query =
       Map.merge(track, attrs)
       |> Map.merge(%{with_photo?: true, user: message.from.first_name})
 
-    msg = LastFm.get_now_track(query)
+    msg = BotOutput.get_now_track(query)
 
     %{
       text: msg,
@@ -74,38 +62,30 @@ defmodule MyScrobblesBot.LastFm.Track do
   def mymusictext(%Message{} = message, %User{} = user) do
     %{last_fm_username: username} = user
 
-    {:ok, track} =
-      LastFm.get_recent_track(%{username: username})
-      |> Helpers.error_handler(message)
+    {:ok, track} = LastFm.get_recent_track(%{username: username})
 
-    {:ok, attrs} =
-      LastFm.get_track(track)
-      |> Helpers.error_handler(message)
+    {:ok, attrs} = LastFm.get_track(track)
 
     query =
       Map.merge(track, attrs)
       |> Map.merge(%{with_photo?: false, user: message.from.first_name})
 
-    msg = LastFm.get_now_track(query)
+    msg = BotOutput.get_now_track(query)
     %{text: msg, parse_mode: "HTML", chat_id: message.chat_id}
   end
 
   def mymusicphoto(%Message{} = message, %User{} = user) do
     %{last_fm_username: username} = user
 
-    {:ok, track} =
-      LastFm.get_recent_track(%{username: username})
-      |> Helpers.error_handler(message)
+    {:ok, track} = LastFm.get_recent_track(%{username: username})
 
-    {:ok, attrs} =
-      LastFm.get_track(track)
-      |> Helpers.error_handler(message)
+    {:ok, attrs} = LastFm.get_track(track)
 
     query =
       Map.merge(track, attrs)
       |> Map.merge(%{with_photo?: false, user: message.from.first_name})
 
-    msg = LastFm.get_now_track(query)
+    msg = BotOutput.get_now_track(query)
 
     {:ok, _} = Telegram.send_photo(%{photo: query.photo, caption: msg, parse_mode: "HTML"})
   end
@@ -129,19 +109,15 @@ defmodule MyScrobblesBot.LastFm.Track do
     %{last_fm_username: friend_username} =
       MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(friend_user_id)
 
-    {:ok, track} =
-      LastFm.get_recent_track(%{username: username})
-      |> Helpers.error_handler(message)
+    {:ok, track} = LastFm.get_recent_track(%{username: username})
 
-    {:ok, attrs} =
-      LastFm.get_track(%{track | username: friend_username})
-      |> Helpers.error_handler(message)
+    {:ok, attrs} = LastFm.get_track(%{track | username: friend_username})
 
     query =
       Map.merge(track, attrs)
       |> Map.merge(%{with_photo?: true, user: user_first_name, friend: friend_first_name})
 
-    msg = LastFm.get_my_music(query)
+    msg = BotOutput.get_my_music(query)
     %{text: msg, parse_mode: "HTML", chat_id: message.chat_id}
   end
 
@@ -164,19 +140,15 @@ defmodule MyScrobblesBot.LastFm.Track do
     %{last_fm_username: friend_username} =
       MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(friend_user_id)
 
-    {:ok, track} =
-      LastFm.get_recent_track(%{username: friend_username})
-      |> Helpers.error_handler(message)
+    {:ok, track} = LastFm.get_recent_track(%{username: friend_username})
 
-    {:ok, attrs} =
-      LastFm.get_track(%{track | username: username})
-      |> Helpers.error_handler(message)
+    {:ok, attrs} = LastFm.get_track(%{track | username: username})
 
     query =
       Map.merge(track, attrs)
       |> Map.merge(%{with_photo?: true, user: user_first_name, friend: friend_first_name})
 
-    msg = LastFm.get_your_music(query)
+    msg = BotOutput.get_your_music(query)
     %{text: msg, parse_mode: "HTML", chat_id: message.chat_id}
   end
 end

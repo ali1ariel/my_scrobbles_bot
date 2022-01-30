@@ -29,8 +29,7 @@ defmodule MyScrobblesBotWeb.BotController do
     end
   end
 
-
-  def receive(conn, %{"callback_query" => %{"data" => data} = message} = _params) do
+  def receive(conn, %{"callback_query" => %{"data" => _data} = message} = _params) do
     with {:ok, message} <- Telegram.build_callback_query(message),
          :ok <- Telegram.enqueue_processing!(message) do
       Logger.info("Message enqueued for later processing")

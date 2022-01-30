@@ -1,5 +1,6 @@
 defmodule MyScrobblesBot.LastFm.User do
   alias MyScrobblesBot.LastFm
+  alias MyScrobblesBot.BotOutput
 
   alias MyScrobblesBot.Accounts.User
   alias MyScrobblesBot.Telegram.Message
@@ -9,9 +10,11 @@ defmodule MyScrobblesBot.LastFm.User do
 
     msg =
       if(user.is_premium?) do
-        LastFm.get_user_plus(%{username: username})
+        %{username: username}
+        |> BotOutput.get_user_plus()
       else
-        LastFm.get_user(%{username: username})
+        %{username: username}
+        |> BotOutput.get_user()
       end
 
     %{text: msg, parse_mode: "HTML", chat_id: message.chat_id}
@@ -23,7 +26,10 @@ defmodule MyScrobblesBot.LastFm.User do
         message.reply_to_message.from.telegram_id
       )
 
-    msg = LastFm.get_user(%{username: username})
+    msg =
+      LastFm.get_user(%{username: username})
+      |> BotOutput.get_user()
+
     %{text: msg, parse_mode: "HTML", chat_id: message.chat_id}
   end
 
@@ -34,7 +40,7 @@ defmodule MyScrobblesBot.LastFm.User do
         message.reply_to_message.from.telegram_id
       )
 
-    msg = LastFm.get_user(%{username: username})
+    msg = BotOutput.get_user(%{username: username})
     %{text: msg, parse_mode: "HTML", chat_id: message.chat_id}
   end
 end

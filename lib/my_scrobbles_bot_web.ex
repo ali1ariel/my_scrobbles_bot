@@ -22,7 +22,7 @@ defmodule MyScrobblesBotWeb do
       use Phoenix.Controller, namespace: MyScrobblesBotWeb
 
       import Plug.Conn
-      import MyScrobblesBotWeb.Gettext
+      import MyScrobblesBot.Gettext
       alias MyScrobblesBotWeb.Router.Helpers, as: Routes
     end
   end
@@ -72,7 +72,7 @@ defmodule MyScrobblesBotWeb do
   def channel do
     quote do
       use Phoenix.Channel
-      import MyScrobblesBotWeb.Gettext
+      import MyScrobblesBot.Gettext
     end
   end
 
@@ -88,7 +88,7 @@ defmodule MyScrobblesBotWeb do
       import Phoenix.View
 
       import MyScrobblesBotWeb.ErrorHelpers
-      import MyScrobblesBotWeb.Gettext
+      import MyScrobblesBot.Gettext
       alias MyScrobblesBotWeb.Router.Helpers, as: Routes
     end
   end

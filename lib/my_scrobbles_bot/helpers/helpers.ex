@@ -1,7 +1,5 @@
 defmodule MyScrobblesBot.Helpers do
   import MyScrobblesBot.Gettext
-  alias MyScrobblesBot.Telegram.Message
-  alias MyScrobblesBotWeb.Services.Telegram
 
   @supported_languages ["en", "es", "pt-br"]
 
@@ -21,37 +19,6 @@ defmodule MyScrobblesBot.Helpers do
       10 -> gettext("October")
       11 -> gettext("November")
       12 -> gettext("December")
-    end
-  end
-
-  def error_handler(request, %Message{} = message) do
-    case request do
-      {:ok, info} ->
-        {:ok, info}
-
-      {:error, %{"message" => msg}} ->
-        Telegram.send_message(%{
-          text: msg,
-          parse_mode: "HTML",
-          chat_id: message.chat_id,
-          reply_to_message_id: message.message_id
-        })
-
-      {:error, %{reason: reason}} ->
-        Telegram.send_message(%{
-          text: reason,
-          parse_mode: "HTML",
-          chat_id: message.chat_id,
-          reply_to_message_id: message.message_id
-        })
-
-      {:error, error} ->
-        Telegram.send_message(%{
-          text: error,
-          parse_mode: "HTML",
-          chat_id: message.chat_id,
-          reply_to_message_id: message.message_id
-        })
     end
   end
 
@@ -78,4 +45,14 @@ defmodule MyScrobblesBot.Helpers do
       "es" -> "es"
     end
   end
+
+  def set_language(language) do
+    Gettext.put_locale(
+      MyScrobblesBot.Gettext,
+      language
+    )
+  end
+
+  def put_space(number) when is_integer(number), do: String.duplicate(" ", number)
+
 end
