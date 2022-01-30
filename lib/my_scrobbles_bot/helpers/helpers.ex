@@ -23,38 +23,6 @@ defmodule MyScrobblesBot.Helpers do
       12 -> gettext("December")
     end
   end
-
-  def error_handler(request, %Message{} = message) do
-    case request do
-      {:ok, info} ->
-        {:ok, info}
-
-      {:error, %{"message" => msg}} ->
-        Telegram.send_message(%{
-          text: msg,
-          parse_mode: "HTML",
-          chat_id: message.chat_id,
-          reply_to_message_id: message.message_id
-        })
-
-      {:error, %{reason: reason}} ->
-        Telegram.send_message(%{
-          text: reason,
-          parse_mode: "HTML",
-          chat_id: message.chat_id,
-          reply_to_message_id: message.message_id
-        })
-
-      {:error, error} ->
-        Telegram.send_message(%{
-          text: error,
-          parse_mode: "HTML",
-          chat_id: message.chat_id,
-          reply_to_message_id: message.message_id
-        })
-    end
-  end
-
   def language_handler(lang) do
     case lang do
       "en" -> :english
@@ -77,5 +45,12 @@ defmodule MyScrobblesBot.Helpers do
       "pt-br" -> "pt_BR"
       "es" -> "es"
     end
+  end
+
+  def set_language(language) do
+    Gettext.put_locale(
+      MyScrobblesBot.Gettext,
+      language
+    )
   end
 end

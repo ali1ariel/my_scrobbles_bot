@@ -43,17 +43,8 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
   def match_user(%Message{} = message) do
     case MyScrobblesBot.Accounts.get_user_by_telegram_user_id(message.from.telegram_id) do
       {:ok, %User{} = user} ->
-        %{user_confs: user_confs} = user |> MyScrobblesBot.Repo.preload(:user_confs)
 
-        Gettext.put_locale(
-          MyScrobblesBot.Gettext,
-          if(!is_nil(user_confs),
-            do: Helpers.internal_language_handler(user_confs.language),
-            else: "en"
-          )
-        )
-
-        {message, user}
+        {message, user |> MyScrobblesBot.Repo.preload(:user_confs)}
 
       _ ->
         {message, nil}
@@ -94,58 +85,94 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
         |> response(message)
 
       x when x in ["lt", "listen", "mymusic", "mm"] ->
+        Helpers.set_language(user.user_confs.language)
+
         MyScrobblesBot.LastFm.Track.mymusic(message, user)
 
       x when x in ["wyl", "ym", "yourmusic"] ->
+        Helpers.set_language(user.user_confs.language)
+
         MyScrobblesBot.LastFm.Track.yourmusic(message)
 
       x when x in ["ltmarked", "ltm", "mymusicmarked", "msm"] ->
+        Helpers.set_language(user.user_confs.language)
+
         MyScrobblesBot.LastFm.Track.mymusicmarked(message, user)
 
       x when x in ["textlisten", "tlisten", "txtl", "mymusictext", "mst"] ->
+        Helpers.set_language(user.user_confs.language)
+
         MyScrobblesBot.LastFm.Track.mymusictext(message, user)
 
       x when x in ["ltphoto", "ltp", "mymusicphoto", "msp"] ->
+        Helpers.set_language(user.user_confs.language)
+
         MyScrobblesBot.LastFm.Track.mymusicphoto(message, user)
 
       x when x in ["andyou", "mytrack", "mt"] ->
+        Helpers.set_language(user.user_confs.language)
+
         MyScrobblesBot.LastFm.Track.mytrack(message)
 
       x when x in ["andme", "yourtrack", "yt"] ->
+        Helpers.set_language(user.user_confs.language)
+
         MyScrobblesBot.LastFm.Track.yourtrack(message)
 
       x when x in ["artist"] ->
+        Helpers.set_language(user.user_confs.language)
+
         MyScrobblesBot.LastFm.Artist.artist(message, user)
 
       x when x in ["yourartist", "yar"] ->
+        Helpers.set_language(user.user_confs.language)
+
         MyScrobblesBot.LastFm.Artist.yourartist(message)
 
       x when x in ["myartist", "mar"] ->
+        Helpers.set_language(user.user_confs.language)
+
         MyScrobblesBot.LastFm.Artist.myartist(message)
 
       x when x in ["album"] ->
+        Helpers.set_language(user.user_confs.language)
+
         MyScrobblesBot.LastFm.Album.album(message, user)
 
       x when x in ["youralbum", "yal"] ->
+        Helpers.set_language(user.user_confs.language)
+
         MyScrobblesBot.LastFm.Album.youralbum(message)
 
       x when x in ["myalbum", "mal"] ->
+        Helpers.set_language(user.user_confs.language)
+
         MyScrobblesBot.LastFm.Album.myalbum(message)
 
       x when x in ["youruser", "yu"] ->
+        Helpers.set_language(user.user_confs.language)
+
         MyScrobblesBot.LastFm.User.youruser(message)
 
       x when x in ["myuser", "mu"] ->
+        Helpers.set_language(user.user_confs.language)
+
         MyScrobblesBot.LastFm.User.myuser(message, user)
 
       x when x in ["register", "msregister"] ->
+        Helpers.set_language(user.user_confs.language)
+
         command_register()
         |> response(message)
 
       "msregister " <> username ->
+        Helpers.set_language(user.user_confs.language)
+
         register(message, username)
 
       "msgetuser " <> info ->
+        Helpers.set_language(user.user_confs.language)
+
         if(message.from.telegram_id in @admins) do
           with user = %MyScrobblesBot.Accounts.User{} <-
                  MyScrobblesBot.Repo.get_by(MyScrobblesBot.Accounts.User, last_fm_username: info) do
@@ -158,6 +185,8 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
         end
 
       "msgetuser" ->
+        Helpers.set_language(user.user_confs.language)
+
         if(message.from.telegram_id in @admins) do
           with {:ok, user} <-
                  MyScrobblesBot.Accounts.get_user_by_telegram_user_id(
@@ -172,6 +201,8 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
         end
 
       "mspromoteid " <> info ->
+        Helpers.set_language(user.user_confs.language)
+
         if(message.from.telegram_id in @admins) do
           infos = String.split(info)
 
@@ -192,6 +223,8 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
         end
 
       "mspromote " <> info ->
+        Helpers.set_language(user.user_confs.language)
+
         if(message.from.telegram_id in @admins) do
           with {:ok, %{expiration: _date}} <- MyScrobblesBot.Accounts.promote_user(message, info) do
             "Welcome #{message.reply_to_message.from.first_name} to premium life."
@@ -203,6 +236,8 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
         end
 
       "msremove" ->
+        Helpers.set_language(user.user_confs.language)
+
         if(message.from.telegram_id in @admins) do
           with {:ok, :removed} <- MyScrobblesBot.Accounts.remove_premium_user(message) do
             "successfully removed."
@@ -218,6 +253,8 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
         end
 
       "msremoveid " <> info ->
+        Helpers.set_language(user.user_confs.language)
+
         if(message.from.telegram_id in @admins) do
           %MyScrobblesBot.Accounts.User{} =
             user = MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(info)
@@ -232,9 +269,13 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
         end
 
       "selectlanguage" ->
+        Helpers.set_language(user.user_confs.language)
+
         select_language(message)
 
       "selectsystemlanguage" ->
+        Helpers.set_language(user.user_confs.language)
+
         select_system_language(message)
     end
   end

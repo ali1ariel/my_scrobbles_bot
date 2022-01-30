@@ -11,11 +11,9 @@ defmodule MyScrobblesBot.LastFm.Artist do
 
     {:ok, track} =
       LastFm.get_recent_track(%{username: username})
-      |> Helpers.error_handler(message)
 
     {:ok, attrs} =
       LastFm.get_artist(track)
-      |> Helpers.error_handler(message)
 
     extra =
       if(user.is_premium?) do
@@ -85,11 +83,9 @@ defmodule MyScrobblesBot.LastFm.Artist do
 
     {:ok, track} =
       LastFm.get_recent_track(%{username: friend_username})
-      |> Helpers.error_handler(message)
 
     {:ok, attrs} =
       LastFm.get_artist(%{track | username: username})
-      |> Helpers.error_handler(message)
 
     query =
       Map.merge(track, attrs)
@@ -120,11 +116,9 @@ defmodule MyScrobblesBot.LastFm.Artist do
 
     {:ok, track} =
       LastFm.get_recent_track(%{username: username})
-      |> Helpers.error_handler(message)
 
     {:ok, attrs} =
       LastFm.get_artist(%{track | username: friend_username})
-      |> Helpers.error_handler(message)
 
     query =
       Map.merge(track, attrs)

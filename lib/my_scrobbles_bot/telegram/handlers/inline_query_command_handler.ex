@@ -8,6 +8,8 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
   alias MyScrobblesBot.Telegram.InlineQuery
   alias MyScrobblesBotWeb.Services.Telegram
   alias MyScrobblesBot.LastFm
+  alias MyScrobblesBot.BotOutput
+  alias MyScrobblesBot.Helpers
 
   @behaviour MyScrobblesBot.Telegram.Handlers
 
@@ -27,6 +29,8 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
   end
 
   defp match_command(%InlineQuery{query: "/" <> command = _query} = inline_query, user) do
+    Helpers.set_language(user.user_confs.language)
+
     command_to_match = String.downcase(command)
 
     {:ok, track} = LastFm.get_recent_track(%{username: user.last_fm_username})
