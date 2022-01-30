@@ -71,7 +71,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
           "With Photo url",
           true,
           "1",
-          fn op -> LastFm.get_now_track(op) end
+          fn op -> BotOutput.get_now_track(op) end
         ),
         inline_text_option(
           track,
@@ -81,7 +81,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
           "Just Text",
           false,
           "2",
-          fn op -> LastFm.get_now_track(op) end
+          fn op -> BotOutput.get_now_track(op) end
         ),
         inline_photo_option(
           track,
@@ -91,7 +91,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
           "with photo",
           false,
           "3",
-          fn op -> LastFm.get_now_track(op) end
+          fn op -> BotOutput.get_now_track(op) end
         )
       ],
       is_personal: true,
@@ -115,7 +115,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
           "With Photo url",
           true,
           "1",
-          fn op -> LastFm.get_now_artist(op) end
+          fn op -> BotOutput.get_now_artist(op) end
         ),
         inline_text_option(
           track,
@@ -125,7 +125,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
           "Just Text",
           false,
           "2",
-          fn op -> LastFm.get_now_artist(op) end
+          fn op -> BotOutput.get_now_artist(op) end
         ),
         inline_photo_option(
           track,
@@ -135,7 +135,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
           "with photo",
           false,
           "3",
-          fn op -> LastFm.get_now_artist(op) end
+          fn op -> BotOutput.get_now_artist(op) end
         )
       ],
       is_personal: true,
@@ -159,7 +159,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
           "With Photo url",
           true,
           "1",
-          fn op -> LastFm.get_now_album(op) end
+          fn op -> BotOutput.get_now_album(op) end
         ),
         inline_text_option(
           track,
@@ -169,7 +169,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
           "Just Text",
           false,
           "2",
-          fn op -> LastFm.get_now_album(op) end
+          fn op -> BotOutput.get_now_album(op) end
         ),
         inline_photo_option(
           track,
@@ -179,7 +179,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
           "with photo",
           false,
           "3",
-          fn op -> LastFm.get_now_album(op) end
+          fn op -> BotOutput.get_now_album(op) end
         )
       ],
       is_personal: true,
