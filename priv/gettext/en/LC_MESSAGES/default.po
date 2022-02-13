@@ -35,7 +35,7 @@ msgstr ""
 msgid "listened"
 msgstr ""
 
-msgid "times"
+msgid "times to"
 msgstr ""
 
 msgid "It comes from"
@@ -117,6 +117,9 @@ msgid "rd"
 msgstr ""
 
 msgid "th"
+msgstr ""
+
+msgid "select the heart you want in your favorites"
 msgstr ""
 
 #, elixir-format

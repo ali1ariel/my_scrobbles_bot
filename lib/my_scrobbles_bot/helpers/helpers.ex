@@ -27,6 +27,7 @@ defmodule MyScrobblesBot.Helpers do
       "en" -> :english
       "pt-br" -> :portuguese
       "es" -> :spanish
+      _ -> :english
     end
   end
 
@@ -35,6 +36,7 @@ defmodule MyScrobblesBot.Helpers do
       :english -> "en"
       :portuguese -> "pt_BR"
       :spanish -> "es"
+      _ -> "en"
     end
   end
 
@@ -43,6 +45,7 @@ defmodule MyScrobblesBot.Helpers do
       "en" -> "en"
       "pt-br" -> "pt_BR"
       "es" -> "es"
+      _ -> "en"
     end
   end
 
@@ -54,5 +57,23 @@ defmodule MyScrobblesBot.Helpers do
   end
 
   def put_space(number) when is_integer(number), do: String.duplicate(" ", number)
+
+  def put_heart(code) do
+    case code do
+      1 -> "❤️"
+      2 -> "🖤"
+      3 -> "❤️‍🔥"
+      4 -> "❤️‍🩹"
+      5 -> "❣️"
+      6 -> "💕"
+      7 -> "💗"
+      8 -> "💖"
+      9 -> "💘"
+     10 -> "🫀"
+     11 -> "😍"
+     12 -> "🥰"
+    end
+  end
+
 
 end

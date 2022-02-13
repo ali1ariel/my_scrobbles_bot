@@ -1,6 +1,8 @@
 defmodule MyScrobblesBot.LastFm do
   require MyScrobblesBot.Gettext
 
+  alias MyScrobblesBot.Helpers
+
   @doc """
   request user information in Last FM API
   """
@@ -67,7 +69,7 @@ defmodule MyScrobblesBot.LastFm do
         {:ok,
          %{
            userloved?: if(track["userloved"] == "1", do: true, else: false),
-           playcount: track["userplaycount"] |> String.to_integer()
+           playcount: track["userplaycount"] |>  String.to_integer()
          }}
 
       {:ok, %{"error" => error, "message" => message}} ->

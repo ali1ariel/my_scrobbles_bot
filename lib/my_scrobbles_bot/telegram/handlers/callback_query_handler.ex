@@ -55,7 +55,21 @@ defmodule MyScrobblesBot.Telegram.Handlers.CallbackQueryHandler do
           text: "your language was updated to #{lang}",
           parse_mode: "HTML"
         }
+      "heart_selected-" <> heart ->
+        {:ok, user} = match_user(callback_query)
+
+        update_heart(
+          user |> MyScrobblesBot.Repo.preload(:user_confs) |> then(& &1.user_confs),
+          heart |> String.to_integer()
+        )
+
+        %{
+          chat_id: callback_query.from.telegram_id,
+          text: "your heart was updated to #{Helpers.put_heart(heart|> String.to_integer())}",
+          parse_mode: "HTML"
+        }
     end
+
   end
 
   def match_user(%CallbackQuery{} = callback_query) do
@@ -86,5 +100,11 @@ defmodule MyScrobblesBot.Telegram.Handlers.CallbackQueryHandler do
       MyScrobblesBot.Gettext,
       if(!is_nil(user_confs), do: Helpers.internal_language_handler(language), else: "en")
     )
+  end
+
+
+  def update_heart(user_confs, heart) do
+    Ecto.Changeset.change(user_confs, heart: heart)
+    |> MyScrobblesBot.Repo.update()
   end
 end

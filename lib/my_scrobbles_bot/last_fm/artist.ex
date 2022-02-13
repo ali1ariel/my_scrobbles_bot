@@ -4,7 +4,7 @@ defmodule MyScrobblesBot.LastFm.Artist do
   alias MyScrobblesBot.Accounts.User
   alias MyScrobblesBot.Telegram.Message
 
-  import MyScrobblesBot.Helpers, only: [put_space: 1]
+  import MyScrobblesBot.Helpers, only: [put_space: 1, put_heart: 1]
 
   def artist(%Message{} = message, %User{} = user) do
     %{last_fm_username: username} = user
@@ -35,7 +35,7 @@ defmodule MyScrobblesBot.LastFm.Artist do
                    playcount: count
                  },
                  acc ->
-                "#{acc}#{put_space(3)}#{if loved, do: "💘", else: "▪️"} <b>#{track}</b> - <i>#{count} plays</i>
+                "#{acc}#{put_space(3)}#{if loved, do: put_heart(user.user_confs.heart), else: "▪️"} <b>#{track}</b> - <i>#{count} plays</i>
 "
               end
             )

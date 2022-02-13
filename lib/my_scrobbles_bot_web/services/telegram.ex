@@ -24,16 +24,15 @@ defmodule MyScrobblesBotWeb.Services.Telegram do
   end
 
   def send_inline(params) do
-    IO.inspect(params)
     build_and_send(&post/2, "/answerInlineQuery", ClientInputs.AnswerInlineQuery, params)
   end
 
   def send_photo(params) do
-    build_and_send(&post/2, "/sendMessage", ClientInputs.SendMessage, params)
+    build_and_send(&post/2, "/sendPhoto", ClientInputs.SendPhoto, params)
   end
 
   defp build_and_send(fun, route, module, params) do
-    with {:ok, input} <- module.build(params) do
+    with {:ok, input} <- IO.inspect module.build(params) do
       fun.(route, input)
     end
   end

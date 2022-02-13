@@ -1,0 +1,29 @@
+{
+	"files": [
+		{
+			"path": "lib/my_scrobbles_bot/telegram/handlers/command_handler.ex",
+			"bookmarks": [
+				{
+					"line": 56,
+					"column": 6,
+					"label": ""
+				},
+				{
+					"line": 105,
+					"column": 26,
+					"label": ""
+				}
+			]
+		},
+		{
+			"path": "lib/my_scrobbles_bot/telegram/handlers/inline_query_command_handler.ex",
+			"bookmarks": [
+				{
+					"line": 18,
+					"column": 8,
+					"label": ""
+				}
+			]
+		}
+	]
+}

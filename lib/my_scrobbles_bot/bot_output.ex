@@ -1,7 +1,7 @@
 defmodule MyScrobblesBot.BotOutput do
   require MyScrobblesBot.Gettext
 
-  import MyScrobblesBot.Helpers, only: [put_space: 1]
+  import MyScrobblesBot.Helpers, only: [put_space: 1, put_heart: 1]
 
   @doc """
   request user information in Last FM API
@@ -16,7 +16,7 @@ defmodule MyScrobblesBot.BotOutput do
           |> DateTime.from_unix!(:second)
 
         #Output Message
-        "<a href=\"#{Enum.at(user["image"], 2)["#text"]}\">👥</a> <>#{Map.get(user, "name")}</b>\n#{put_space(6)}#{Gettext.gettext(MyScrobblesBot.Gettext, "got")} #{Map.get(user, "playcount")} scrobbles #{Gettext.gettext(MyScrobblesBot.Gettext, "since")} #{MyScrobblesBot.Helpers.month(date.month)} #{date.day}, #{date.year}."
+        "<a href=\"#{Enum.at(user["image"], 2)["#text"]}\">👥</a> <b>#{Map.get(user, "name")}</b>\n#{put_space(3)}#{Gettext.gettext(MyScrobblesBot.Gettext, "got")} #{Map.get(user, "playcount")} scrobbles #{Gettext.gettext(MyScrobblesBot.Gettext, "since")} #{MyScrobblesBot.Helpers.month(date.month)} #{date.day}, #{date.year}."
 
       {:error, error} ->
         "error: #{error}"
@@ -44,7 +44,7 @@ defmodule MyScrobblesBot.BotOutput do
         |> DateTime.from_unix!(:second)
 
       #Output Message
-      "<a href=\"#{Enum.at(user["image"], 2)["#text"]}\">👥</a> <b>#{Map.get(user, "name")}</b> #{Gettext.gettext(MyScrobblesBot.Gettext, "got")} <i>#{Map.get(user, "playcount")} scrobbles</i> #{Gettext.gettext(MyScrobblesBot.Gettext, "since")} #{MyScrobblesBot.Helpers.month(date.month)} #{date.day}, #{date.year}.\n\n<b>#{Gettext.gettext(MyScrobblesBot.Gettext, "Some loved tracks")}</b>\n#{Enum.map(tracks, fn track -> "#{put_space(6)}💘 #{track["artist"]["name"]} - #{track["name"]}\n" end)}
+      "<a href=\"#{Enum.at(user["image"], 2)["#text"]}\">👥</a> <b>#{Map.get(user, "name")}</b> #{Gettext.gettext(MyScrobblesBot.Gettext, "got")} <i>#{Map.get(user, "playcount")} scrobbles</i> #{Gettext.gettext(MyScrobblesBot.Gettext, "since")} #{MyScrobblesBot.Helpers.month(date.month)} #{date.day}, #{date.year}.\n\n<b>#{Gettext.gettext(MyScrobblesBot.Gettext, "Some loved tracks")}</b>\n#{Enum.map(tracks, fn track -> "#{put_space(3)}#{put_heart(attrs.heart)} #{track["artist"]["name"]} - #{track["name"]}\n" end)}
 🎧💎
 "
     else
@@ -62,9 +62,10 @@ defmodule MyScrobblesBot.BotOutput do
         album: album,
         userloved?: loved,
         photo: photo_link,
-        with_photo?: with_photo
+        with_photo?: with_photo,
+        heart: heart
       }) do
-    "<b>#{user}</b> #{playcount_user_text(playcount, now)}#{Gettext.gettext(MyScrobblesBot.Gettext, "to")}:\n\n#{put_space(6)}#{if with_photo, do: "<a href=\"#{photo_link}\">🎶</a>", else: "🎶"} <b>#{track}</b>\n#{put_space(6)}💿 #{album}\n#{put_space(6)}👥#{artist}\n#{put_space(6)}#{if loved, do: "💘"}"
+    "<b>#{user}</b> #{playcount_user_text(playcount, now)}:\n\n#{put_space(3)}#{if with_photo, do: "<a href=\"#{photo_link}\">🎶</a>", else: "🎶"} <b>#{track}</b>\n#{put_space(3)}💿 #{album}\n#{put_space(3)}👥 #{artist}\n#{put_space(3)}#{if loved, do: put_heart(heart)}"
   end
 
   def lyrics(%{
@@ -77,9 +78,10 @@ defmodule MyScrobblesBot.BotOutput do
         userloved?: loved,
         photo: photo_link,
         with_photo?: with_photo,
-        verse: verse
+        verse: verse,
+        heart: heart
       }) do
-    "<b>#{user}</b> #{playcount_user_text(playcount, now)} #{Gettext.gettext(MyScrobblesBot.Gettext, "time")}:\n\n#{put_space(6)}#{if with_photo, do: "<a href=\"#{photo_link}\">🎶</a>", else: "🎶"} <b>#{track}</b>\n#{put_space(6)}💿 #{album}\n#{put_space(6)}👥 #{artist}\n#{put_space(6)}#{if loved, do: "💘"}\n\n<u><i>#{verse}</i></u>"
+    "<b>#{user}</b> #{playcount_user_text(playcount, now)} #{Gettext.gettext(MyScrobblesBot.Gettext, "time")}:\n\n#{put_space(3)}#{if with_photo, do: "<a href=\"#{photo_link}\">🎶</a>", else: "🎶"} <b>#{track}</b>\n#{put_space(3)}💿 #{album}\n#{put_space(3)}👥 #{artist}\n#{put_space(3)}#{if loved, do: put_heart(heart)}\n\n<u><i>#{verse}</i></u>"
   end
 
   # @spec get_now_album(%{username: String.t(), user: String.t()}) :: String.t()
@@ -92,7 +94,7 @@ defmodule MyScrobblesBot.BotOutput do
         photo: photo_link,
         with_photo?: with_photo
       }) do
-    "<b>#{user}</b> #{playcount_user_text(playcount, now)}:\n\n#{put_space(6)}#{if with_photo, do: "<a href=\"#{photo_link}\">💿</a>", else: "💿"} <b>#{album}</b>\n#{put_space(6)}👥 #{artist}"
+    "<b>#{user}</b> #{playcount_user_text(playcount, now)}:\n\n#{put_space(3)}#{if with_photo, do: "<a href=\"#{photo_link}\">💿</a>", else: "💿"} <b>#{album}</b>\n#{put_space(3)}👥 #{artist}"
   end
 
   # @spec get_now_artist(%{username: String.t(), user: String.t()}) :: String.t()
@@ -104,7 +106,7 @@ defmodule MyScrobblesBot.BotOutput do
         photo: photo_link,
         with_photo?: with_photo
       }) do
-    "<b>#{user}</b> #{playcount_user_text(playcount, now)}:\n\n#{put_space(6)}#{if with_photo, do: "<a href=\"#{photo_link}\">👥</a>", else: "👥"} <b>#{artist}</b>"
+    "<b>#{user}</b> #{playcount_user_text(playcount, now)}:\n\n#{put_space(3)}#{if with_photo, do: "<a href=\"#{photo_link}\">👥</a>", else: "👥"} <b>#{artist}</b>"
   end
 
   def get_your_music(%{
@@ -115,9 +117,10 @@ defmodule MyScrobblesBot.BotOutput do
         artist: artist,
         album: album,
         userloved?: loved,
-        photo: photo_link
+        photo: photo_link,
+        heart: heart
       }) do
-    "<b>#{user}</b> #{playcount_text(playcount)} #{Gettext.gettext(MyScrobblesBot.Gettext, "to")}:\n\n#{put_space(6)}<a href=\"#{photo_link}\">🎶</a> <b>#{track}</b>\n#{put_space(6)}💿 #{album}\n👥 #{artist}\n#{put_space(6)}#{if loved, do: "💘"}\n\n<u><i>#{Gettext.gettext(MyScrobblesBot.Gettext, "listening by")} #{friend}</i></u>"
+    "<b>#{user}</b> #{playcount_text(playcount)} :\n\n#{put_space(3)}<a href=\"#{photo_link}\">🎶</a> <b>#{track}</b>\n#{put_space(3)}💿 #{album}\n#{put_space(3)}👥 #{artist}\n#{put_space(3)}#{if loved, do: put_heart(heart)}\n\n<u><i>#{Gettext.gettext(MyScrobblesBot.Gettext, "listening by")} #{friend}</i></u>"
   end
 
   def get_my_music(%{
@@ -129,9 +132,10 @@ defmodule MyScrobblesBot.BotOutput do
         album: album,
         userloved?: loved,
         photo: photo_link,
-        with_photo?: with_photo
+        with_photo?: with_photo,
+        heart: heart
       }) do
-    "<b>#{friend}</b> #{playcount_text(playcount)}:\n\n#{put_space(6)}#{if with_photo, do: "<a href=\"#{photo_link}\">🎶</a>", else: "🎶"} <b>#{track}</b>\n\n#{put_space(6)}💿 #{album}\n#{put_space(6)}👥 #{artist}\n#{if loved, do: "💘"}\n<u><i>#{Gettext.gettext(MyScrobblesBot.Gettext, "requested by")} #{user}</i></u>\n"
+    "<b>#{friend}</b> #{playcount_text(playcount)}:\n\n#{put_space(3)}#{if with_photo, do: "<a href=\"#{photo_link}\">🎶</a>", else: "🎶"} <b>#{track}</b>\n\n#{put_space(3)}💿 #{album}\n#{put_space(3)}👥 #{artist}\n#{if loved, do: put_heart(heart)}\n<u><i>#{Gettext.gettext(MyScrobblesBot.Gettext, "requested by")} #{user}</i></u>\n"
   end
 
   def get_your_album(%{
@@ -142,7 +146,7 @@ defmodule MyScrobblesBot.BotOutput do
         album: album,
         photo: photo_link
       }) do
-    "<b>#{user}</b> #{playcount_text(playcount)} #{Gettext.gettext(MyScrobblesBot.Gettext, "to")}:\n\n#{put_space(6)}<a href=\"#{photo_link}\">💿</a> <b>#{album}</b>\n#{put_space(6)}👥 #{artist}\n\n<u><i>#{Gettext.gettext(MyScrobblesBot.Gettext, "listening by")} #{friend}</i></u>
+    "<b>#{user}</b> #{playcount_text(playcount)} :\n\n#{put_space(3)}<a href=\"#{photo_link}\">💿</a> <b>#{album}</b>\n#{put_space(3)}👥 #{artist}\n\n<u><i>#{Gettext.gettext(MyScrobblesBot.Gettext, "listening by")} #{friend}</i></u>
     "
   end
 
@@ -154,7 +158,7 @@ defmodule MyScrobblesBot.BotOutput do
         album: album,
         photo: photo_link
       }) do
-    "<b>#{friend}</b> #{playcount_text(playcount)} #{Gettext.gettext(MyScrobblesBot.Gettext, "to")}:\n\n#{put_space(6)}<a href=\"#{photo_link}\">💿</a> <b>#{album}</b>\n#{put_space(6)}👥 #{artist}\n<u><i>#{Gettext.gettext(MyScrobblesBot.Gettext, "requested by")} #{user}</i></u>"
+    "<b>#{friend}</b> #{playcount_text(playcount)} :\n\n#{put_space(3)}<a href=\"#{photo_link}\">💿</a> <b>#{album}</b>\n#{put_space(3)}👥 #{artist}\n\n<u><i>#{Gettext.gettext(MyScrobblesBot.Gettext, "requested by")} #{user}</i></u>"
   end
 
   def get_your_artist(%{
@@ -164,7 +168,7 @@ defmodule MyScrobblesBot.BotOutput do
         :artist => artist,
         :photo => photo_link
       }) do
-    "<b>#{user}</b> #{playcount_text(stats["userplaycount"])} #{Gettext.gettext(MyScrobblesBot.Gettext, "to")}:\n\n#{put_space(6)}<a href=\"#{photo_link}\">👥</a> <b>#{artist}</b>\n<u><i>#{Gettext.gettext(MyScrobblesBot.Gettext, "listening by")} #{friend}</i></u>"
+    "<b>#{user}</b> #{playcount_text(stats["userplaycount"])} :\n\n#{put_space(3)}<a href=\"#{photo_link}\">👥</a> <b>#{artist}</b>\n\n<u><i>#{Gettext.gettext(MyScrobblesBot.Gettext, "listening by")} #{friend}</i></u>"
   end
 
   def get_my_artist(%{
@@ -174,14 +178,14 @@ defmodule MyScrobblesBot.BotOutput do
         :artist => artist,
         :photo => photo_link
       }) do
-    "<b>#{friend}</b> #{playcount_text(stats["userplaycount"])} #{Gettext.gettext(MyScrobblesBot.Gettext, "to")}:\n\n#{put_space(6)}<a href=\"#{photo_link}\">👥</a> <b>#{artist}</b>\n<u><i>#{Gettext.gettext(MyScrobblesBot.Gettext, "requested by")} #{user}</i></u>"
+    "<b>#{friend}</b> #{playcount_text(stats["userplaycount"])} :\n\n#{put_space(3)}<a href=\"#{photo_link}\">👥</a> <b>#{artist}</b>\n\n<u><i>#{Gettext.gettext(MyScrobblesBot.Gettext, "requested by")} #{user}</i></u>"
   end
 
   def playcount_text(playcount) when is_binary(playcount) do
     case playcount do
       "0" -> "<i>#{Gettext.gettext(MyScrobblesBot.Gettext, "never")}</i> #{Gettext.gettext(MyScrobblesBot.Gettext, "listened")}"
       "1" -> "#{Gettext.gettext(MyScrobblesBot.Gettext, "listened")} #{Gettext.gettext(MyScrobblesBot.Gettext, "only")} <i>#{Gettext.gettext(MyScrobblesBot.Gettext, "once")}</i>"
-      value -> "#{Gettext.gettext(MyScrobblesBot.Gettext, "listened")} <i>#{value}</i> #{Gettext.gettext(MyScrobblesBot.Gettext, "times")}"
+      value -> "#{Gettext.gettext(MyScrobblesBot.Gettext, "listened")} <i>#{value}</i> #{Gettext.gettext(MyScrobblesBot.Gettext, "times to")}"
     end
   end
 
@@ -212,7 +216,7 @@ defmodule MyScrobblesBot.BotOutput do
         "#{Gettext.gettext(MyScrobblesBot.Gettext, "listened")} #{Gettext.gettext(MyScrobblesBot.Gettext, "only")} <i>#{Gettext.gettext(MyScrobblesBot.Gettext, "once")}</i>"
 
       {_, false} ->
-        "#{Gettext.gettext(MyScrobblesBot.Gettext, "listened")} <i>#{playcount}</i> #{Gettext.gettext(MyScrobblesBot.Gettext, "times")}"
+        "#{Gettext.gettext(MyScrobblesBot.Gettext, "listened")} <i>#{playcount}</i> #{Gettext.gettext(MyScrobblesBot.Gettext, "times to")}"
     end
   end
 

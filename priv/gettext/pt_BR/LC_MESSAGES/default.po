@@ -35,7 +35,7 @@ msgstr "nunca"
 msgid "listened"
 msgstr "escutou"
 
-msgid "times"
+msgid "times to"
 msgstr "vezes"
 
 msgid "It comes from"
@@ -118,6 +118,9 @@ msgstr "ª"
 
 msgid "th"
 msgstr "ª"
+
+msgid "select the heart you want in your favorites"
+msgstr "selecione o coração que você quer em seus favoritos"
 
 #, elixir-format
 #: lib/my_scrobbles_bot_web/live/page_live.html.leex:2

@@ -3,6 +3,7 @@ defmodule MyScrobblesBot.LastFm.Album do
   alias MyScrobblesBot.BotOutput
   alias MyScrobblesBot.Accounts.User
   alias MyScrobblesBot.Telegram.Message
+  alias MyScrobblesBot.Helpers
 
   import MyScrobblesBot.Helpers, only: [put_space: 1]
 
@@ -19,12 +20,12 @@ defmodule MyScrobblesBot.LastFm.Album do
 
         case Enum.count(data) do
           0 ->
-            "\n🎧 <i>#{Gettext.gettext(MyScrobblesBot.Gettext, "It comes from")}</i> <b>#{track.trackname}</b>\n🎧💎"
+            "\n\n🎧 <i>#{Gettext.gettext(MyScrobblesBot.Gettext, "It comes from")}</i> <b>#{track.trackname}</b>\n🎧💎"
 
           _ ->
             data
             |> Enum.reduce(
-              "\n🎧 <i>#{Gettext.gettext(MyScrobblesBot.Gettext, "It comes from")}</i> <b>#{track.trackname}</b>\n\n<b>#{Gettext.gettext(MyScrobblesBot.Gettext, "Your power tracks of this album")}:</b>
+              "\n\n🎧 <i>#{Gettext.gettext(MyScrobblesBot.Gettext, "It comes from")}</i> <b>#{track.trackname}</b>\n\n<b>#{Gettext.gettext(MyScrobblesBot.Gettext, "Your power tracks of this album")}:</b>
 ",
               fn %{
                    track: track,
@@ -32,7 +33,7 @@ defmodule MyScrobblesBot.LastFm.Album do
                    playcount: count
                  },
                  acc ->
-                "#{acc}#{put_space(3)}#{if loved, do: "💘", else: "▪️"} <b>#{track}</b> - <i>#{count} plays</i>\n"
+                "#{acc}#{put_space(3)}#{if loved, do: Helpers.put_heart(user.user_confs.heart), else: "▪️"} <b>#{track}</b> - <i>#{count} plays</i>\n"
               end
             )
             |> then(&"#{&1}\n🎧💎")

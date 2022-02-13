@@ -10,7 +10,7 @@ defmodule MyScrobblesBot.LastFm.User do
 
     msg =
       if(user.is_premium?) do
-        %{username: username}
+        %{username: username, heart: user.user_confs.heart}
         |> BotOutput.get_user_plus()
       else
         %{username: username}

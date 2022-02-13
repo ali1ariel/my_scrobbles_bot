@@ -42,6 +42,7 @@ defmodule MyScrobblesBot.Telegram.Message do
     |> Changeset.validate_required([:text])
     |> put_chat_id()
     |> put_chat_type()
+    |> put_message_id()
     |> Changeset.cast_embed(:from, with: &from_changeset/2)
     |> Changeset.cast_embed(:reply_to_message, with: &reply_to_message_changeset/2)
   end
@@ -66,6 +67,14 @@ defmodule MyScrobblesBot.Telegram.Message do
       changeset,
       :chat_id,
       Changeset.get_change(changeset, :chat_id, params["chat"]["id"] |> Integer.to_string())
+    )
+  end
+
+  defp put_message_id(%Ecto.Changeset{params: params} = changeset) do
+    Ecto.Changeset.put_change(
+      changeset,
+      :message_id,
+      Changeset.get_change(changeset, :message_id, params["message_id"] |> Integer.to_string())
     )
   end
 

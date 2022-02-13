@@ -14,7 +14,7 @@ defmodule MyScrobblesBot.LastFm.Track do
 
     query =
       Map.merge(track, attrs)
-      |> Map.merge(%{with_photo?: true, user: message.from.first_name})
+      |> Map.merge(%{with_photo?: true, user: message.from.first_name, heart: user.user_confs.heart})
 
     msg = BotOutput.get_now_track(query)
     %{text: msg, parse_mode: "HTML", chat_id: message.chat_id}
@@ -47,9 +47,11 @@ defmodule MyScrobblesBot.LastFm.Track do
 
     query =
       Map.merge(track, attrs)
-      |> Map.merge(%{with_photo?: true, user: message.from.first_name})
+      |> Map.merge(%{with_photo?: true, user: message.from.first_name, heart: user.user_confs.heart})
 
     msg = BotOutput.get_now_track(query)
+
+    IO.inspect message
 
     %{
       text: msg,
@@ -68,7 +70,7 @@ defmodule MyScrobblesBot.LastFm.Track do
 
     query =
       Map.merge(track, attrs)
-      |> Map.merge(%{with_photo?: false, user: message.from.first_name})
+      |> Map.merge(%{with_photo?: false, user: message.from.first_name, heart: user.user_confs.heart})
 
     msg = BotOutput.get_now_track(query)
     %{text: msg, parse_mode: "HTML", chat_id: message.chat_id}
@@ -83,11 +85,11 @@ defmodule MyScrobblesBot.LastFm.Track do
 
     query =
       Map.merge(track, attrs)
-      |> Map.merge(%{with_photo?: false, user: message.from.first_name})
+      |> Map.merge(%{with_photo?: false, user: message.from.first_name, heart: user.user_confs.heart})
 
     msg = BotOutput.get_now_track(query)
 
-    {:ok, _} = Telegram.send_photo(%{photo: query.photo, caption: msg, parse_mode: "HTML"})
+    {:ok, _} = Telegram.send_photo(%{photo: query.photo, caption: msg, chat_id: message.chat_id, parse_mode: "HTML"})
   end
 
   def mytrack(%Message{} = message) do

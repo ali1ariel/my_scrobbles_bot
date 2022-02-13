@@ -31,7 +31,10 @@ defmodule MyScrobblesBot.Confs.UserConfs do
     field :show_premium?, :boolean, default: true
     # show user as he doesn`t registered
     field :registered?, :boolean, default: true
+
     field :telegram_id, :string
+
+    field :heart, :integer, default: 1
 
     belongs_to :user, User, foreign_key: :user_id
 
@@ -53,7 +56,8 @@ defmodule MyScrobblesBot.Confs.UserConfs do
       :ban_expiration,
       :country,
       :continent,
-      :email
+      :email,
+      :heart
     ])
     |> validate_required([
       :language,
