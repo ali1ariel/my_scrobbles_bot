@@ -27,7 +27,7 @@ defmodule MyScrobblesBot.Application do
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: MyScrobblesBot.Supervisor]
+    opts = [strategy: :one_for_all, name: MyScrobblesBot.Supervisor]
     Supervisor.start_link(children, opts)
   end
 

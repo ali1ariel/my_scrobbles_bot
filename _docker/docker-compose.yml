@@ -1,0 +1,43 @@
+version: '3'
+
+services: 
+  bff_api:
+    image: softaliza/cieb-localhost
+    build:
+      context: ../
+      dockerfile: _docker/Dockerfile.dev
+    env_file: ./env/dev.env
+    ports:
+      - "4000:4000"
+    command: iex -S mix phx.server # "./entrypoint-dev.sh"
+    tty: true
+    stdin_open: true
+    depends_on: 
+      - bff_db
+    volumes:
+      - "../:/opt/app/cieb:rw"
+    networks:
+      - local-cloud
+  
+  bff_db:
+    image: postgres:13.4
+    environment: 
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      ENCODING: UTF8
+      POSTGRES_BD: cieb_dev
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRESQL_ENABLE_TLS: 'yes'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5000:5432"
+    networks:
+      - local-cloud
+volumes:
+  pgdata:
+
+networks:
+  local-cloud:
+    external: true
+    name: local-cloud

@@ -15,7 +15,7 @@ defmodule MyScrobblesBot.LastFm.Album do
     {:ok, attrs} = LastFm.get_album(track)
 
     extra =
-      if(user.is_premium?) do
+      if (user.is_premium?) do
         data = album_tracks(attrs["tracks"]["track"], username)
 
         case Enum.count(data) do
@@ -33,7 +33,7 @@ defmodule MyScrobblesBot.LastFm.Album do
                    playcount: count
                  },
                  acc ->
-                "#{acc}#{put_space(3)}#{if loved, do: Helpers.put_heart(user.user_confs.heart), else: "▪️"} <b>#{track}</b> - <i>#{count} plays</i>\n"
+                "#{acc}#{put_space(0)}#{if loved, do: Helpers.put_heart(user.user_confs.heart), else: "▪️"} <b>#{track |> Phoenix.HTML.html_escape() |> Phoenix.HTML.safe_to_string}</b> - <i>#{count} plays</i>\n"
               end
             )
             |> then(&"#{&1}\n🎧💎")

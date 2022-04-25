@@ -16,9 +16,6 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
   @impl true
   def handle(%InlineQuery{from: %{telegram_id: user_id}} = inline_query) do
     case MyScrobblesBot.Accounts.get_user_by_telegram_user_id(user_id) do
-      {:ok, %{is_premium?: false} = _user} ->
-        not_premium(inline_query.inline_query_id)
-
       {:ok, user} ->
         match_command(inline_query, user)
 
@@ -33,20 +30,23 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
 
     command_to_match = String.downcase(command)
 
-    {:ok, track} = LastFm.get_recent_track(%{username: user.last_fm_username})
-    # |> Helpers.error_handler(message)
+    with {:ok, track} <- LastFm.get_recent_track(%{username: user.last_fm_username}) do
+      # |> Helpers.error_handler(message)
 
-    case command_to_match do
-      "track" -> inline_track(inline_query, track)
-      "album" -> inline_album(inline_query, track)
-      "artist" -> inline_artist(inline_query, track)
-      _ -> inline_track(inline_query, track)
+      case command_to_match do
+        "track" -> inline_track(inline_query, track, user)
+        "album" -> inline_album(inline_query, track, user)
+        "artist" -> inline_artist(inline_query, track, user)
+        _ -> inline_track(inline_query, track, user)
+      end
+    else
+      _ -> :nothing
     end
 
     # {:ok, nil}
   end
 
-  def inline_track(inline_query, track) do
+  def inline_track(inline_query, track, user) do
     full_track =
       case LastFm.get_track(track) do
         {:ok, full_track} ->
@@ -71,6 +71,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
           "With Photo url",
           true,
           "1",
+          user.user_confs.heart,
           fn op -> BotOutput.get_now_track(op) end
         ),
         inline_text_option(
@@ -81,6 +82,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
           "Just Text",
           false,
           "2",
+          user.user_confs.heart,
           fn op -> BotOutput.get_now_track(op) end
         ),
         inline_photo_option(
@@ -91,6 +93,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
           "with photo",
           false,
           "3",
+          user.user_confs.heart,
           fn op -> BotOutput.get_now_track(op) end
         )
       ],
@@ -99,7 +102,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
     }
   end
 
-  def inline_artist(inline_query, track) do
+  def inline_artist(inline_query, track, user) do
     {:ok, attrs} = LastFm.get_artist(track)
 
     query = Map.merge(track, %{playcount: attrs["stats"]["userplaycount"]})
@@ -115,6 +118,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
           "With Photo url",
           true,
           "1",
+          user.user_confs.heart,
           fn op -> BotOutput.get_now_artist(op) end
         ),
         inline_text_option(
@@ -125,6 +129,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
           "Just Text",
           false,
           "2",
+          user.user_confs.heart,
           fn op -> BotOutput.get_now_artist(op) end
         ),
         inline_photo_option(
@@ -135,6 +140,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
           "with photo",
           false,
           "3",
+          user.user_confs.heart,
           fn op -> BotOutput.get_now_artist(op) end
         )
       ],
@@ -143,7 +149,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
     }
   end
 
-  def inline_album(inline_query, track) do
+  def inline_album(inline_query, track, user) do
     {:ok, attrs} = LastFm.get_album(track)
 
     query = Map.merge(track, %{playcount: attrs["userplaycount"]})
@@ -159,6 +165,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
           "With Photo url",
           true,
           "1",
+          user.user_confs.heart,
           fn op -> BotOutput.get_now_album(op) end
         ),
         inline_text_option(
@@ -169,6 +176,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
           "Just Text",
           false,
           "2",
+          user.user_confs.heart,
           fn op -> BotOutput.get_now_album(op) end
         ),
         inline_photo_option(
@@ -179,6 +187,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
           "with photo",
           false,
           "3",
+          user.user_confs.heart,
           fn op -> BotOutput.get_now_album(op) end
         )
       ],
@@ -238,7 +247,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
   def only_text() do
   end
 
-  def inline_text_option(content, content_type, query, first_name, type, photo?, id, function) do
+  def inline_text_option(content, content_type, query, first_name, type, photo?, id, heart, function) do
     %{
       type: "article",
       title: content[content_type],
@@ -246,7 +255,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
       input_message_content: %{
         parse_mode: "HTML",
         message_text:
-          Map.merge(query, %{with_photo?: photo?, user: first_name})
+          Map.merge(query, %{with_photo?: photo?, user: first_name, heart: heart})
           |> function.()
       },
       thumb_url:
@@ -264,7 +273,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
     }
   end
 
-  def inline_photo_option(content, content_type, query, first_name, _type, photo?, id, function) do
+  def inline_photo_option(content, content_type, query, first_name, _type, photo?, id, heart, function) do
     %{
       type: "photo",
       title: "Photo and text",
@@ -280,7 +289,7 @@ defmodule MyScrobblesBot.Telegram.Handlers.InlineQueryCommandHandler do
       photo_url: content.photo,
       thumb_url: content.photo,
       caption:
-        Map.merge(query, %{with_photo?: photo?, user: first_name})
+        Map.merge(query, %{with_photo?: photo?, user: first_name, heart: heart})
         |> function.(),
       id: id
     }

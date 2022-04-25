@@ -10,13 +10,22 @@ defmodule MyScrobblesBot.LastFm.Track do
 
     {:ok, track} = LastFm.get_recent_track(%{username: username})
 
-    {:ok, attrs} = LastFm.get_track(track)
+    attrs = with {:ok, attrs} <- LastFm.get_track(track) do
+      attrs
+    else
+      _->
+      %{
+        userloved?: false,
+        playcount: nil
+      }
+    end
+
 
     query =
       Map.merge(track, attrs)
       |> Map.merge(%{with_photo?: true, user: message.from.first_name, heart: user.user_confs.heart})
 
-    msg = BotOutput.get_now_track(query)
+      msg = BotOutput.get_now_track(query)
     %{text: msg, parse_mode: "HTML", chat_id: message.chat_id}
   end
 
@@ -51,7 +60,6 @@ defmodule MyScrobblesBot.LastFm.Track do
 
     msg = BotOutput.get_now_track(query)
 
-    IO.inspect message
 
     %{
       text: msg,
@@ -90,6 +98,7 @@ defmodule MyScrobblesBot.LastFm.Track do
     msg = BotOutput.get_now_track(query)
 
     {:ok, _} = Telegram.send_photo(%{photo: query.photo, caption: msg, chat_id: message.chat_id, parse_mode: "HTML"})
+    :nothing
   end
 
   def mytrack(%Message{} = message) do
@@ -106,7 +115,8 @@ defmodule MyScrobblesBot.LastFm.Track do
       }
     } = message
 
-    %{last_fm_username: username} = MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(user_id)
+    %{last_fm_username: username} = user = MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(user_id) |> MyScrobblesBot.Repo.preload(:user_confs)
+
 
     %{last_fm_username: friend_username} =
       MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(friend_user_id)
@@ -117,7 +127,7 @@ defmodule MyScrobblesBot.LastFm.Track do
 
     query =
       Map.merge(track, attrs)
-      |> Map.merge(%{with_photo?: true, user: user_first_name, friend: friend_first_name})
+      |> Map.merge(%{with_photo?: true, user: user_first_name, friend: friend_first_name, heart: user.user_confs.heart})
 
     msg = BotOutput.get_my_music(query)
     %{text: msg, parse_mode: "HTML", chat_id: message.chat_id}
@@ -137,7 +147,7 @@ defmodule MyScrobblesBot.LastFm.Track do
       }
     } = message
 
-    %{last_fm_username: username} = MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(user_id)
+    %{last_fm_username: username} = user = MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(user_id) |> MyScrobblesBot.Repo.preload(:user_confs)
 
     %{last_fm_username: friend_username} =
       MyScrobblesBot.Accounts.get_user_by_telegram_user_id!(friend_user_id)
@@ -148,7 +158,7 @@ defmodule MyScrobblesBot.LastFm.Track do
 
     query =
       Map.merge(track, attrs)
-      |> Map.merge(%{with_photo?: true, user: user_first_name, friend: friend_first_name})
+      |> Map.merge(%{with_photo?: true, user: user_first_name, friend: friend_first_name, heart: user.user_confs.heart})
 
     msg = BotOutput.get_your_music(query)
     %{text: msg, parse_mode: "HTML", chat_id: message.chat_id}

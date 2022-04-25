@@ -38,6 +38,14 @@ defmodule MyScrobblesBotWeb.Router do
     post "/webhooks", BotController, :receive
   end
 
+
+
+  scope "/meulastfmbot", MyScrobblesBotWeb do
+    pipe_through :api
+
+    post "/webhooks", MLFMController, :receive
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", MyScrobblesBotWeb do
   #   pipe_through :api

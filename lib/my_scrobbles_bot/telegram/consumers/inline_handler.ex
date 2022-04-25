@@ -11,7 +11,7 @@ defmodule MyScrobblesBot.Telegram.Consumers.InlineHandler do
   alias MyScrobblesBot.Telegram
   alias MyScrobblesBot.Telegram.InlineQuery
 
-  def start_link(_), do: GenServer.start_link(__MODULE__, nil)
+  def start_link(_), do: GenServer.start_link(__MODULE__, spawn_opt: [fullsweep_after: 10])
 
   @impl true
   def init(_) do

@@ -11,7 +11,6 @@ defmodule MyScrobblesBot.Telegram.Handlers.DefaultHandler do
 
   @impl true
   def handle(%Message{message_id: id}) do
-    Logger.info("Received and ignored message #{id}")
 
     {:ok, nil}
   end

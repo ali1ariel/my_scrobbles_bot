@@ -33,13 +33,80 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
     "5073257888"
   ]
 
-  def handle(%Message{} = message) do
-    message
-    |> match_user()
-    |> match_command()
-    |> case do
-      :nothing -> :nothing
-      something -> Telegram.send_message(something)
+  @command_list [
+    "lt",
+    "listen",
+    "mymusic",
+    "mm",
+    "wyl",
+    "ym",
+    "yourmusic",
+    "ltmarked",
+    "ltm",
+    "mymusicmarked",
+    "mmm",
+    "textlisten",
+    "tlisten",
+    "txtl",
+    "mymusictext",
+    "mmt",
+    "ltphoto",
+    "ltp",
+    "mymusicphoto",
+    "mmp",
+    "andyou",
+    "mytrack",
+    "mt",
+    "andme",
+    "yourtrack",
+    "yt",
+    "artist",
+    "yourartist",
+    "yar",
+    "myartist",
+    "mar",
+    "album",
+    "youralbum",
+    "yal",
+    "myalbum",
+    "mal",
+    "youruser",
+    "yu",
+    "myuser",
+    "mu",
+    "register",
+    "msregister ",
+    "msgetuser ",
+    "msgetuser",
+    "mspromoteid ",
+    "mspromote ",
+    "msremove",
+    "msremoveid ",
+    "setlanguage",
+    "setsystemlanguage",
+    "setheart"
+  ]
+
+
+  def handle(%Message{text: "/" <> command} = message) do
+    if !is_nil(
+         Enum.find(@command_list, fn com -> String.contains?(command |> String.downcase(), com) end)
+       ) do
+      message
+      |> match_user()
+      |> then(
+        &try do
+          match_command(&1)
+        rescue
+          _ -> :nothing
+        end
+      )
+      |> case do
+        :nothing -> :nothing
+        something -> Telegram.send_message(something)
+      end
+    else
+      :nothing
     end
   end
 
@@ -53,27 +120,28 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
     end
   end
 
-  def match_command({%Message{text: "/" <> command, chat_type: type, chat_id: id} = message, nil})
-      when type == "private" or (type == "supergroup" and id in @allowed_groups)
-      do
+  def match_command({%Message{text: "/" <> command, chat_type: type, chat_id: id} = message, nil}) do
     command = String.downcase(command)
 
-      case command do
-        "msregister " <> username ->
-          register(message, username)
+    case command do
+      "msregister " <> username ->
+        register(message, username)
 
-        _ ->
-          Gettext.put_locale(
-            MyScrobblesBot.Gettext,
-            if(message.from.language_code in Helpers.supported_languages(),
-              do: Helpers.message_language_handler(message.from.language_code),
-              else: "en"
-            )
+      "msregister@MyScrobblesbot" <> username ->
+        register(message, username)
+
+      _ ->
+        Gettext.put_locale(
+          MyScrobblesBot.Gettext,
+          if(message.from.language_code in Helpers.supported_languages(),
+            do: Helpers.message_language_handler(message.from.language_code),
+            else: "en"
           )
+        )
 
-          "<i>#{Gettext.gettext(MyScrobblesBot.Gettext, "user_not_found")}</i>"
-          |> response(message)
-      end
+        "<i>#{Gettext.gettext(MyScrobblesBot.Gettext, "user_not_found")}</i>"
+        |> response(message)
+    end
   end
 
   def match_command(
@@ -102,12 +170,11 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
 
   def match_command(
         {%Message{text: "/" <> command, chat_type: type, chat_id: id} = message, %User{} = user}
-      )
-      when type == "private" or (type == "supergroup" and id in @allowed_groups)
-       do
+      ) do
     command = String.downcase(command)
 
     case command do
+      # "lt" <> message
       x when x in ["lt", "listen", "mymusic", "mm"] ->
         Helpers.set_language(user.user_confs.language |> Helpers.internal_language_handler())
 
@@ -438,25 +505,23 @@ defmodule MyScrobblesBot.Telegram.Handlers.CommandHandler do
   def preview(string) do
     case String.length(string) do
       0 ->
-        IO.puts("okay, zero")
-
+        "something"
       1 ->
         case string do
           "+" ->
-            IO.puts("plus")
-
+            "something"
           _ ->
             case Integer.parse(string) do
-              {number, ""} when is_integer(number) -> IO.puts("number #{number}")
-              _ -> IO.puts("n eh inteiro")
+              {number, ""} when is_integer(number) -> "number #{number}"
+              _ -> "n eh inteiro"
             end
         end
 
       2 ->
-        IO.puts("two_arguments")
+        "two_arguments"
 
       _ ->
-        IO.puts("invalido")
+        "invalido"
     end
   end
 

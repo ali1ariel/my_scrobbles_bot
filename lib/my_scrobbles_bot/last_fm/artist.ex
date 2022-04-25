@@ -14,7 +14,7 @@ defmodule MyScrobblesBot.LastFm.Artist do
     {:ok, attrs} = LastFm.get_artist(track)
 
     extra =
-      if(user.is_premium?) do
+      if (user.is_premium?) do
         {:ok, tracks} = LastFm.get_artist_top_tracks(track)
 
         data = artist_tracks(tracks["track"], username)
@@ -35,7 +35,7 @@ defmodule MyScrobblesBot.LastFm.Artist do
                    playcount: count
                  },
                  acc ->
-                "#{acc}#{put_space(3)}#{if loved, do: put_heart(user.user_confs.heart), else: "▪️"} <b>#{track}</b> - <i>#{count} plays</i>
+                "#{acc}#{put_space(0)}#{if loved, do: put_heart(user.user_confs.heart), else: "▪️"} <b>#{track |> Phoenix.HTML.html_escape() |> Phoenix.HTML.safe_to_string}</b> - <i>#{count} plays</i>
 "
               end
             )

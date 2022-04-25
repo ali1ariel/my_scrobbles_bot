@@ -186,3 +186,7 @@ msgstr "Outubro"
 #: lib/my_scrobbles_bot/helpers/helpers.ex:18
 msgid "September"
 msgstr "Setembro"
+
+#, fuzzy
+msgid "listening"
+msgstr "escutando"

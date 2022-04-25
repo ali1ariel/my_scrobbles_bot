@@ -186,3 +186,7 @@ msgstr ""
 #: lib/my_scrobbles_bot/helpers/helpers.ex:18
 msgid "September"
 msgstr ""
+
+#, fuzzy
+msgid "listening"
+msgstr ""

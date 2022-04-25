@@ -24,7 +24,7 @@ config :my_scrobbles_bot, MyScrobblesBot.Repo,
 # with webpack to recompile .js and .css sources.
 config :my_scrobbles_bot, MyScrobblesBotWeb.Endpoint,
   http: [port: 4000],
-  debug_errors: true,
+  debug_errors: false,
   code_reloader: true,
   check_origin: false,
   watchers: [
@@ -74,6 +74,8 @@ config :my_scrobbles_bot, MyScrobblesBotWeb.Endpoint,
 
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"
+config :logger, level: :warn
+
 
 # Set a higher stacktrace during development. Avoid configuring such
 # in production as building large stacktraces may be expensive.

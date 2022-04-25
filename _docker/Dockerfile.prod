@@ -1,0 +1,59 @@
+FROM elixir:1.12-alpine as builder
+
+ARG DATABASE_URL
+ARG SECRET_KEY_BASE
+
+
+ENV APP_PATH /opt/app
+ENV APP_NAME cieb
+ENV APP_VERSION 0.1.0
+ENV HTTP_PORT 4000
+ENV HTTPS_PORT 4040
+ENV MIX_ENV prod
+ENV DATABASE_URL ${DATABASE_URL}
+ENV SECRET_KEY_BASE ${SECRET_KEY_BASE}
+ENV GUARDIAN_SECRET_KEY ""
+ENV KAFKA_HOST 75.119.146.89
+ENV KAFKA_PORT 9092
+RUN apk add --no-cache build-base  git inotify-tools bash
+RUN mix local.hex --force && mix local.rebar --force
+
+COPY . $APP_PATH/$APP_NAME
+WORKDIR $APP_PATH/$APP_NAME
+
+RUN MIX_ENV=${MIX_ENV} mix do clean, deps.get, compile
+RUN MIX_ENV=${MIX_ENV} mix phx.digest
+
+RUN MIX_ENV=${MIX_ENV} mix distillery.release --env=${MIX_ENV}
+
+RUN mkdir -p /tmp/${APP_NAME}
+RUN cp ${APP_PATH}/${APP_NAME}/_build/${MIX_ENV}/rel/${APP_NAME}/releases/${APP_VERSION}/${APP_NAME}.tar.gz /tmp/${APP_NAME}
+
+WORKDIR /tmp/${APP_NAME}
+
+RUN tar -xzf ${APP_NAME}.tar.gz
+RUN rm -rf ${APP_NAME}.tar.gz
+
+RUN echo "Release in place, ready to be copied."
+
+
+FROM elixir:1.12-alpine as runner
+
+ENV APP_PATH /opt/app
+ENV APP_NAME cieb
+ENV APP_VERSION 0.1.0
+ENV HTTP_PORT 4000
+ENV HTTPS_PORT 4040
+ENV MIX_ENV prod
+
+RUN apk add --no-cache bash
+
+COPY --from=builder /tmp/${APP_NAME} ${APP_PATH}/${APP_NAME}
+
+COPY ./keys ${APP_PATH}/${APP_NAME}/keys
+COPY ./entrypoint-prod.sh $APP_PATH/$APP_NAME
+WORKDIR ${APP_PATH}/${APP_NAME}
+
+EXPOSE $HTTP_PORT $HTTPS_PORT
+
+CMD ["sh", "-c", "./entrypoint-prod.sh"]

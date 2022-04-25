@@ -14,7 +14,6 @@ defmodule MyScrobblesBot.Telegram.Handlers.CallbackQueryHandler do
 
   @impl true
   def handle(%CallbackQuery{data: data} = callback_query) do
-    Logger.info("Received and ignored message #{callback_query.callback_query_id} - #{data}")
 
     {:ok, user} = match_user(callback_query)
 

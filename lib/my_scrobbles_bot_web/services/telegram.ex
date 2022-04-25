@@ -14,7 +14,7 @@ defmodule MyScrobblesBotWeb.Services.Telegram do
 
   plug Tesla.Middleware.Headers
   plug Tesla.Middleware.JSON
-  plug Tesla.Middleware.Logger
+  plug Tesla.Middleware.Logger, log_level: :warn
 
   @doc """
   Calls the sendMessage method in the telegram api
@@ -32,7 +32,7 @@ defmodule MyScrobblesBotWeb.Services.Telegram do
   end
 
   defp build_and_send(fun, route, module, params) do
-    with {:ok, input} <- IO.inspect module.build(params) do
+    with {:ok, input} <- module.build(params) do
       fun.(route, input)
     end
   end
